@@ -26,7 +26,12 @@ public static class AdsManager
             if (provider == null ||
                 (provider is UnityEngine.Object unityObject && unityObject == null))
             {
+                // Telefonda AdMob kuruluysa gerçek reklam; değilse (ve Editor'da) test reklamı.
+#if ADMOB_INSTALLED && !UNITY_EDITOR
+                provider = AdMobRewardedAd.Create();
+#else
                 provider = FakeRewardedAd.Create();
+#endif
             }
 
             return provider;

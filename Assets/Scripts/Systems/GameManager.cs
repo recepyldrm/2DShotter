@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
         highScore = PlayerPrefs.GetInt(GameKeys.HighScore, 0);
         UpdateUI();
 
-        GameAnalytics.RunStarted();
+        GameAnalytics.RunStarted(WeaponCatalog.Selected.id);
 
         // Kalıcı geliştirmeler uygulandı; oyuncuya göster.
         ActiveBonusBanner.ShowIfAny();
@@ -230,7 +230,8 @@ public class GameManager : MonoBehaviour
             score,
             killsThisRun,
             Time.timeSinceLevelLoad,
-            isGameOver
+            isGameOver,
+            WeaponCatalog.Selected.id
         );
     }
 

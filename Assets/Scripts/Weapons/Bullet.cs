@@ -32,9 +32,57 @@ public class Bullet : MonoBehaviour
     // WeaponController her atışta ayarlar: 1 + ek mermi sayısı.
     private int shotMultiplier = 1;
 
-    public void SetShotMultiplier(int multiplier)
+    // ==================================
+    // SİLAH
+    // ==================================
+
+    // Seçili silahın bu mermiye etkisi (WeaponController ayarlar)
+    private float weaponDamageMultiplier = 1f;
+    private float weaponSpeedMultiplier = 1f;
+    private float weaponExplosionRadius;
+
+    // Havuzdan gelen mermi her atışta silaha göre boyanıp boyutlandırılır.
+    private SpriteRenderer spriteRenderer;
+    private Vector3 defaultScale;
+    private Color defaultColor = Color.white;
+
+    void Awake()
+    {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        defaultScale = transform.localScale;
+
+        if (spriteRenderer != null)
+        {
+            defaultColor = spriteRenderer.color;
+        }
+    }
+
+    public void Configure(int multiplier, WeaponCatalog.Weapon weapon)
     {
         shotMultiplier = Mathf.Max(1, multiplier);
+
+        if (weapon == null)
+            return;
+
+        weaponDamageMultiplier = weapon.damageMultiplier;
+        weaponSpeedMultiplier = weapon.speedMultiplier;
+        weaponExplosionRadius = weapon.explosionRadius;
+        remainingPiercing += weapon.extraPierce;
+
+        // Menzil = ömür
+        CancelInvoke(nameof(ReturnToPool));
+        Invoke(nameof(ReturnToPool), lifetime * weapon.lifetimeMultiplier);
+
+        transform.localScale = new Vector3(
+            defaultScale.x * weapon.scale.x,
+            defaultScale.y * weapon.scale.y,
+            defaultScale.z
+        );
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = defaultColor * weapon.tint;
+        }
     }
 
     // ==================================
@@ -54,8 +102,17 @@ public class Bullet : MonoBehaviour
     {
         remainingPiercing = 0;
 
-        // Havuzdan gelen mermide önceki atışın değeri kalmasın.
+        // Havuzdan gelen mermide önceki atışın değerleri kalmasın.
         shotMultiplier = 1;
+        weaponDamageMultiplier = 1f;
+        weaponSpeedMultiplier = 1f;
+        weaponExplosionRadius = 0f;
+        transform.localScale = defaultScale;
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = defaultColor;
+        }
 
         if (PlayerStats.Instance != null)
         {
@@ -86,7 +143,7 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
-        float finalSpeed = speed;
+        float finalSpeed = speed * weaponSpeedMultiplier;
 
         if (PlayerStats.Instance != null)
         {
@@ -95,12 +152,11 @@ public class Bullet : MonoBehaviour
                     .bulletSpeedMultiplier;
         }
 
-        transform.Translate(
-            Vector3.right *
+        // Merminin baktığı yöne git (pompalının saçmaları yelpaze şeklinde dağılır).
+        transform.position +=
+            transform.right *
             finalSpeed *
-            Time.deltaTime,
-            Space.World
-        );
+            Time.deltaTime;
     }
 
     // ==================================
@@ -145,6 +201,9 @@ public class Bullet : MonoBehaviour
 
         // Multi Shot: ek mermiler ayrı görünmez, hasar olarak eklenir
         multiplier *= shotMultiplier;
+
+        // Seçili silahın mermi başı hasarı (örn. pompalı saçması zayıf, roket güçlü)
+        multiplier *= weaponDamageMultiplier;
 
         int finalDamage =
             Mathf.RoundToInt(
@@ -243,7 +302,21 @@ public class Bullet : MonoBehaviour
             Explode(
                 other.transform.position,
                 finalDamage,
-                enemyHealth
+                enemyHealth,
+                PlayerStats.Instance.explosionRadius,
+                PlayerStats.Instance.explosionDamageMultiplier
+            );
+        }
+
+        // Roketatar: çarptığı yerde tam hasarlı alan patlaması
+        if (weaponExplosionRadius > 0f)
+        {
+            Explode(
+                other.transform.position,
+                finalDamage,
+                enemyHealth,
+                weaponExplosionRadius,
+                1f
             );
         }
 
@@ -572,15 +645,15 @@ public class Bullet : MonoBehaviour
     // EXPLOSION
     // ==================================
 
+    // radius / damageMultiplier: patlayıcı mermi kartından ya da roketatardan gelir.
     void Explode(
         Vector3 explosionPosition,
         int mainDamage,
-        EnemyHealth mainTarget
+        EnemyHealth mainTarget,
+        float radius,
+        float explosionMultiplier
     )
     {
-        if (PlayerStats.Instance == null)
-            return;
-
         // ==================================
         // EXPLOSION EFFECT
         // ==================================
@@ -603,16 +676,8 @@ public class Bullet : MonoBehaviour
         // EXPLOSION DAMAGE
         // ==================================
 
-        float radius =
-            PlayerStats.Instance
-                .explosionRadius;
-
         // Parlama + hasar yarıçapı kadar büyüyen şok dalgası
         ExplosionBlast.Play(explosionPosition, radius);
-
-        float explosionMultiplier =
-            PlayerStats.Instance
-                .explosionDamageMultiplier;
 
         int explosionDamage =
             Mathf.RoundToInt(

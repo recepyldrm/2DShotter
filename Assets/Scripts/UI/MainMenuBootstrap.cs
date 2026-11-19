@@ -20,6 +20,7 @@ public static class MainMenuBootstrap
 
         GameObject host = null;
 
+        AddIfMissing<WeaponsUI>(ref host);
         AddIfMissing<PermanentUpgradesUI>(ref host);
         AddIfMissing<AchievementsUI>(ref host);
         AddIfMissing<DailyRewardUI>(ref host);

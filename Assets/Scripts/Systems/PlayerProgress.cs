@@ -191,6 +191,41 @@ public static class PlayerProgress
     }
 
     // ==================================
+    // SİLAHLAR
+    // ==================================
+
+    public static string SelectedWeapon
+    {
+        get => PlayerPrefs.GetString(GameKeys.SelectedWeapon, string.Empty);
+        set
+        {
+            PlayerPrefs.SetString(GameKeys.SelectedWeapon, value ?? string.Empty);
+            Touch();
+            PlayerPrefs.Save();
+        }
+    }
+
+    public static bool IsWeaponOwned(string weaponId)
+    {
+        return !string.IsNullOrEmpty(weaponId) &&
+               ReadSet(GameKeys.OwnedWeapons).Contains(weaponId);
+    }
+
+    public static void UnlockWeapon(string weaponId)
+    {
+        if (string.IsNullOrEmpty(weaponId))
+            return;
+
+        HashSet<string> owned = ReadSet(GameKeys.OwnedWeapons);
+
+        if (!owned.Add(weaponId))
+            return;
+
+        WriteSet(GameKeys.OwnedWeapons, owned);
+        NotifyProgressChanged();
+    }
+
+    // ==================================
     // DOST SKINLERİ
     // ==================================
 

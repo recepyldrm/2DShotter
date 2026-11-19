@@ -171,6 +171,9 @@ public class IAPManager : MonoBehaviour
         // Gold paketleri burada tekrar verilmez.
         foreach (ConfirmedOrder order in orders.ConfirmedOrders)
         {
+            if (!PurchaseReceiptValidator.Validate(order.Info.Receipt, out _))
+                continue;
+
             foreach (CartItem item in order.CartOrdered.Items())
             {
                 Product product = item.Product;
@@ -192,6 +195,18 @@ public class IAPManager : MonoBehaviour
     // Ödeme alındı: önce ödülü ver, sonra mağazaya onayla.
     void HandlePurchasePending(PendingOrder order)
     {
+        // Sahte makbuzla gelen satın almalar ödül vermez.
+        if (!PurchaseReceiptValidator.Validate(order.Info.Receipt, out string validationError))
+        {
+            Debug.LogWarning("IAP: Geçersiz makbuz, ödül verilmedi: " + validationError);
+
+            OnPurchaseFailed?.Invoke(GetFirstProductId(order), "SATIN ALMA DOĞRULANAMADI");
+
+            // Aynı geçersiz satın alma her açılışta tekrar gelmesin.
+            store.ConfirmPurchase(order);
+            return;
+        }
+
         bool firstTime = PlayerProgress.TryMarkTransactionGranted(order.Info.TransactionID);
 
         foreach (CartItem item in order.CartOrdered.Items())

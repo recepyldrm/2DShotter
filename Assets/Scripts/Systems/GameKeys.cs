@@ -14,6 +14,8 @@ public static class GameKeys
     public const string OwnedCompanionSkins = "OwnedCompanionSkins";
     public const string SelectedCompanionSkin = "SelectedCompanionSkin";
     public const string GrantedTransactions = "GrantedTransactions";
+    public const string OwnedWeapons = "OwnedWeapons";
+    public const string SelectedWeapon = "SelectedWeapon";
 
     // İstatistikler (başarımlar için)
     public const string StatTotalKills = "StatTotalKills";

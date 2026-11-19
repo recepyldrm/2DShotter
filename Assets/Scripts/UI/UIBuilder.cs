@@ -10,17 +10,18 @@ public static class UIBuilder
 
     // Ana menünün sağ kenarındaki buton sütunu, yukarıdan aşağı sıra
     public const int MenuSlotShop = 0;
-    public const int MenuSlotUpgrades = 1;
-    public const int MenuSlotAchievements = 2;
-    public const int MenuSlotDaily = 3;
-    public const int MenuSlotTutorial = 4;
+    public const int MenuSlotWeapons = 1;
+    public const int MenuSlotUpgrades = 2;
+    public const int MenuSlotAchievements = 3;
+    public const int MenuSlotDaily = 4;
+    public const int MenuSlotTutorial = 5;
 
     // En altta: Google Play Games bağlanana kadar görünmez, boşluk kalmasın.
-    public const int MenuSlotLeaderboard = 5;
+    public const int MenuSlotLeaderboard = 6;
 
     public const float MenuButtonTop = 40f;
-    public const float MenuButtonSpacing = 120f;
-    public static readonly Vector2 MenuButtonSize = new Vector2(280f, 100f);
+    public const float MenuButtonSpacing = 110f;
+    public static readonly Vector2 MenuButtonSize = new Vector2(280f, 95f);
 
     public static Transform CreateCanvas(Transform parent, string name, int sortingOrder)
     {

@@ -89,16 +89,16 @@ public static class GameAnalytics
     // OLAYLAR
     // ==================================
 
-    public static void RunStarted() =>
-        Send(new AnalyticsRecord { e = Run_Start });
+    public static void RunStarted(string weapon) =>
+        Send(new AnalyticsRecord { e = Run_Start, detail = weapon });
 
     // Oyuncu öldü (devam hakkı kullanılırsa aynı oyunda tekrar ölebilir).
     public static void PlayerDied(int level, int score, int kills, float seconds, bool reviveUsed) =>
         Send(new AnalyticsRecord { e = Death, level = level, score = score, kills = kills, seconds = seconds, flag = reviveUsed });
 
     // Oyun bitti ya da yarıda bırakıldı: oyuncunun bıraktığı son durum.
-    public static void RunEnded(int level, int score, int kills, float seconds, bool died) =>
-        Send(new AnalyticsRecord { e = Run_End, level = level, score = score, kills = kills, seconds = seconds, flag = died });
+    public static void RunEnded(int level, int score, int kills, float seconds, bool died, string weapon) =>
+        Send(new AnalyticsRecord { e = Run_End, level = level, score = score, kills = kills, seconds = seconds, flag = died, detail = weapon });
 
     public static void LevelReached(int level, float seconds) =>
         Send(new AnalyticsRecord { e = Level_Up, level = level, seconds = seconds });

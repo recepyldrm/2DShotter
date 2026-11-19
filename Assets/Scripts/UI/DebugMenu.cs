@@ -180,6 +180,15 @@ public class DebugMenu : MonoBehaviour
         UpdateLabels();
     }
 
+    // Silahlar bir sonraki oyunda geçerli olur (ana menüden seçilir).
+    void UnlockAllWeapons()
+    {
+        foreach (WeaponCatalog.Weapon weapon in WeaponCatalog.All)
+        {
+            PlayerProgress.UnlockWeapon(weapon.id);
+        }
+    }
+
     void ResetTutorial()
     {
         PlayerPrefs.DeleteKey(GameKeys.TutorialSeen);
@@ -282,6 +291,7 @@ public class DebugMenu : MonoBehaviour
 
         // Her sahnede
         AddButton(content, "+1000 KALICI ALTIN", AddBankGold, true, false);
+        AddButton(content, "TÜM SİLAHLARI AÇ", UnlockAllWeapons, false, false);
         AddButton(content, "EĞİTİMİ SIFIRLA", ResetTutorial, false, false);
         AddButton(content, "GÜNLÜK ÖDÜLÜ SIFIRLA", ResetDailyReward, false, false);
         resetAllText = AddButton(content, "TÜM KAYITLARI SİL", ResetAll, false, false);

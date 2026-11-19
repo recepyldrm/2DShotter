@@ -10,7 +10,17 @@ public class WeaponController : MonoBehaviour
     [Header("Ateş Efekti")]
     public GameObject muzzleFlash;
 
+    // Ana menüde seçilen silah (tüfek, pompalı, lazer, roketatar)
+    private WeaponCatalog.Weapon weapon;
+
     private float fireTimer;
+
+    public WeaponCatalog.Weapon CurrentWeapon => weapon;
+
+    void Awake()
+    {
+        weapon = WeaponCatalog.Selected;
+    }
 
     void Update()
     {
@@ -20,13 +30,11 @@ public class WeaponController : MonoBehaviour
         {
             Shoot();
 
-            float finalFireRate = fireRate;
+            float finalFireRate = fireRate * weapon.fireIntervalMultiplier;
 
             if (PlayerStats.Instance != null)
             {
-                finalFireRate =
-                    fireRate /
-                    PlayerStats.Instance.fireRateMultiplier;
+                finalFireRate /= PlayerStats.Instance.fireRateMultiplier;
             }
 
             fireTimer = Mathf.Max(finalFireRate, 0.03f);
@@ -53,10 +61,28 @@ public class WeaponController : MonoBehaviour
             shotMultiplier += PlayerStats.Instance.extraBullets;
         }
 
-        SpawnBullet(
-            firePoint.position,
-            shotMultiplier
-        );
+        // Pompalı gibi silahlar tek atışta yelpaze şeklinde birden çok mermi atar.
+        int pellets = Mathf.Max(1, weapon.pellets);
+
+        for (int i = 0; i < pellets; i++)
+        {
+            float angle = 0f;
+
+            if (pellets > 1)
+            {
+                float t = i / (float)(pellets - 1);
+                angle = Mathf.Lerp(-weapon.spreadAngle / 2f, weapon.spreadAngle / 2f, t);
+
+                // Hafif rastgelelik: her atış birebir aynı görünmesin.
+                angle += Random.Range(-2f, 2f);
+            }
+
+            SpawnBullet(
+                firePoint.position,
+                Quaternion.Euler(0f, 0f, angle),
+                shotMultiplier
+            );
+        }
 
         ShowMuzzleFlash();
 
@@ -66,7 +92,7 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    void SpawnBullet(Vector3 spawnPosition, int shotMultiplier)
+    void SpawnBullet(Vector3 spawnPosition, Quaternion rotation, int shotMultiplier)
     {
         GameObject bullet = null;
 
@@ -76,7 +102,7 @@ public class WeaponController : MonoBehaviour
                 ObjectPool.Instance.Spawn(
                     GameKeys.BulletPool,
                     spawnPosition,
-                    Quaternion.identity
+                    rotation
                 );
         }
         else if (bulletPrefab != null)
@@ -85,7 +111,7 @@ public class WeaponController : MonoBehaviour
                 Instantiate(
                     bulletPrefab,
                     spawnPosition,
-                    Quaternion.identity
+                    rotation
                 );
         }
 
@@ -98,14 +124,13 @@ public class WeaponController : MonoBehaviour
             return;
         }
 
-        bullet.transform.position = spawnPosition;
-        bullet.transform.rotation = Quaternion.identity;
+        bullet.transform.SetPositionAndRotation(spawnPosition, rotation);
 
         Bullet bulletComponent = bullet.GetComponent<Bullet>();
 
         if (bulletComponent != null)
         {
-            bulletComponent.SetShotMultiplier(shotMultiplier);
+            bulletComponent.Configure(shotMultiplier, weapon);
         }
     }
 

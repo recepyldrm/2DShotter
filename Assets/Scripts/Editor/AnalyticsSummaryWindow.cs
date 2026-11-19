@@ -126,6 +126,28 @@ public class AnalyticsSummaryWindow : EditorWindow
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Oyunun bittiği seviye", EditorStyles.boldLabel);
         DrawHistogram(runs.Select(r => r.level));
+
+        // Silah dengesi: hangi silahla ne kadar ilerleniyor
+        List<IGrouping<string, AnalyticsRecord>> byWeapon = runs
+            .Where(r => !string.IsNullOrEmpty(r.detail))
+            .GroupBy(r => r.detail)
+            .OrderByDescending(g => g.Average(r => r.level))
+            .ToList();
+
+        if (byWeapon.Count > 0)
+        {
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Silaha göre", EditorStyles.boldLabel);
+
+            foreach (IGrouping<string, AnalyticsRecord> group in byWeapon)
+            {
+                EditorGUILayout.LabelField(
+                    group.Key,
+                    group.Count() + " oyun   ort. seviye " + group.Average(r => r.level).ToString("0.0") +
+                    "   ort. skor " + group.Average(r => r.score).ToString("0")
+                );
+            }
+        }
     }
 
     // ==================================

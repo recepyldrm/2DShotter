@@ -18,12 +18,14 @@ public class SaveSnapshot
 
     public int totalGold;
     public string selectedSkin;
+    public string selectedWeapon;
     public string dailyLastClaimDate;
     public int dailyLastClaimIndex = -1;
 
     // Birleşim (union): hiçbir cihazdaki kazanım kaybolmaz
     public List<string> ownedSkins = new List<string>();
     public List<string> claimedAchievements = new List<string>();
+    public List<string> ownedWeapons = new List<string>();
 
     // Kalıcı yükseltmeler "id:seviye" olarak; birleşirken yüksek seviye kazanır
     public List<string> permanentUpgrades = new List<string>();
@@ -70,10 +72,12 @@ public class SaveSnapshot
             ),
             totalGold = PlayerProgress.TotalGold,
             selectedSkin = PlayerProgress.SelectedCompanionSkin,
+            selectedWeapon = PlayerProgress.SelectedWeapon,
             dailyLastClaimDate = PlayerPrefs.GetString(GameKeys.DailyLastClaimDate, string.Empty),
             dailyLastClaimIndex = PlayerPrefs.GetInt(GameKeys.DailyLastClaimIndex, -1),
             ownedSkins = ReadList(GameKeys.OwnedCompanionSkins),
             claimedAchievements = ReadList(GameKeys.ClaimedAchievements),
+            ownedWeapons = ReadList(GameKeys.OwnedWeapons),
             permanentUpgrades = CaptureUpgrades(),
             highScore = PlayerProgress.BestScore,
             totalKills = PlayerProgress.TotalKills,
@@ -89,6 +93,8 @@ public class SaveSnapshot
     {
         PlayerPrefs.SetInt(GameKeys.TotalGold, Mathf.Max(0, totalGold));
         PlayerPrefs.SetString(GameKeys.SelectedCompanionSkin, selectedSkin ?? string.Empty);
+        PlayerPrefs.SetString(GameKeys.SelectedWeapon, selectedWeapon ?? string.Empty);
+        PlayerPrefs.SetString(GameKeys.OwnedWeapons, string.Join(Separator.ToString(), ownedWeapons ?? new List<string>()));
         PlayerPrefs.SetString(GameKeys.DailyLastClaimDate, dailyLastClaimDate ?? string.Empty);
         PlayerPrefs.SetInt(GameKeys.DailyLastClaimIndex, dailyLastClaimIndex);
         PlayerPrefs.SetString(GameKeys.OwnedCompanionSkins, string.Join(Separator.ToString(), ownedSkins));
@@ -128,10 +134,12 @@ public class SaveSnapshot
             modifiedAtUtc = Math.Max(a.modifiedAtUtc, b.modifiedAtUtc),
             totalGold = newer.totalGold,
             selectedSkin = newer.selectedSkin,
+            selectedWeapon = newer.selectedWeapon,
             dailyLastClaimDate = newer.dailyLastClaimDate,
             dailyLastClaimIndex = newer.dailyLastClaimIndex,
             ownedSkins = Union(a.ownedSkins, b.ownedSkins),
             claimedAchievements = Union(a.claimedAchievements, b.claimedAchievements),
+            ownedWeapons = Union(a.ownedWeapons, b.ownedWeapons),
             permanentUpgrades = MergeUpgrades(a.permanentUpgrades, b.permanentUpgrades),
             highScore = Math.Max(a.highScore, b.highScore),
             totalKills = Math.Max(a.totalKills, b.totalKills),
