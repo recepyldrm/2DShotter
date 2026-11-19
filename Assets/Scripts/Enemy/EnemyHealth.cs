@@ -379,7 +379,7 @@ public class EnemyHealth : MonoBehaviour
         // Hit sound
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayEnemyHit();
+            AudioManager.Instance.PlayEnemyHit(style == DamageNumbers.Style.Critical);
         }
 
         // Hurt animation
@@ -866,6 +866,11 @@ public class EnemyHealth : MonoBehaviour
         // ==================================
 
         // Bomber patlaması kırmızı; halka oyuncuya hasar verdiği alanı gösterir.
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayExplosion();
+        }
+
         ExplosionBlast.Play(
             transform.position,
             enemyType.explosionRadius,

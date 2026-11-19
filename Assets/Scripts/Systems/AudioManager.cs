@@ -5,6 +5,7 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance;
 
     [Header("Ses Kaynakları")]
+    [Tooltip("Ses seviyesi ve mikser grubu buradan alınır; efektler kendi kanallarından çalar.")]
     public AudioSource sfxSource;
     public AudioSource musicSource;
 
@@ -39,10 +40,37 @@ public class AudioManager : MonoBehaviour
     private const string MusicVolumeKey = GameKeys.MusicVolume;
     private const string SfxVolumeKey = GameKeys.SfxVolume;
 
+    // Ateş klibi bir seri; her atışta sadece ilk patlaması çalınır.
+    private const float ShootClipLength = 0.16f;
+
     private float previousMusicVolume = 0.4f;
     private float previousSfxVolume = 1f;
 
     private bool allSoundMuted = false;
+
+    // ==================================
+    // SES KANALLARI
+    // ==================================
+
+    // Her ses türü kendi kanalında çalar: aynı anda çalan ses sayısı ve
+    // iki ses arasındaki en kısa süre sınırlıdır. Böylece çok sayıda isabet /
+    // ölüm aynı anda olunca sesler üst üste binip gürültüye dönüşmez.
+    private class Channel
+    {
+        public AudioSource[] voices;
+        public int next;
+        public float minInterval;
+        public float lastPlayTime = -10f;
+    }
+
+    private Channel shootChannel;
+    private Channel hitChannel;
+    private Channel deathChannel;
+    private Channel goldChannel;
+    private Channel hurtChannel;
+    private Channel explosionChannel;
+    private Channel uiChannel;
+    private Channel eventChannel;
 
     void Awake()
     {
@@ -55,6 +83,79 @@ public class AudioManager : MonoBehaviour
         {
             Destroy(gameObject);
             return;
+        }
+
+        shootChannel = CreateChannel(1, 0f);
+        hitChannel = CreateChannel(3, 0.05f);
+        deathChannel = CreateChannel(4, 0.07f);
+        goldChannel = CreateChannel(2, 0.09f);
+        hurtChannel = CreateChannel(1, 0.15f);
+        explosionChannel = CreateChannel(2, 0.1f);
+        uiChannel = CreateChannel(3, 0.03f);
+        eventChannel = CreateChannel(2, 0.2f);
+    }
+
+    Channel CreateChannel(int voiceCount, float minInterval)
+    {
+        Channel channel = new Channel
+        {
+            voices = new AudioSource[voiceCount],
+            minInterval = minInterval
+        };
+
+        for (int i = 0; i < voiceCount; i++)
+        {
+            AudioSource voice = gameObject.AddComponent<AudioSource>();
+            voice.playOnAwake = false;
+            voice.loop = false;
+            voice.spatialBlend = 0f;
+
+            if (sfxSource != null)
+            {
+                voice.outputAudioMixerGroup = sfxSource.outputAudioMixerGroup;
+            }
+
+            channel.voices[i] = voice;
+        }
+
+        return channel;
+    }
+
+    float SfxVolume =>
+        sfxSource != null ? sfxSource.volume : GetSfxVolume();
+
+    // pitchVariance: her çalışta perde biraz değişsin (tekrar eden ses yorucu olmasın)
+    // maxLength: > 0 ise ses bu süre sonra kesilir
+    void Play(Channel channel, AudioClip clip, float volume, float pitch = 1f, float pitchVariance = 0f, float maxLength = 0f)
+    {
+        if (clip == null || channel == null)
+            return;
+
+        float now = Time.unscaledTime;
+
+        if (now - channel.lastPlayTime < channel.minInterval)
+            return;
+
+        float finalVolume = volume * SfxVolume;
+
+        if (finalVolume <= 0.001f)
+            return;
+
+        channel.lastPlayTime = now;
+
+        // Kanal doluysa en eski sesin yerine çalar.
+        AudioSource voice = channel.voices[channel.next];
+        channel.next = (channel.next + 1) % channel.voices.Length;
+
+        voice.Stop();
+        voice.clip = clip;
+        voice.volume = finalVolume;
+        voice.pitch = pitch * Random.Range(1f - pitchVariance, 1f + pitchVariance);
+        voice.Play();
+
+        if (maxLength > 0f)
+        {
+            voice.SetScheduledEndTime(AudioSettings.dspTime + maxLength / Mathf.Max(0.1f, voice.pitch));
         }
     }
 
@@ -127,16 +228,7 @@ public class AudioManager : MonoBehaviour
         float volume
     )
     {
-        if (sfxSource == null)
-            return;
-
-        if (clip == null)
-            return;
-
-        sfxSource.PlayOneShot(
-            clip,
-            volume
-        );
+        Play(uiChannel, clip, volume);
     }
 
     // =====================================
@@ -262,59 +354,64 @@ public class AudioManager : MonoBehaviour
     // SES KISAYOLLARI
     // =====================================
 
-    public void PlayShoot()
+    // pitch: silaha göre perde (pompalı tok, lazer ince, roket derin)
+    public void PlayShoot(float pitch = 1f)
     {
-        PlaySFX(
-            shootClip,
-            shootVolume
-        );
+        Play(shootChannel, shootClip, shootVolume, pitch, 0.04f, ShootClipLength);
     }
 
-    public void PlayEnemyHit()
+    public void PlayEnemyHit(bool critical = false)
     {
-        PlaySFX(
+        // Kritik vuruş daha tiz ve biraz daha yüksek
+        Play(
+            hitChannel,
             enemyHitClip,
-            enemyHitVolume
+            critical ? Mathf.Min(1f, enemyHitVolume * 1.3f) : enemyHitVolume,
+            critical ? 1.45f : 1f,
+            0.1f
         );
     }
 
     public void PlayEnemyDeath()
     {
-        PlaySFX(
-            enemyDeathClip,
-            enemyDeathVolume
-        );
+        Play(deathChannel, enemyDeathClip, enemyDeathVolume, 1f, 0.12f);
     }
 
     public void PlayGoldPickup()
     {
-        PlaySFX(
-            goldPickupClip,
-            goldPickupVolume
-        );
+        Play(goldChannel, goldPickupClip, goldPickupVolume, 1.05f, 0.08f);
     }
 
     public void PlayPlayerHurt()
     {
-        PlaySFX(
-            playerHurtClip,
-            playerHurtVolume
-        );
+        Play(hurtChannel, playerHurtClip, playerHurtVolume, 1f, 0.05f);
     }
 
     public void PlayUpgradePurchase()
     {
-        PlaySFX(
-            upgradePurchaseClip,
-            upgradePurchaseVolume
-        );
+        Play(uiChannel, upgradePurchaseClip, upgradePurchaseVolume);
     }
 
     public void PlayButtonClick()
     {
-        PlaySFX(
-            buttonClickClip,
-            buttonClickVolume
-        );
+        Play(uiChannel, buttonClickClip, buttonClickVolume);
+    }
+
+    // Patlama: yere çarpma sesinin derin hâli
+    public void PlayExplosion()
+    {
+        Play(explosionChannel, enemyHitClip, Mathf.Min(1f, enemyHitVolume * 1.6f), 0.55f, 0.06f);
+    }
+
+    // Seviye atlama: altın sesinin tiz hâli
+    public void PlayLevelUp()
+    {
+        Play(eventChannel, goldPickupClip, Mathf.Min(1f, goldPickupVolume * 1.6f), 1.35f);
+    }
+
+    // Boss uyarısı: çok derin bir darbe
+    public void PlayBossWarning()
+    {
+        Play(eventChannel, enemyHitClip, 1f, 0.4f);
     }
 }

@@ -153,6 +153,7 @@ public class BossWaveManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
 
             ShowBanner("BOSS GELİYOR!", 2.5f);
+            PlaySound(audio => audio.PlayBossWarning());
             Shake(0.2f, 0.4f);
             Haptics.Heavy();
 
@@ -363,6 +364,7 @@ public class BossWaveManager : MonoBehaviour
         EndBossFight();
 
         ShowBanner("BOSS YENİLDİ!", 2.5f);
+        PlaySound(audio => audio.PlayExplosion());
         Shake(0.25f, 0.5f);
     }
 
@@ -381,6 +383,14 @@ public class BossWaveManager : MonoBehaviour
 
         bossMovement = null;
         barRoot.SetActive(false);
+    }
+
+    static void PlaySound(System.Action<AudioManager> play)
+    {
+        if (AudioManager.Instance != null)
+        {
+            play(AudioManager.Instance);
+        }
     }
 
     static void Shake(float magnitude, float duration)

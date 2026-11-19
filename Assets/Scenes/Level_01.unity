@@ -16806,19 +16806,19 @@ MonoBehaviour:
   shootClip: {fileID: 8300000, guid: fa35ec4196145c548887c4bcd3f13a64, type: 3}
   shootVolume: 0.3
   enemyHitClip: {fileID: 8300000, guid: c37e2fe5e96442b45aac745f37f17db9, type: 3}
-  enemyHitVolume: 0.5
+  enemyHitVolume: 0.4
   enemyDeathClip: {fileID: 8300000, guid: f0a30c3cbfe091447bced0e9b635be4d, type: 3}
   enemyDeathVolume: 0.5
-  goldPickupClip: {fileID: 8300000, guid: 64b0e16692e06ae4ba6282ce019910f8, type: 3}
-  goldPickupVolume: 0.5
+  goldPickupClip: {fileID: 8300000, guid: bb60fa92b079f824abc99d1da311b55a, type: 3}
+  goldPickupVolume: 0.35
   playerHurtClip: {fileID: 8300000, guid: 38d8f234601946b4091716516d06f5ac, type: 3}
   playerHurtVolume: 0.7
-  upgradePurchaseClip: {fileID: 8300000, guid: bb60fa92b079f824abc99d1da311b55a, type: 3}
+  upgradePurchaseClip: {fileID: 8300000, guid: 64b0e16692e06ae4ba6282ce019910f8, type: 3}
   upgradePurchaseVolume: 1
   buttonClickClip: {fileID: 8300000, guid: 3b168ad25dec3dd4fa7568784112cd1a, type: 3}
   buttonClickVolume: 1
   backgroundMusic: {fileID: 8300000, guid: 4626aa52a3ae0ac4db51a4f4c883de60, type: 3}
-  musicVolume: 1
+  musicVolume: 0.45
 --- !u!4 &2142699149
 Transform:
   m_ObjectHideFlags: 0

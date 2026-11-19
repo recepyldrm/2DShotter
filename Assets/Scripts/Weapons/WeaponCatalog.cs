@@ -38,6 +38,9 @@ public static class WeaponCatalog
         // Mermi görünümü
         public Color tint = Color.white;
         public Vector2 scale = Vector2.one;
+
+        // Ateş sesinin perdesi (1 = normal, düşük = tok, yüksek = ince)
+        public float soundPitch = 1f;
     }
 
     public static readonly Weapon Rifle = new Weapon
@@ -61,7 +64,8 @@ public static class WeaponCatalog
         speedMultiplier = 0.9f,
         lifetimeMultiplier = 0.18f,
         tint = new Color(1f, 0.85f, 0.35f, 1f),
-        scale = new Vector2(0.7f, 0.7f)
+        scale = new Vector2(0.7f, 0.7f),
+        soundPitch = 0.75f
     };
 
     public static readonly Weapon Laser = new Weapon
@@ -75,7 +79,8 @@ public static class WeaponCatalog
         speedMultiplier = 2.2f,
         extraPierce = 999,
         tint = new Color(0.4f, 0.9f, 1f, 1f),
-        scale = new Vector2(2.2f, 0.5f)
+        scale = new Vector2(2.2f, 0.5f),
+        soundPitch = 1.5f
     };
 
     public static readonly Weapon Rocket = new Weapon
@@ -90,7 +95,8 @@ public static class WeaponCatalog
         lifetimeMultiplier = 1.5f,
         explosionRadius = 1.8f,
         tint = new Color(1f, 0.5f, 0.15f, 1f),
-        scale = new Vector2(1.5f, 1.2f)
+        scale = new Vector2(1.5f, 1.2f),
+        soundPitch = 0.55f
     };
 
     public static readonly Weapon[] All =

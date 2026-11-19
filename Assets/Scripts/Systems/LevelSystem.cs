@@ -60,6 +60,11 @@ public class LevelSystem : MonoBehaviour
 
         Haptics.Light();
 
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayLevelUp();
+        }
+
         GameAnalytics.LevelReached(currentLevel, Time.timeSinceLevelLoad);
 
         // Her 5 seviyede bir boss (kart seçildikten sonra gelir)

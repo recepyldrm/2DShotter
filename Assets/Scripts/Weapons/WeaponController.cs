@@ -88,7 +88,7 @@ public class WeaponController : MonoBehaviour
 
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayShoot();
+            AudioManager.Instance.PlayShoot(weapon.soundPitch);
         }
     }
 

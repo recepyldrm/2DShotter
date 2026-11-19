@@ -679,6 +679,11 @@ public class Bullet : MonoBehaviour
         // Parlama + hasar yarıçapı kadar büyüyen şok dalgası
         ExplosionBlast.Play(explosionPosition, radius);
 
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayExplosion();
+        }
+
         int explosionDamage =
             Mathf.RoundToInt(
                 mainDamage *
