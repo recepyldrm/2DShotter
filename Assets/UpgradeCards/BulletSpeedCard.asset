@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bae5f82c90c1da44b3752768c0e54a9, type: 3}
+  m_Name: BulletSpeedCard
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeCardData
+  cardName: MERMİ HIZI
+  description: "Mermi h\u0131z\u0131n\u0131 %20 art\u0131r\u0131r."
+  icon: {fileID: -2346302928887187388, guid: f8d9761ec6e0b9e42942f015797d3979, type: 3}
+  upgradeType: 3
+  floatValue: 0.2
+  intValue: 1
+  maxLevel: 5

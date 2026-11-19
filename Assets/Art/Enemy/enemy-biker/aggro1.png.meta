@@ -1,0 +1,1274 @@
+fileFormatVersion: 2
+guid: 8ceb583d245330d408b3b5d5d7e5ed16
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8162812835560496426
+    second: aggro1_0
+  - first:
+      213: -6485516570508456737
+    second: aggro1_1
+  - first:
+      213: 8124117630359866654
+    second: aggro1_2
+  - first:
+      213: -2852076440580089073
+    second: aggro1_3
+  - first:
+      213: 7692688655006732071
+    second: aggro1_4
+  - first:
+      213: -7275160940284697430
+    second: aggro1_5
+  - first:
+      213: 3772954639337169423
+    second: aggro1_6
+  - first:
+      213: -8724339883406647557
+    second: aggro1_7
+  - first:
+      213: -8118099804659655996
+    second: aggro1_8
+  - first:
+      213: -4983869385632787587
+    second: aggro1_9
+  - first:
+      213: -9198447102750979934
+    second: aggro1_10
+  - first:
+      213: 4076418209120698321
+    second: aggro1_11
+  - first:
+      213: 8716919221725883131
+    second: aggro1_12
+  - first:
+      213: 8572330626697734979
+    second: aggro1_13
+  - first:
+      213: -3991894415709628571
+    second: aggro1_14
+  - first:
+      213: -5883770954731648923
+    second: aggro1_15
+  - first:
+      213: 3021966015614828063
+    second: aggro1_16
+  - first:
+      213: 6027642429954028761
+    second: aggro1_17
+  - first:
+      213: 4359025232509752917
+    second: aggro1_18
+  - first:
+      213: -1095731499493526439
+    second: aggro1_19
+  - first:
+      213: 2402118633951719938
+    second: aggro1_20
+  - first:
+      213: -2955472331985757918
+    second: aggro1_21
+  - first:
+      213: -154074958061249825
+    second: aggro1_22
+  - first:
+      213: 3831849103200206362
+    second: aggro1_23
+  - first:
+      213: 7544071230101439999
+    second: aggro1_24
+  - first:
+      213: -2954360641248526358
+    second: aggro1_25
+  - first:
+      213: 109964718477238248
+    second: aggro1_26
+  - first:
+      213: 590470001252504598
+    second: aggro1_27
+  - first:
+      213: -3156289049645525347
+    second: aggro1_28
+  - first:
+      213: 1472412149938550496
+    second: aggro1_29
+  - first:
+      213: -4402537254303974631
+    second: aggro1_30
+  - first:
+      213: 7722261818730956773
+    second: aggro1_31
+  - first:
+      213: 8330864244002971533
+    second: aggro1_32
+  - first:
+      213: 6954069470830074550
+    second: aggro1_33
+  - first:
+      213: -8810526759521134822
+    second: aggro1_34
+  - first:
+      213: -8000228346429073850
+    second: aggro1_35
+  - first:
+      213: -6942208966810771546
+    second: aggro1_36
+  - first:
+      213: -5032787133466762319
+    second: aggro1_37
+  - first:
+      213: 3506547782159391120
+    second: aggro1_38
+  - first:
+      213: 5790038098981495770
+    second: aggro1_39
+  - first:
+      213: -5307334131193705308
+    second: aggro1_40
+  - first:
+      213: -3357731578331974964
+    second: aggro1_41
+  - first:
+      213: 6326755910430089238
+    second: aggro1_42
+  - first:
+      213: 2838215064217650595
+    second: aggro1_43
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: aggro1_0
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 327
+        width: 21
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2d15978603284170800000000000000
+      internalID: 8162812835560496426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_1
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 326
+        width: 21
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdc0fe57a01def5a0800000000000000
+      internalID: -6485516570508456737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_2
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 326
+        width: 20
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1d861ff0f9aeb070800000000000000
+      internalID: 8124117630359866654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_3
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 326
+        width: 20
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0b96f696936b68d0800000000000000
+      internalID: -2852076440580089073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_4
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 326
+        width: 20
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72f8a59f29be1ca60800000000000000
+      internalID: 7692688655006732071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_5
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 326
+        width: 20
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa4a8869baf690b90800000000000000
+      internalID: -7275160940284697430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_6
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 326
+        width: 20
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f02aa57214a3c5430800000000000000
+      internalID: 3772954639337169423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_7
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 326
+        width: 20
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfe16cd791bece680800000000000000
+      internalID: -8724339883406647557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_8
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 326
+        width: 20
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cad71c3d37b65f80800000000000000
+      internalID: -8118099804659655996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_9
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 327
+        width: 21
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d73d96e033db5dab0800000000000000
+      internalID: -4983869385632787587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_10
+      rect:
+        serializedVersion: 2
+        x: 1038
+        y: 329
+        width: 23
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a88e43781d885080800000000000000
+      internalID: -9198447102750979934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_11
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 224
+        width: 21
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dfb29e63c8529830800000000000000
+      internalID: 4076418209120698321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_12
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 224
+        width: 25
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfaeeb219d7b8f870800000000000000
+      internalID: 8716919221725883131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_13
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 223
+        width: 34
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34b258d694907f670800000000000000
+      internalID: 8572330626697734979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_14
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 223
+        width: 34
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56713cacd21f998c0800000000000000
+      internalID: -3991894415709628571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_15
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 223
+        width: 34
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 568857f7d75a85ea0800000000000000
+      internalID: -5883770954731648923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_16
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 223
+        width: 34
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1e3604841e20f920800000000000000
+      internalID: 3021966015614828063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_17
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 223
+        width: 34
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d47b7eaadc76a350800000000000000
+      internalID: 6027642429954028761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_18
+      rect:
+        serializedVersion: 2
+        x: 741
+        y: 223
+        width: 34
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55655b69a5e5e7c30800000000000000
+      internalID: 4359025232509752917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_19
+      rect:
+        serializedVersion: 2
+        x: 841
+        y: 223
+        width: 34
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9547b73b10e2bc0f0800000000000000
+      internalID: -1095731499493526439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_20
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 224
+        width: 28
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 202f90dab2a065120800000000000000
+      internalID: 2402118633951719938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_21
+      rect:
+        serializedVersion: 2
+        x: 1043
+        y: 225
+        width: 24
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2295e74a29d0cf6d0800000000000000
+      internalID: -2955472331985757918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_22
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 123
+        width: 20
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdad9f754ad9cddf0800000000000000
+      internalID: -154074958061249825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_23
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 122
+        width: 20
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1eb52515767d2530800000000000000
+      internalID: 3831849103200206362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_24
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 119
+        width: 20
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff5c07640dce1b860800000000000000
+      internalID: 7544071230101439999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_25
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 119
+        width: 20
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aef7cff46a00007d0800000000000000
+      internalID: -2954360641248526358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_26
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 119
+        width: 20
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ef59ae245ca68100800000000000000
+      internalID: 109964718477238248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_27
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 119
+        width: 20
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6141e237655c13800800000000000000
+      internalID: 590470001252504598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_28
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 119
+        width: 20
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d965c6305db9234d0800000000000000
+      internalID: -3156289049645525347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_29
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 119
+        width: 20
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e67e089c0f0f6410800000000000000
+      internalID: 1472412149938550496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_30
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 119
+        width: 20
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91bb9ce51bb07e2c0800000000000000
+      internalID: -4402537254303974631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_31
+      rect:
+        serializedVersion: 2
+        x: 941
+        y: 123
+        width: 21
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e74508b53cfa2b60800000000000000
+      internalID: 7722261818730956773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_32
+      rect:
+        serializedVersion: 2
+        x: 1040
+        y: 124
+        width: 23
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8fdccf14ec2d9370800000000000000
+      internalID: 8330864244002971533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_33
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 25
+        width: 21
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ba1738e651d18060800000000000000
+      internalID: 6954069470830074550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_34
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 25
+        width: 24
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a175ba6a798bab580800000000000000
+      internalID: -8810526759521134822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_35
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 25
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6469519b4ba79f090800000000000000
+      internalID: -8000228346429073850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_36
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 25
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6af56b0e9b158af90800000000000000
+      internalID: -6942208966810771546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_37
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 25
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b3ae8754c2f72ab0800000000000000
+      internalID: -5032787133466762319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_38
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 25
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0995b8f11a2c9a030800000000000000
+      internalID: 3506547782159391120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_39
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 25
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad325cd59f85a5050800000000000000
+      internalID: 5790038098981495770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_40
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 25
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ac84e52abf8856b0800000000000000
+      internalID: -5307334131193705308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_41
+      rect:
+        serializedVersion: 2
+        x: 824
+        y: 25
+        width: 35
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc239666be0f661d0800000000000000
+      internalID: -3357731578331974964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_42
+      rect:
+        serializedVersion: 2
+        x: 928
+        y: 25
+        width: 30
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 610e9cddaf62dc750800000000000000
+      internalID: 6326755910430089238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: aggro1_43
+      rect:
+        serializedVersion: 2
+        x: 1033
+        y: 26
+        width: 24
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a50bda309d536720800000000000000
+      internalID: 2838215064217650595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      aggro1_0: 8162812835560496426
+      aggro1_1: -6485516570508456737
+      aggro1_10: -9198447102750979934
+      aggro1_11: 4076418209120698321
+      aggro1_12: 8716919221725883131
+      aggro1_13: 8572330626697734979
+      aggro1_14: -3991894415709628571
+      aggro1_15: -5883770954731648923
+      aggro1_16: 3021966015614828063
+      aggro1_17: 6027642429954028761
+      aggro1_18: 4359025232509752917
+      aggro1_19: -1095731499493526439
+      aggro1_2: 8124117630359866654
+      aggro1_20: 2402118633951719938
+      aggro1_21: -2955472331985757918
+      aggro1_22: -154074958061249825
+      aggro1_23: 3831849103200206362
+      aggro1_24: 7544071230101439999
+      aggro1_25: -2954360641248526358
+      aggro1_26: 109964718477238248
+      aggro1_27: 590470001252504598
+      aggro1_28: -3156289049645525347
+      aggro1_29: 1472412149938550496
+      aggro1_3: -2852076440580089073
+      aggro1_30: -4402537254303974631
+      aggro1_31: 7722261818730956773
+      aggro1_32: 8330864244002971533
+      aggro1_33: 6954069470830074550
+      aggro1_34: -8810526759521134822
+      aggro1_35: -8000228346429073850
+      aggro1_36: -6942208966810771546
+      aggro1_37: -5032787133466762319
+      aggro1_38: 3506547782159391120
+      aggro1_39: 5790038098981495770
+      aggro1_4: 7692688655006732071
+      aggro1_40: -5307334131193705308
+      aggro1_41: -3357731578331974964
+      aggro1_42: 6326755910430089238
+      aggro1_43: 2838215064217650595
+      aggro1_5: -7275160940284697430
+      aggro1_6: 3772954639337169423
+      aggro1_7: -8724339883406647557
+      aggro1_8: -8118099804659655996
+      aggro1_9: -4983869385632787587
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

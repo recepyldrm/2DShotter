@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bae5f82c90c1da44b3752768c0e54a9, type: 3}
+  m_Name: FireRateCard
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeCardData
+  cardName: ATEŞ HIZI
+  description: "Ate\u015F h\u0131z\u0131n\u0131 %15 art\u0131r\u0131r."
+  icon: {fileID: -1518713475451153952, guid: e8988209128bbe14fa647b07c448f18a, type: 3}
+  upgradeType: 1
+  floatValue: 0.15
+  intValue: 1
+  maxLevel: 5

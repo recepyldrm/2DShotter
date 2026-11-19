@@ -1,0 +1,160 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da224443a555890567a811800dc3d459, type: 3}
+  m_Name: CompanionSkinDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::CompanionSkinDatabase
+  skins:
+  - id: default
+    displayName: Standart
+    sprite: {fileID: 0}
+    animationFrames: []
+    framesPerSecond: 8
+    scale: 1
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 0
+  - id: ninja
+    displayName: NİNJA
+    sprite: {fileID: -339578126815785611, guid: 1e1fb535c275e184d98e6a8ad320923a, type: 3}
+    animationFrames: []
+    framesPerSecond: 8
+    scale: 1
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 200
+  - id: drone_saucer
+    displayName: DAİRE
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4723107735738678597, guid: d8187ed09e12a394ca5e26daf00ab64c, type: 3}
+    - {fileID: -7385789195546760866, guid: d8187ed09e12a394ca5e26daf00ab64c, type: 3}
+    - {fileID: 3234629978573100161, guid: d8187ed09e12a394ca5e26daf00ab64c, type: 3}
+    - {fileID: 6373048116405451881, guid: d8187ed09e12a394ca5e26daf00ab64c, type: 3}
+    framesPerSecond: 8
+    scale: 0.7
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 150
+  - id: drone_hover
+    displayName: SÜZÜLEN
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4035959289877228764, guid: 784442e88db10054cb64ba9b80d9c184, type: 3}
+    - {fileID: -982904232830982447, guid: 784442e88db10054cb64ba9b80d9c184, type: 3}
+    - {fileID: -350908408369970039, guid: 784442e88db10054cb64ba9b80d9c184, type: 3}
+    - {fileID: -5409570386352685021, guid: 784442e88db10054cb64ba9b80d9c184, type: 3}
+    framesPerSecond: 8
+    scale: 0.8
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 200
+  - id: drone_box_mini
+    displayName: MİNİ KUTU
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4723107735738678597, guid: ffd5f95456367874c8db307938648934, type: 3}
+    - {fileID: -7385789195546760866, guid: ffd5f95456367874c8db307938648934, type: 3}
+    - {fileID: 3234629978573100161, guid: ffd5f95456367874c8db307938648934, type: 3}
+    - {fileID: 6373048116405451881, guid: ffd5f95456367874c8db307938648934, type: 3}
+    framesPerSecond: 8
+    scale: 0.85
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 250
+  - id: drone_gunner
+    displayName: NİŞANCI
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4723107735738678597, guid: fb507b3309c32644a9f071826d4c1cba, type: 3}
+    - {fileID: -7385789195546760866, guid: fb507b3309c32644a9f071826d4c1cba, type: 3}
+    - {fileID: 3234629978573100161, guid: fb507b3309c32644a9f071826d4c1cba, type: 3}
+    - {fileID: 6373048116405451881, guid: fb507b3309c32644a9f071826d4c1cba, type: 3}
+    framesPerSecond: 8
+    scale: 0.7
+    flipX: 1
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 350
+  - id: drone_box
+    displayName: KUTU
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4723107735738678597, guid: 39894ee0e5435f34ab0810b333df7c52, type: 3}
+    - {fileID: -7385789195546760866, guid: 39894ee0e5435f34ab0810b333df7c52, type: 3}
+    - {fileID: 3234629978573100161, guid: 39894ee0e5435f34ab0810b333df7c52, type: 3}
+    - {fileID: 6373048116405451881, guid: 39894ee0e5435f34ab0810b333df7c52, type: 3}
+    framesPerSecond: 8
+    scale: 0.5
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 450
+  - id: drone_chopper
+    displayName: HELİKOPTER
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4723107735738678597, guid: aca0a488928b2ef408c7d4b16de79662, type: 3}
+    - {fileID: -7385789195546760866, guid: aca0a488928b2ef408c7d4b16de79662, type: 3}
+    - {fileID: 3234629978573100161, guid: aca0a488928b2ef408c7d4b16de79662, type: 3}
+    - {fileID: 6373048116405451881, guid: aca0a488928b2ef408c7d4b16de79662, type: 3}
+    framesPerSecond: 10
+    scale: 0.4
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 600
+    iapProductId: skin_chopper
+  - id: drone_jet
+    displayName: JET
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 253005588072490991, guid: 01deb70591e12f746a0b79826e723e3a, type: 3}
+    - {fileID: 8788866114957560507, guid: 01deb70591e12f746a0b79826e723e3a, type: 3}
+    - {fileID: 4449804034329666902, guid: 01deb70591e12f746a0b79826e723e3a, type: 3}
+    - {fileID: 3032044938078382984, guid: 01deb70591e12f746a0b79826e723e3a, type: 3}
+    - {fileID: -4530884514433335378, guid: 01deb70591e12f746a0b79826e723e3a, type: 3}
+    - {fileID: 2457945676293540905, guid: 01deb70591e12f746a0b79826e723e3a, type: 3}
+    framesPerSecond: 10
+    scale: 0.4
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 800
+    iapProductId: skin_jet
+  - id: drone_sentinel
+    displayName: NÖBETÇİ
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: -7336976327935280826, guid: c1e202a287f640f48b82d4a8a970d033, type: 3}
+    - {fileID: -1337661611528318557, guid: c1e202a287f640f48b82d4a8a970d033, type: 3}
+    - {fileID: 2574693422021135672, guid: c1e202a287f640f48b82d4a8a970d033, type: 3}
+    - {fileID: 3680841646731950152, guid: c1e202a287f640f48b82d4a8a970d033, type: 3}
+    - {fileID: 4593637847128527946, guid: c1e202a287f640f48b82d4a8a970d033, type: 3}
+    - {fileID: -223555348957246375, guid: c1e202a287f640f48b82d4a8a970d033, type: 3}
+    - {fileID: -1646692243668517169, guid: c1e202a287f640f48b82d4a8a970d033, type: 3}
+    - {fileID: 9098928177931027168, guid: c1e202a287f640f48b82d4a8a970d033, type: 3}
+    framesPerSecond: 10
+    scale: 0.7
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 0
+    unlockedByAchievement: 1
+  - id: drone_phantom
+    displayName: HAYALET
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 1250808662612385756, guid: bd80bcf34a4243e408e71d9c57219710, type: 3}
+    - {fileID: 8113845950375717845, guid: bd80bcf34a4243e408e71d9c57219710, type: 3}
+    - {fileID: -2920124084036186404, guid: bd80bcf34a4243e408e71d9c57219710, type: 3}
+    - {fileID: -2159451586206418740, guid: bd80bcf34a4243e408e71d9c57219710, type: 3}
+    framesPerSecond: 8
+    scale: 0.8
+    flipX: 0
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 0
+    unlockedByAchievement: 1
