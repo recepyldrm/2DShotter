@@ -18,6 +18,15 @@ public static class TimeScaleController
 
     public static bool IsPaused => pauseRequests.Count > 0;
 
+    // Test menüsünden oyun hızı (1 = normal). Duraklatmayı etkilemez.
+    public static float DebugSpeed = 1f;
+
+    public static void SetDebugSpeed(float speed)
+    {
+        DebugSpeed = Mathf.Max(0.1f, speed);
+        Apply();
+    }
+
     public static void Pause(object requester)
     {
         if (requester == null)
@@ -71,7 +80,8 @@ public static class TimeScaleController
             return;
         }
 
-        Time.timeScale = Time.unscaledTime < hitStopUntil ? hitStopScale : 1f;
+        float scale = Time.unscaledTime < hitStopUntil ? hitStopScale : 1f;
+        Time.timeScale = scale * DebugSpeed;
     }
 
     // Hit-stop süresi dolunca zamanı geri açar.

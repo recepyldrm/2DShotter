@@ -70,6 +70,17 @@ public class BossWaveManager : MonoBehaviour
         if (level <= 0 || level % LevelsPerBoss != 0)
             return;
 
+        QueueBoss();
+    }
+
+    // Test menüsü: seviye beklemeden boss çağırır.
+    public static void ForceBoss()
+    {
+        QueueBoss();
+    }
+
+    static void QueueBoss()
+    {
         if (instance == null)
         {
             instance = new GameObject("BossWaveManager").AddComponent<BossWaveManager>();

@@ -20,6 +20,9 @@ public class PlayerHealth : MonoBehaviour
 
     public bool IsInvulnerable => Time.time < invulnerableUntil;
 
+    // Test menüsünden açılan ölümsüzlük (sadece geliştirme için).
+    public static bool GodMode;
+
     [Header("UI")]
     public Slider healthBar;
     public TextMeshProUGUI healthText;
@@ -39,7 +42,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDead || IsInvulnerable)
+        if (isDead || IsInvulnerable || GodMode)
             return;
 
         if (AudioManager.Instance != null)
