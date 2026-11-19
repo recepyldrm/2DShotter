@@ -25,6 +25,7 @@ MonoBehaviour:
   greyButtonHover: {fileID: 8783706965351475430, guid: 5a1038c89aa417e4e9d85b2831ca1832, type: 3}
   buttonPressed: {fileID: -568935526288352090, guid: 7670c4eb242c80c489535463ac9ecc03, type: 3}
   buttonDisabled: {fileID: -5580702716424681278, guid: 0f9eedc3be225274a83c82845329cc7a, type: 3}
+  unlitEffectMaterial: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   mainRed: {r: 0.6627451, g: 0.050980393, b: 0.003921569, a: 1}
   mainRedHover: {r: 0.85490197, g: 0, b: 0, a: 1}
   mainBlack: {r: 0.06666667, g: 0.06666667, b: 0.06666667, a: 1}

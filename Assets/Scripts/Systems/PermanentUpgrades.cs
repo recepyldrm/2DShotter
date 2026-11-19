@@ -113,4 +113,24 @@ public static class PermanentUpgrades
     public static float XpMultiplier => 1f + GetValue(XpBonus) / 100f;
 
     public static int BonusFreeRerolls => Mathf.RoundToInt(GetValue(ExtraReroll));
+
+    // Oyun başında gösterilecek aktif bonuslar (örn. "+20 maksimum can")
+    public static System.Collections.Generic.List<string> GetActiveBonusTexts()
+    {
+        System.Collections.Generic.List<string> texts = new System.Collections.Generic.List<string>();
+
+        foreach (Upgrade upgrade in All)
+        {
+            if (GetLevel(upgrade) > 0)
+            {
+                texts.Add(string.Format(
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    upgrade.bonusFormat,
+                    Mathf.RoundToInt(GetValue(upgrade))
+                ));
+            }
+        }
+
+        return texts;
+    }
 }

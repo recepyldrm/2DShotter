@@ -62,6 +62,9 @@ public class LevelSystem : MonoBehaviour
 
         GameAnalytics.LevelReached(currentLevel, Time.timeSinceLevelLoad);
 
+        // Her 5 seviyede bir boss (kart seçildikten sonra gelir)
+        BossWaveManager.NotifyLevelUp(currentLevel);
+
         xpNeeded = Mathf.RoundToInt(
             xpNeeded * xpMultiplier
         );

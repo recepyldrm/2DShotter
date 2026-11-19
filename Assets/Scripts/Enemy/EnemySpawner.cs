@@ -101,11 +101,35 @@ public class EnemySpawner : MonoBehaviour
             spawnInterval -
             reduction;
 
-        return Mathf.Max(
+        finalInterval = Mathf.Max(
             minimumSpawnInterval,
             finalInterval
         );
+
+        // Boss sahadayken normal düşmanlar daha seyrek gelir.
+        if (BossWaveManager.IsBossActive)
+        {
+            finalInterval *= bossSpawnIntervalMultiplier;
+        }
+
+        return finalInterval;
     }
+
+    // ==================================
+    // BOSS
+    // ==================================
+
+    [Header("Boss")]
+    [Tooltip("Boss sahadayken normal spawn aralığı bu kadarla çarpılır.")]
+    public float bossSpawnIntervalMultiplier = 2f;
+
+    // Boss'un yardımcı düşman çağırması için.
+    public void SpawnMinion()
+    {
+        SpawnEnemy();
+    }
+
+    public int CurrentLevel => GetCurrentLevel();
 
     // ==================================
     // SPAWN ENEMY

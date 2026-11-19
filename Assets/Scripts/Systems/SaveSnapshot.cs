@@ -34,6 +34,7 @@ public class SaveSnapshot
     public int totalRuns;
     public int bestLevel;
     public int totalGoldEarned;
+    public int totalBossKills;
 
     public string ToJson() => JsonUtility.ToJson(this);
 
@@ -78,7 +79,8 @@ public class SaveSnapshot
             totalKills = PlayerProgress.TotalKills,
             totalRuns = PlayerProgress.TotalRuns,
             bestLevel = PlayerProgress.BestLevel,
-            totalGoldEarned = PlayerProgress.TotalGoldEarned
+            totalGoldEarned = PlayerProgress.TotalGoldEarned,
+            totalBossKills = PlayerProgress.TotalBossKills
         };
     }
 
@@ -101,6 +103,7 @@ public class SaveSnapshot
         PlayerPrefs.SetInt(GameKeys.StatTotalRuns, totalRuns);
         PlayerPrefs.SetInt(GameKeys.StatBestLevel, bestLevel);
         PlayerPrefs.SetInt(GameKeys.StatTotalGoldEarned, totalGoldEarned);
+        PlayerPrefs.SetInt(GameKeys.StatTotalBossKills, totalBossKills);
         PlayerPrefs.SetString(GameKeys.ProgressModifiedAt, modifiedAtUtc.ToString(CultureInfo.InvariantCulture));
         PlayerPrefs.Save();
 
@@ -134,7 +137,8 @@ public class SaveSnapshot
             totalKills = Math.Max(a.totalKills, b.totalKills),
             totalRuns = Math.Max(a.totalRuns, b.totalRuns),
             bestLevel = Math.Max(a.bestLevel, b.bestLevel),
-            totalGoldEarned = Math.Max(a.totalGoldEarned, b.totalGoldEarned)
+            totalGoldEarned = Math.Max(a.totalGoldEarned, b.totalGoldEarned),
+            totalBossKills = Math.Max(a.totalBossKills, b.totalBossKills)
         };
 
         return merged;

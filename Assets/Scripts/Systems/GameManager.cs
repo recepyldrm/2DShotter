@@ -56,6 +56,8 @@ public class GameManager : MonoBehaviour
     // oyun sonunda / sahneden çıkarken toplu kaydedilir.
     private int killsThisRun = 0;
     private int killsCommitted = 0;
+    private int bossKillsThisRun = 0;
+    private int bossKillsCommitted = 0;
     private bool runCounted = false;
 
     // Her biri oyun başına bir kez kullanılabilir.
@@ -91,6 +93,9 @@ public class GameManager : MonoBehaviour
         UpdateUI();
 
         GameAnalytics.RunStarted();
+
+        // Kalıcı geliştirmeler uygulandı; oyuncuya göster.
+        ActiveBonusBanner.ShowIfAny();
     }
 
     public void AddScore(int points)
@@ -140,6 +145,9 @@ public class GameManager : MonoBehaviour
         int pendingKills = killsThisRun - killsCommitted;
         killsCommitted = killsThisRun;
 
+        int pendingBossKills = bossKillsThisRun - bossKillsCommitted;
+        bossKillsCommitted = bossKillsThisRun;
+
         // Hiç oynanmadan çıkılan sahneler oyun sayısına eklenmez.
         bool countRun =
             !runCounted &&
@@ -157,7 +165,8 @@ public class GameManager : MonoBehaviour
             pendingKills,
             Mathf.Max(0, pendingGold),
             levelReached,
-            countRun
+            countRun,
+            pendingBossKills
         );
     }
 
@@ -165,6 +174,11 @@ public class GameManager : MonoBehaviour
     public void RegisterKill()
     {
         killsThisRun++;
+    }
+
+    public void RegisterBossKill()
+    {
+        bossKillsThisRun++;
     }
 
     void OnApplicationPause(bool paused)
@@ -421,7 +435,7 @@ public class GameManager : MonoBehaviour
 
         foreach (EnemyHealth enemy in enemies)
         {
-            if (enemy == null || enemy.IsDead())
+            if (enemy == null || enemy.IsDead() || enemy.IsBoss)
                 continue;
 
             if (Vector2.Distance(center, enemy.transform.position) <= radius)

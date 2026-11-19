@@ -87,16 +87,23 @@ public static class PlayerProgress
     // Sadece oyun içinde kazanılan gold (satın alma / ödül hariç)
     public static int TotalGoldEarned => PlayerPrefs.GetInt(GameKeys.StatTotalGoldEarned, 0);
 
+    public static int TotalBossKills => PlayerPrefs.GetInt(GameKeys.StatTotalBossKills, 0);
+
     // Başarım ekranı / bildirim rozetleri günceller.
     public static event System.Action OnProgressChanged;
 
     // Oyun sonunda (veya sahneden çıkarken) toplu olarak çağrılır,
     // her öldürmede diske yazmamak için.
-    public static void RecordRunProgress(int kills, int goldEarned, int levelReached, bool countRun)
+    public static void RecordRunProgress(int kills, int goldEarned, int levelReached, bool countRun, int bossKills = 0)
     {
         if (kills > 0)
         {
             PlayerPrefs.SetInt(GameKeys.StatTotalKills, TotalKills + kills);
+        }
+
+        if (bossKills > 0)
+        {
+            PlayerPrefs.SetInt(GameKeys.StatTotalBossKills, TotalBossKills + bossKills);
         }
 
         if (goldEarned > 0)

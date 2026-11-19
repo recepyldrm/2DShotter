@@ -9,7 +9,8 @@ public static class AchievementCatalog
         BestLevel,
         TotalRuns,
         BestScore,
-        TotalGoldEarned
+        TotalGoldEarned,
+        TotalBossKills
     }
 
     public class Achievement
@@ -54,6 +55,9 @@ public static class AchievementCatalog
         new Achievement("score_5000", "REKOR AVCISI", "Bir oyunda 5000 skor yap", Stat.BestScore, 5000, 600),
 
         new Achievement("gold_5000", "HAZİNE AVCISI", "Oyunlarda toplam 5000 altın kazan", Stat.TotalGoldEarned, 5000, 500),
+
+        new Achievement("boss_1", "DEV AVCISI", "İlk boss'u yen", Stat.TotalBossKills, 1, 200),
+        new Achievement("boss_10", "BOSS KATİLİ", "Toplam 10 boss yen", Stat.TotalBossKills, 10, 1000),
     };
 
     public static int GetProgress(Achievement achievement)
@@ -74,6 +78,9 @@ public static class AchievementCatalog
 
             case Stat.TotalGoldEarned:
                 return PlayerProgress.TotalGoldEarned;
+
+            case Stat.TotalBossKills:
+                return PlayerProgress.TotalBossKills;
 
             default:
                 return 0;

@@ -10,6 +10,9 @@ public class EnemyHealth : MonoBehaviour
     public Color flashColor = Color.white;
     public float flashDuration = 0.08f;
 
+    [Tooltip("Yanan düşmanın rengi (siyah silüetlerde alevin fark edilmesi için).")]
+    public Color burnColor = new Color(1f, 0.45f, 0.1f, 1f);
+
     [Header("Ölüm Efekti")]
     public GameObject deathParticlePrefab;
 
@@ -57,6 +60,30 @@ public class EnemyHealth : MonoBehaviour
     // ==================================
 
     private bool isDead = false;
+
+    // ==================================
+    // BOSS
+    // ==================================
+
+    // BossWaveManager bir düşmanı boss yapınca can ve ödüller bu oranlarla katlanır.
+    private float bossHealthMultiplier = 1f;
+    private float bossRewardMultiplier = 1f;
+
+    public bool IsBoss => bossHealthMultiplier > 1f;
+
+    // Ölünce haber verir (boss can barı / boss yönetimi için).
+    public event System.Action<EnemyHealth> OnDied;
+
+    // Havuzdan değil Instantiate ile oluşturulmuş bir düşmanı boss yapar.
+    // Boss havuza geri dönmez, ölünce yok edilir.
+    public void ConfigureAsBoss(float healthMultiplier, float rewardMultiplier)
+    {
+        bossHealthMultiplier = Mathf.Max(1f, healthMultiplier);
+        bossRewardMultiplier = Mathf.Max(1f, rewardMultiplier);
+        poolKey = null;
+
+        ApplyHealthScaling();
+    }
 
     // ==================================
     // HIT FLASH
@@ -293,7 +320,8 @@ public class EnemyHealth : MonoBehaviour
             Mathf.RoundToInt(
                 maxHealth *
                 typeHealthMultiplier *
-                globalHealthMultiplier
+                globalHealthMultiplier *
+                bossHealthMultiplier
             )
         );
 
@@ -452,6 +480,34 @@ public class EnemyHealth : MonoBehaviour
             StartCoroutine(
                 BurnRoutine()
             );
+
+        ApplyRestingColor();
+    }
+
+    // ==================================
+    // DURUM RENGİ
+    // ==================================
+
+    // Vuruş parlaması dışında düşmanın olması gereken renk.
+    // Öncelik: donma > yanma > normal.
+    public Color GetRestingColor()
+    {
+        if (enemyMovement != null && enemyMovement.IsFrozen())
+            return enemyMovement.GetCurrentVisualColor();
+
+        if (burnCoroutine != null && !isDead)
+            return burnColor;
+
+        return originalColor;
+    }
+
+    void ApplyRestingColor()
+    {
+        // Parlama sürüyorsa bittiğinde zaten doğru renge döner.
+        if (spriteRenderer != null && flashCoroutine == null)
+        {
+            spriteRenderer.color = GetRestingColor();
+        }
     }
 
     // ==================================
@@ -493,6 +549,11 @@ public class EnemyHealth : MonoBehaviour
         }
 
         burnCoroutine = null;
+
+        if (!isDead)
+        {
+            ApplyRestingColor();
+        }
     }
 
     // ==================================
@@ -618,8 +679,19 @@ public class EnemyHealth : MonoBehaviour
         // ==================================
 
         // Çok kısa duraklama + hafif titreşim (art arda öldürmelerde sınırlı).
-        TimeScaleController.HitStop(0.04f);
-        Haptics.Light();
+        // Boss öldüğünde daha uzun ve güçlü.
+        if (IsBoss)
+        {
+            TimeScaleController.HitStop(0.25f, 0.05f, 0f);
+            Haptics.Heavy();
+        }
+        else
+        {
+            TimeScaleController.HitStop(0.04f);
+            Haptics.Light();
+        }
+
+        OnDied?.Invoke(this);
 
         // ==================================
         // BOMBER
@@ -676,11 +748,16 @@ public class EnemyHealth : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddScore(
-                scoreValue
+                Mathf.RoundToInt(scoreValue * bossRewardMultiplier)
             );
 
             // Başarım istatistiği
             GameManager.Instance.RegisterKill();
+
+            if (IsBoss)
+            {
+                GameManager.Instance.RegisterBossKill();
+            }
         }
 
         // ==================================
@@ -788,6 +865,14 @@ public class EnemyHealth : MonoBehaviour
         // EFFECT
         // ==================================
 
+        // Bomber patlaması kırmızı; halka oyuncuya hasar verdiği alanı gösterir.
+        ExplosionBlast.Play(
+            transform.position,
+            enemyType.explosionRadius,
+            new Color(1f, 0.55f, 0.35f, 1f),
+            new Color(0.85f, 0.05f, 0f, 1f)
+        );
+
         if (enemyType.explosionEffectPrefab != null)
         {
             // Prefab'da BomberExplosionEffect varsa onun süresi kullanılır.
@@ -880,6 +965,8 @@ public class EnemyHealth : MonoBehaviour
         // Kalıcı "Hızlı Öğrenme" yükseltmesi
         multiplier *= PermanentUpgrades.XpMultiplier;
 
+        multiplier *= bossRewardMultiplier;
+
         int finalXP =
             Mathf.Max(
                 1,
@@ -943,7 +1030,9 @@ public class EnemyHealth : MonoBehaviour
         if (deathGoldMax <= 0)
             return;
 
-        if (Random.value >
+        // Boss her zaman altın bırakır.
+        if (!IsBoss &&
+            Random.value >
             deathGoldChance)
         {
             return;
@@ -965,6 +1054,8 @@ public class EnemyHealth : MonoBehaviour
 
         // Kalıcı "Altın Avcısı" yükseltmesi
         multiplier *= PermanentUpgrades.GoldMultiplier;
+
+        multiplier *= bossRewardMultiplier;
 
         int finalAmount =
             Mathf.Max(
@@ -1016,22 +1107,11 @@ public class EnemyHealth : MonoBehaviour
             yield break;
         }
 
-        // Freeze varsa tekrar freeze rengine dön.
-        if (
-            enemyMovement != null &&
-            enemyMovement.IsFrozen()
-        )
-        {
-            spriteRenderer.color =
-                enemyMovement.GetCurrentVisualColor();
-        }
-        else
-        {
-            spriteRenderer.color =
-                originalColor;
-        }
-
+        // Donma / yanma varsa o renge, yoksa normale dön.
         flashCoroutine = null;
+
+        spriteRenderer.color =
+            GetRestingColor();
     }
 
     // ==================================

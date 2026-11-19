@@ -276,7 +276,7 @@ public class PlayerStats : MonoBehaviour
     // İlk seviye özelliği açar; rarity Common'dan yüksekse ekstra
     // (çarpan - 1) adım bonus verir. Sonraki seviyelerde adım x çarpan.
     // Örn. Legendary (x3): ilk alışta +2 adım, sonrakilerde +3 adım.
-    static float RarityStep(int newLevel, float rarityMultiplier)
+    public static float RarityStep(int newLevel, float rarityMultiplier)
     {
         rarityMultiplier = Mathf.Max(1f, rarityMultiplier);
 

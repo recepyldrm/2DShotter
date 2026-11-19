@@ -705,7 +705,7 @@ public class LevelUpCardManager : MonoBehaviour
 
         if (cardUI.descriptionText != null)
         {
-            cardUI.descriptionText.text = data.description;
+            cardUI.descriptionText.text = GetCardDescription(choice);
         }
 
         if (cardUI.icon != null)
@@ -717,6 +717,113 @@ public class LevelUpCardManager : MonoBehaviour
             // Orijinal sprite rengi korunuyor.
             cardUI.icon.color = Color.white;
         }
+    }
+
+    // ==================================
+    // KART AÇIKLAMASI
+    // ==================================
+
+    private static readonly System.Globalization.CultureInfo Turkish =
+        new System.Globalization.CultureInfo("tr-TR");
+
+    // Kartın bu nadirlikte ve oyuncunun şu anki seviyesinde gerçekte ne
+    // yapacağını yazar. Değerler ApplyUpgrade / PlayerStats ile aynı hesaplanır.
+    string GetCardDescription(CardChoice choice)
+    {
+        UpgradeCardData data = choice.data;
+        PlayerStats stats = PlayerStats.Instance;
+
+        if (stats == null)
+            return data.description;
+
+        float rarity = GetRarityMultiplier(choice.rarity);
+        float floatValue = data.floatValue * rarity;
+        int intValue = Mathf.Max(1, Mathf.RoundToInt(data.intValue * rarity));
+
+        int currentLevel = stats.GetUpgradeLevel(data.upgradeType);
+        bool firstPick = currentLevel == 0;
+        float step = PlayerStats.RarityStep(currentLevel + 1, rarity);
+
+        switch (data.upgradeType)
+        {
+            case UpgradeCardData.UpgradeType.Damage:
+                return "Silah hasarını " + Percent(floatValue) + " artırır.";
+
+            case UpgradeCardData.UpgradeType.FireRate:
+                return "Ateş hızını " + Percent(floatValue) + " artırır.";
+
+            case UpgradeCardData.UpgradeType.MaxHealth:
+                return "Maksimum canı " + intValue + " artırır.";
+
+            case UpgradeCardData.UpgradeType.BulletSpeed:
+                return "Mermi hızını " + Percent(floatValue) + " artırır.";
+
+            case UpgradeCardData.UpgradeType.CriticalChance:
+            {
+                float total = Mathf.Clamp01(stats.criticalChance + floatValue);
+                return "Kritik vuruş şansını " + Percent(floatValue) + " artırır (toplam " + Percent(total) + "). " +
+                       "Kritik vuruş " + Number(stats.criticalDamageMultiplier) + " kat hasar verir.";
+            }
+
+            case UpgradeCardData.UpgradeType.Piercing:
+                return "Mermiler +" + intValue + " düşmanı delip geçer (toplam " + (stats.piercing + intValue) + ").";
+
+            case UpgradeCardData.UpgradeType.ExtraBullet:
+                return "Mermi hasarını %100 artırır (toplam " + (stats.extraBullets + 2) + " kat hasar).";
+
+            case UpgradeCardData.UpgradeType.ExplosiveBullet:
+            {
+                float radius = stats.explosionRadius + stats.explosionRadiusPerLevel * step;
+                float damage = stats.explosionDamageMultiplier + stats.explosionDamagePerLevel * step;
+
+                return firstPick
+                    ? "Mermiler çarptığı yerde patlar: " + Number(radius) + " birim çevredeki düşmanlara " + Percent(damage) + " hasar verir."
+                    : "Patlama alanı " + Number(radius) + " birim, patlama hasarı " + Percent(damage) + " olur.";
+            }
+
+            case UpgradeCardData.UpgradeType.FreezeBullet:
+            {
+                float slow = Mathf.Clamp(stats.freezeSlowAmount + stats.freezeSlowPerLevel * step, 0f, 0.8f);
+                float duration = stats.freezeDuration + stats.freezeDurationPerLevel * step;
+
+                return firstPick
+                    ? "Mermiler düşmanları " + Number(duration) + " saniye boyunca " + Percent(slow) + " yavaşlatır."
+                    : "Yavaşlatma " + Percent(slow) + ", süresi " + Number(duration) + " saniye olur.";
+            }
+
+            case UpgradeCardData.UpgradeType.BurnBullet:
+            {
+                int damage = stats.burnDamage + Mathf.RoundToInt(stats.burnDamagePerLevel * step);
+
+                return firstPick
+                    ? "Mermiler düşmanları " + Number(stats.burnDuration) + " saniye boyunca saniyede " + damage + " hasarla yakar."
+                    : "Yanma hasarı saniyede " + damage + " olur.";
+            }
+
+            case UpgradeCardData.UpgradeType.ChainLightning:
+            {
+                int count = stats.chainCount + Mathf.RoundToInt(stats.chainCountPerLevel * step);
+                float range = stats.chainRange + stats.chainRangePerLevel * step;
+
+                return firstPick
+                    ? "İsabet eden mermiden " + count + " düşmana sıçrayan yıldırım çıkar (" +
+                      Percent(stats.chainDamageMultiplier) + " hasar, " + Number(range) + " birim menzil)."
+                    : "Yıldırım " + count + " düşmana sıçrar, menzili " + Number(range) + " birim olur.";
+            }
+
+            default:
+                return data.description;
+        }
+    }
+
+    static string Percent(float value)
+    {
+        return "%" + Mathf.RoundToInt(value * 100f);
+    }
+
+    static string Number(float value)
+    {
+        return value.ToString("0.#", Turkish);
     }
 
     // ==================================

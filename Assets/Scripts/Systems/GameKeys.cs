@@ -20,6 +20,7 @@ public static class GameKeys
     public const string StatTotalRuns = "StatTotalRuns";
     public const string StatBestLevel = "StatBestLevel";
     public const string StatTotalGoldEarned = "StatTotalGoldEarned";
+    public const string StatTotalBossKills = "StatTotalBossKills";
     public const string ClaimedAchievements = "ClaimedAchievements";
 
     // Bulut kayıt: ilerlemenin son değiştiği zaman (UTC, Unix saniye)

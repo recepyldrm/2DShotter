@@ -1522,9 +1522,9 @@ MonoBehaviour:
   piercingLevel: 0
   extraBulletLevel: 0
   chainLightning: 0
-  chainLightningLevel: 1
+  chainLightningLevel: 0
   chainCount: 3
-  chainRange: 10
+  chainRange: 4
   chainDamageMultiplier: 0.5
   chainCountPerLevel: 1
   chainRangePerLevel: 0.25

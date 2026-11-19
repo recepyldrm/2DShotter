@@ -45,6 +45,10 @@ public class UITheme : ScriptableObject
     public Sprite buttonPressed;
     public Sprite buttonDisabled;
 
+    [Header("Efektler")]
+    [Tooltip("Kodla çizilen oyun içi efektler için ışıktan etkilenmeyen materyal (Sprite-Unlit-Default).")]
+    public Material unlitEffectMaterial;
+
     [Header("Renkler")]
     public Color mainRed = new Color32(0xA9, 0x0D, 0x01, 0xFF);
     public Color mainRedHover = new Color32(0xDA, 0x00, 0x00, 0xFF);

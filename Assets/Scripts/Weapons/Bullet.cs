@@ -607,6 +607,9 @@ public class Bullet : MonoBehaviour
             PlayerStats.Instance
                 .explosionRadius;
 
+        // Parlama + hasar yarıçapı kadar büyüyen şok dalgası
+        ExplosionBlast.Play(explosionPosition, radius);
+
         float explosionMultiplier =
             PlayerStats.Instance
                 .explosionDamageMultiplier;

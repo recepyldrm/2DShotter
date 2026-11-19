@@ -187,7 +187,7 @@ MonoBehaviour:
   attackDistance: 1.4
   attackCooldown: 1
   damage: 10
-  freezeColor: {r: 0.4, g: 0.8, b: 1, a: 0}
+  freezeColor: {r: 0.4, g: 0.8, b: 1, a: 1}
 --- !u!114 &1812933528499315465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   xpReward: 20
-  flashColor: {r: 0, g: 0, b: 0, a: 1}
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
   flashDuration: 0.08
   deathParticlePrefab: {fileID: 2673779781152141791, guid: 20ca6595e3ea08c41acc1a76ed2c2a3b, type: 3}
   maxHealth: 100

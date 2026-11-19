@@ -5,7 +5,12 @@ public class EnemyMovement : MonoBehaviour
 {
     [Header("Hareket - BASE DEĞER")]
     public float moveSpeed = 2f;
+
+    [Tooltip("Yedek: collider bulunamazsa merkezden merkeze bu mesafede saldırır.")]
     public float attackDistance = 1.2f;
+
+    [Tooltip("Düşmanın gövdesi ile oyuncunun gövdesi arasında bu kadar boşluk kalınca saldırır (dünya birimi).")]
+    public float attackReach = 0.15f;
 
     [Header("Saldırı - BASE DEĞER")]
     public float attackCooldown = 1f;
@@ -26,7 +31,12 @@ public class EnemyMovement : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
 
+    // Saldırı mesafesi gövdelerin kenarları arasından ölçülür.
+    private Collider2D bodyCollider;
+    private Collider2D playerCollider;
+
     private EnemyType enemyType;
+    private EnemyHealth enemyHealth;
 
     private float attackTimer;
 
@@ -45,6 +55,72 @@ public class EnemyMovement : MonoBehaviour
     // Update karar verir, FixedUpdate fiziksel olarak hareket ettirir.
     private bool shouldMove = false;
 
+    // ==================================
+    // BOSS
+    // ==================================
+
+    private float bossSpeedMultiplier = 1f;
+    private float bossDamageMultiplier = 1f;
+
+    // Boss hücum ederken geçici hız çarpanı
+    private float chargeMultiplier = 1f;
+
+    // BossWaveManager bir düşmanı boss yapınca çağırır.
+    // attackRangeMultiplier: boss büyüdüğü için saldırı mesafesi de büyür.
+    public void ConfigureAsBoss(float speedMultiplier, float damageMultiplier, float attackRangeMultiplier)
+    {
+        bossSpeedMultiplier = speedMultiplier;
+        bossDamageMultiplier = damageMultiplier;
+        attackDistance *= attackRangeMultiplier;
+
+        // Gövde zaten büyüdü; kenar mesafesine sadece biraz pay eklenir.
+        attackReach += 0.1f;
+
+        ApplyScaling();
+    }
+
+    // Tetik olmayan (fiziksel) collider'ı tercih et.
+    static Collider2D FindBodyCollider(GameObject target)
+    {
+        Collider2D fallback = null;
+
+        foreach (Collider2D candidate in target.GetComponents<Collider2D>())
+        {
+            if (!candidate.isTrigger)
+                return candidate;
+
+            if (fallback == null)
+                fallback = candidate;
+        }
+
+        return fallback;
+    }
+
+    // Oyuncu saldırı menzilinde mi? Gövdelerin kenarları arasındaki
+    // boşluğa bakılır; collider yoksa merkezden merkeze mesafe kullanılır.
+    bool IsPlayerInAttackRange()
+    {
+        if (bodyCollider != null &&
+            playerCollider != null &&
+            bodyCollider.enabled &&
+            playerCollider.enabled)
+        {
+            ColliderDistance2D gap = Physics2D.Distance(bodyCollider, playerCollider);
+
+            if (gap.isValid)
+            {
+                return gap.distance <= attackReach;
+            }
+        }
+
+        return Vector2.Distance(transform.position, player.position) <= attackDistance;
+    }
+
+    public void SetChargeMultiplier(float multiplier)
+    {
+        chargeMultiplier = Mathf.Max(0f, multiplier);
+    }
+
     void Awake()
     {
         animator =
@@ -56,14 +132,23 @@ public class EnemyMovement : MonoBehaviour
         rb =
             GetComponent<Rigidbody2D>();
 
+        bodyCollider =
+            FindBodyCollider(gameObject);
+
         enemyType =
             GetComponent<EnemyType>();
+
+        enemyHealth =
+            GetComponent<EnemyHealth>();
 
         if (spriteRenderer != null)
         {
             originalColor =
                 spriteRenderer.color;
         }
+
+        // Donma rengi yanlışlıkla saydam ayarlanırsa düşman görünmez olmasın.
+        freezeColor.a = 1f;
 
         GameObject playerObject =
             GameObject.FindGameObjectWithTag(
@@ -77,6 +162,9 @@ public class EnemyMovement : MonoBehaviour
 
             playerHealth =
                 playerObject.GetComponent<PlayerHealth>();
+
+            playerCollider =
+                FindBodyCollider(playerObject);
         }
         else
         {
@@ -194,7 +282,8 @@ public class EnemyMovement : MonoBehaviour
             Mathf.RoundToInt(
                 damage *
                 typeDamageMultiplier *
-                globalDamageMultiplier
+                globalDamageMultiplier *
+                bossDamageMultiplier
             );
 
         // ==============================
@@ -204,7 +293,8 @@ public class EnemyMovement : MonoBehaviour
         scaledMoveSpeed =
             moveSpeed *
             typeSpeedMultiplier *
-            globalSpeedMultiplier;
+            globalSpeedMultiplier *
+            bossSpeedMultiplier;
 
         GameLog.Log(
             gameObject.name +
@@ -233,13 +323,7 @@ public class EnemyMovement : MonoBehaviour
         attackTimer -=
             Time.deltaTime;
 
-        float distance =
-            Vector2.Distance(
-                transform.position,
-                player.position
-            );
-
-        if (distance > attackDistance)
+        if (!IsPlayerInAttackRange())
         {
             shouldMove = true;
 
@@ -300,7 +384,8 @@ public class EnemyMovement : MonoBehaviour
 
         float finalMoveSpeed =
             scaledMoveSpeed *
-            currentSpeedMultiplier;
+            currentSpeedMultiplier *
+            chargeMultiplier;
 
         return
             direction *
@@ -430,10 +515,13 @@ public class EnemyMovement : MonoBehaviour
 
         isFrozen = false;
 
+        // Donma bitti: hâlâ yanıyorsa yanma rengine, değilse normale dön.
         if (spriteRenderer != null)
         {
             spriteRenderer.color =
-                originalColor;
+                enemyHealth != null
+                    ? enemyHealth.GetRestingColor()
+                    : originalColor;
         }
 
         freezeCoroutine = null;

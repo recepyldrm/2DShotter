@@ -201,8 +201,36 @@ public class AnalyticsSummaryWindow : EditorWindow
     // DİĞER
     // ==================================
 
+    void DrawBosses()
+    {
+        List<AnalyticsRecord> spawned = Of(GameAnalytics.Boss_Spawned);
+
+        if (spawned.Count == 0)
+            return;
+
+        List<AnalyticsRecord> defeated = Of(GameAnalytics.Boss_Defeated);
+
+        Header("BOSS'LAR");
+        EditorGUILayout.LabelField("Yenilme oranı düşükse boss çok güçlü olabilir.", EditorStyles.wordWrappedMiniLabel);
+
+        foreach (IGrouping<int, AnalyticsRecord> group in spawned.GroupBy(r => r.value).OrderBy(g => g.Key))
+        {
+            List<AnalyticsRecord> wins = defeated.Where(d => d.value == group.Key).ToList();
+            float rate = (float)wins.Count / group.Count();
+            string time = wins.Count > 0 ? "  ort. " + FormatTime(wins.Average(w => w.seconds)) : string.Empty;
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(group.Key + ". boss", GUILayout.Width(80));
+            Rect bar = GUILayoutUtility.GetRect(100, 16, GUILayout.ExpandWidth(true));
+            EditorGUI.ProgressBar(bar, rate, wins.Count + " / " + group.Count() + " yenildi" + time);
+            EditorGUILayout.EndHorizontal();
+        }
+    }
+
     void DrawOther()
     {
+        DrawBosses();
+
         Header("DİĞER");
 
         foreach (IGrouping<string, AnalyticsRecord> group in Of(GameAnalytics.Ad_Watched).GroupBy(r => r.detail))

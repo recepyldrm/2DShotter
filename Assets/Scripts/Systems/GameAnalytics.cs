@@ -45,6 +45,8 @@ public static class GameAnalytics
     public const string Permanent_Upgrade = "permanent_upgrade";
     public const string Daily_Reward = "daily_reward";
     public const string Achievement = "achievement";
+    public const string Boss_Spawned = "boss_spawned";
+    public const string Boss_Defeated = "boss_defeated";
 
     private static readonly List<IAnalyticsSink> sinks = new List<IAnalyticsSink>();
 
@@ -121,6 +123,13 @@ public static class GameAnalytics
 
     public static void DailyRewardClaimed(int day) =>
         Send(new AnalyticsRecord { e = Daily_Reward, value = day });
+
+    public static void BossSpawned(int level, int bossNumber, string bossType) =>
+        Send(new AnalyticsRecord { e = Boss_Spawned, level = level, value = bossNumber, detail = bossType });
+
+    // seconds: boss'un çıkışından ölümüne kadar geçen süre
+    public static void BossDefeated(int level, int bossNumber, float seconds) =>
+        Send(new AnalyticsRecord { e = Boss_Defeated, level = level, value = bossNumber, seconds = seconds });
 
     public static void AchievementClaimed(string achievementId) =>
         Send(new AnalyticsRecord { e = Achievement, detail = achievementId });
