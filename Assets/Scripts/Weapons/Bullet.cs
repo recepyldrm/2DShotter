@@ -40,6 +40,7 @@ public class Bullet : MonoBehaviour
     private float weaponDamageMultiplier = 1f;
     private float weaponSpeedMultiplier = 1f;
     private float weaponExplosionRadius;
+    private float weaponCritBonus;
 
     // Havuzdan gelen mermi her atışta silaha göre boyanıp boyutlandırılır.
     private SpriteRenderer spriteRenderer;
@@ -67,6 +68,7 @@ public class Bullet : MonoBehaviour
         weaponDamageMultiplier = weapon.damageMultiplier;
         weaponSpeedMultiplier = weapon.speedMultiplier;
         weaponExplosionRadius = weapon.explosionRadius;
+        weaponCritBonus = weapon.bonusCritChance;
         remainingPiercing += weapon.extraPierce;
 
         // Menzil = ömür
@@ -107,6 +109,7 @@ public class Bullet : MonoBehaviour
         weaponDamageMultiplier = 1f;
         weaponSpeedMultiplier = 1f;
         weaponExplosionRadius = 0f;
+        weaponCritBonus = 0f;
         transform.localScale = defaultScale;
 
         if (spriteRenderer != null)
@@ -217,24 +220,20 @@ public class Bullet : MonoBehaviour
 
         bool isCritical = false;
 
+        // "<" kullanılıyor: kritik şansı 0 iken asla kritik olmaz.
+        float critChance = weaponCritBonus;
+        float critMultiplier = 2f;
+
         if (PlayerStats.Instance != null)
         {
-            // "<" kullanılıyor: criticalChance 0 iken asla kritik olmaz.
-            if (
-                Random.value <
-                PlayerStats.Instance
-                    .criticalChance
-            )
-            {
-                isCritical = true;
+            critChance += PlayerStats.Instance.criticalChance;
+            critMultiplier = Mathf.Max(PlayerStats.Instance.criticalDamageMultiplier, 1.5f);
+        }
 
-                finalDamage =
-                    Mathf.RoundToInt(
-                        finalDamage *
-                        PlayerStats.Instance
-                            .criticalDamageMultiplier
-                    );
-            }
+        if (Random.value < critChance)
+        {
+            isCritical = true;
+            finalDamage = Mathf.RoundToInt(finalDamage * critMultiplier);
         }
 
         // ==================================

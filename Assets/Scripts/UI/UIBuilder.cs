@@ -14,10 +14,11 @@ public static class UIBuilder
     public const int MenuSlotUpgrades = 2;
     public const int MenuSlotAchievements = 3;
     public const int MenuSlotDaily = 4;
-    public const int MenuSlotTutorial = 5;
+    public const int MenuSlotQuests = 5;
+    public const int MenuSlotTutorial = 6;
 
     // En altta: Google Play Games bağlanana kadar görünmez, boşluk kalmasın.
-    public const int MenuSlotLeaderboard = 6;
+    public const int MenuSlotLeaderboard = 7;
 
     public const float MenuButtonTop = 40f;
     public const float MenuButtonSpacing = 110f;

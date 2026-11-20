@@ -13,7 +13,8 @@ public class DamageNumbers : MonoBehaviour
         Critical,
         Burn,
         Chain,
-        Explosion
+        Explosion,
+        Shield
     }
 
     private const int PoolSize = 60;
@@ -181,6 +182,9 @@ public class DamageNumbers : MonoBehaviour
             case Style.Explosion:
                 return new Color(1f, 0.8f, 0.3f, 1f);
 
+            case Style.Shield:
+                return new Color(0.7f, 0.85f, 1f, 1f);
+
             default:
                 return theme.mainWhite;
         }
@@ -194,6 +198,7 @@ public class DamageNumbers : MonoBehaviour
                 return 7f;
 
             case Style.Burn:
+            case Style.Shield:
             case Style.Chain:
                 return 3.5f;
 

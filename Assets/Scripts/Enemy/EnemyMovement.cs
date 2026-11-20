@@ -38,6 +38,10 @@ public class EnemyMovement : MonoBehaviour
     private EnemyType enemyType;
     private EnemyHealth enemyHealth;
 
+    // Spawn sırasında eklenebilir (nişancı / kalkanlı / bölünen), tembel alınır.
+    private EnemyVariant variant;
+    EnemyVariant Variant => variant != null ? variant : (variant = GetComponent<EnemyVariant>());
+
     private float attackTimer;
 
     private float scaledMoveSpeed;
@@ -114,6 +118,21 @@ public class EnemyMovement : MonoBehaviour
         }
 
         return Vector2.Distance(transform.position, player.position) <= attackDistance;
+    }
+
+    // Nişancı ateş edebilecek konumda mı: oyuncuya yeterince yakın ve ekranın içinde.
+    bool IsInRangedPosition()
+    {
+        if (Vector2.Distance(transform.position, player.position) > Variant.RangedRange)
+            return false;
+
+        Camera cam = Camera.main;
+
+        if (cam == null)
+            return true;
+
+        Vector3 viewport = cam.WorldToViewportPoint(transform.position);
+        return viewport.x > 0.05f && viewport.x < 0.92f && viewport.y > 0.05f && viewport.y < 0.95f;
     }
 
     public void SetChargeMultiplier(float multiplier)
@@ -230,6 +249,12 @@ public class EnemyMovement : MonoBehaviour
     // SCALING
     // ==================================
 
+    // EnemyVariant türü değişince hız / hasar yeniden hesaplansın.
+    public void RefreshScaling()
+    {
+        ApplyScaling();
+    }
+
     void ApplyScaling()
     {
         float globalDamageMultiplier = 1f;
@@ -294,7 +319,8 @@ public class EnemyMovement : MonoBehaviour
             moveSpeed *
             typeSpeedMultiplier *
             globalSpeedMultiplier *
-            bossSpeedMultiplier;
+            bossSpeedMultiplier *
+            (Variant != null ? Variant.SpeedMultiplier : 1f);
 
         GameLog.Log(
             gameObject.name +
@@ -322,6 +348,15 @@ public class EnemyMovement : MonoBehaviour
 
         attackTimer -=
             Time.deltaTime;
+
+        // Nişancı: menzile ve ekrana girince durur, uzaktan ateş eder.
+        if (Variant != null && Variant.IsRanged && !IsPlayerInAttackRange() && IsInRangedPosition())
+        {
+            shouldMove = false;
+            SetRunning(false);
+            Variant.TickRangedAttack(player, scaledDamage);
+            return;
+        }
 
         if (!IsPlayerInAttackRange())
         {

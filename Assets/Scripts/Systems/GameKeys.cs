@@ -31,6 +31,9 @@ public static class GameKeys
     // Günlük ödül
     public const string DailyLastClaimDate = "DailyLastClaimDate";
     public const string DailyLastClaimIndex = "DailyLastClaimIndex";
+    public const string QuestDate = "QuestDate";
+    public const string QuestProgressPrefix = "QuestProgress_";
+    public const string QuestClaimedPrefix = "QuestClaimed_";
 
     // Eğitim
     public const string TutorialSeen = "TutorialSeen";

@@ -116,6 +116,8 @@ public static class PlayerProgress
             PlayerPrefs.SetInt(GameKeys.StatBestLevel, levelReached);
         }
 
+        DailyQuests.Record(kills, goldEarned, levelReached, countRun, bossKills);
+
         if (countRun)
         {
             PlayerPrefs.SetInt(GameKeys.StatTotalRuns, TotalRuns + 1);

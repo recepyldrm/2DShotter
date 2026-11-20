@@ -44,6 +44,7 @@ public static class GameAnalytics
     public const string Ad_Watched = "ad_watched";
     public const string Permanent_Upgrade = "permanent_upgrade";
     public const string Daily_Reward = "daily_reward";
+    public const string Daily_Quest = "daily_quest";
     public const string Achievement = "achievement";
     public const string Boss_Spawned = "boss_spawned";
     public const string Boss_Defeated = "boss_defeated";
@@ -123,6 +124,9 @@ public static class GameAnalytics
 
     public static void DailyRewardClaimed(int day) =>
         Send(new AnalyticsRecord { e = Daily_Reward, value = day });
+
+    public static void DailyQuestClaimed(string questType, int target, int reward) =>
+        Send(new AnalyticsRecord { e = Daily_Quest, value = reward, detail = questType + ":" + target });
 
     public static void BossSpawned(int level, int bossNumber, string bossType) =>
         Send(new AnalyticsRecord { e = Boss_Spawned, level = level, value = bossNumber, detail = bossType });

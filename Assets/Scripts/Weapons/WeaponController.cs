@@ -77,6 +77,12 @@ public class WeaponController : MonoBehaviour
                 angle += Random.Range(-2f, 2f);
             }
 
+            // Minigun gibi silahlarda her mermi biraz farklı yöne gider.
+            if (weapon.randomSpread > 0f)
+            {
+                angle += Random.Range(-weapon.randomSpread, weapon.randomSpread);
+            }
+
             SpawnBullet(
                 firePoint.position,
                 Quaternion.Euler(0f, 0f, angle),

@@ -53,6 +53,12 @@ public class EnemyHealth : MonoBehaviour
 
     private EnemyType enemyType;
     private EnemyMovement enemyMovement;
+
+    // Spawn sırasında eklenebildiği için tembel alınır (nişancı / kalkanlı / bölünen).
+    private EnemyVariant variant;
+    EnemyVariant Variant => variant != null ? variant : (variant = GetComponent<EnemyVariant>());
+    float VariantHealthMultiplier => Variant != null ? Variant.HealthMultiplier : 1f;
+    float VariantRewardMultiplier => Variant != null ? Variant.RewardMultiplier : 1f;
     private PlayerHealth playerHealth;
 
     // ==================================
@@ -289,6 +295,12 @@ public class EnemyHealth : MonoBehaviour
     // HEALTH SCALING
     // ==================================
 
+    // EnemyVariant türü değişince canı yeniden hesaplatır.
+    public void RefreshHealthScaling()
+    {
+        ApplyHealthScaling();
+    }
+
     void ApplyHealthScaling()
     {
         float globalHealthMultiplier = 1f;
@@ -321,7 +333,8 @@ public class EnemyHealth : MonoBehaviour
                 maxHealth *
                 typeHealthMultiplier *
                 globalHealthMultiplier *
-                bossHealthMultiplier
+                bossHealthMultiplier *
+                VariantHealthMultiplier
             )
         );
 
@@ -347,6 +360,10 @@ public class EnemyHealth : MonoBehaviour
             0,
             damage
         );
+
+        // Kalkanlı düşman: hasarı önce kalkan alır.
+        if (Variant != null && Variant.AbsorbDamage(ref damage, GetDamageNumberPosition()))
+            return;
 
         currentHealth -= damage;
 
@@ -772,6 +789,12 @@ public class EnemyHealth : MonoBehaviour
 
         GrantXP();
 
+        // Bölünen düşman iki küçük kopya bırakır.
+        if (Variant != null)
+        {
+            Variant.OnOwnerDied();
+        }
+
         // ==================================
         // DEATH PARTICLE
         // ==================================
@@ -970,7 +993,7 @@ public class EnemyHealth : MonoBehaviour
         // Kalıcı "Hızlı Öğrenme" yükseltmesi
         multiplier *= PermanentUpgrades.XpMultiplier;
 
-        multiplier *= bossRewardMultiplier;
+        multiplier *= bossRewardMultiplier * VariantRewardMultiplier;
 
         int finalXP =
             Mathf.Max(
@@ -1060,7 +1083,7 @@ public class EnemyHealth : MonoBehaviour
         // Kalıcı "Altın Avcısı" yükseltmesi
         multiplier *= PermanentUpgrades.GoldMultiplier;
 
-        multiplier *= bossRewardMultiplier;
+        multiplier *= bossRewardMultiplier * VariantRewardMultiplier;
 
         int finalAmount =
             Mathf.Max(

@@ -158,3 +158,80 @@ MonoBehaviour:
     tint: {r: 1, g: 1, b: 1, a: 1}
     price: 0
     unlockedByAchievement: 1
+  - id: drone_gunner_fire
+    displayName: SAVAŞÇI
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: -2085297131118140966, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 2469033851445598716, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 3242852554281066579, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: -3312327535390791081, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 1033412679963994307, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 1601381086964363177, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 8325545706620066509, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 1755033254961316109, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 5448622151208290923, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 767275881243087891, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 4717479194549166724, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 741564202561748535, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: -2263443639419737509, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 5816005833443997956, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: -4321844286452402176, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 6428867732993131146, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    framesPerSecond: 12
+    scale: 0.7
+    flipX: 1
+    tint: {r: 1, g: 1, b: 1, a: 1}
+    price: 600
+  - id: drone_crimson
+    displayName: KIZIL DAİRE
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4723107735738678597, guid: d8187ed09e12a394ca5e26daf00ab64c, type: 3}
+    - {fileID: -7385789195546760866, guid: d8187ed09e12a394ca5e26daf00ab64c, type: 3}
+    - {fileID: 3234629978573100161, guid: d8187ed09e12a394ca5e26daf00ab64c, type: 3}
+    - {fileID: 6373048116405451881, guid: d8187ed09e12a394ca5e26daf00ab64c, type: 3}
+    framesPerSecond: 8
+    scale: 0.7
+    flipX: 0
+    tint: {r: 1, g: 0.45, b: 0.45, a: 1}
+    price: 300
+  - id: drone_shadow
+    displayName: GÖLGE
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4723107735738678597, guid: ffd5f95456367874c8db307938648934, type: 3}
+    - {fileID: -7385789195546760866, guid: ffd5f95456367874c8db307938648934, type: 3}
+    - {fileID: 3234629978573100161, guid: ffd5f95456367874c8db307938648934, type: 3}
+    - {fileID: 6373048116405451881, guid: ffd5f95456367874c8db307938648934, type: 3}
+    framesPerSecond: 8
+    scale: 0.85
+    flipX: 0
+    tint: {r: 0.6, g: 0.5, b: 0.9, a: 1}
+    price: 400
+  - id: drone_frost
+    displayName: BUZ KUTUSU
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4723107735738678597, guid: 39894ee0e5435f34ab0810b333df7c52, type: 3}
+    - {fileID: -7385789195546760866, guid: 39894ee0e5435f34ab0810b333df7c52, type: 3}
+    - {fileID: 3234629978573100161, guid: 39894ee0e5435f34ab0810b333df7c52, type: 3}
+    - {fileID: 6373048116405451881, guid: 39894ee0e5435f34ab0810b333df7c52, type: 3}
+    framesPerSecond: 8
+    scale: 0.5
+    flipX: 0
+    tint: {r: 0.6, g: 0.9, b: 1, a: 1}
+    price: 500
+  - id: drone_golden
+    displayName: ALTIN HELİKOPTER
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4723107735738678597, guid: aca0a488928b2ef408c7d4b16de79662, type: 3}
+    - {fileID: -7385789195546760866, guid: aca0a488928b2ef408c7d4b16de79662, type: 3}
+    - {fileID: 3234629978573100161, guid: aca0a488928b2ef408c7d4b16de79662, type: 3}
+    - {fileID: 6373048116405451881, guid: aca0a488928b2ef408c7d4b16de79662, type: 3}
+    framesPerSecond: 10
+    scale: 0.4
+    flipX: 0
+    tint: {r: 1, g: 0.85, b: 0.4, a: 1}
+    price: 900

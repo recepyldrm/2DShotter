@@ -199,6 +199,12 @@ public class EnemySpawner : MonoBehaviour
             Quaternion.identity;
 
         // ==================================
+        // ÖZEL TÜR (nişancı / kalkanlı / bölünen)
+        // ==================================
+
+        ApplyVariant(enemy, data);
+
+        // ==================================
         // DEBUG
         // ==================================
 
@@ -224,6 +230,25 @@ public class EnemySpawner : MonoBehaviour
                 " | EnemyType bulunamadı!"
             );
         }
+    }
+
+    // Seviyeye göre bazı düşmanlar özel davranış kazanır.
+    // Bombacılar sade kalır; bölünme havuz gerektirdiği için havuzsuz düşmanda olmaz.
+    void ApplyVariant(GameObject enemy, EnemySpawnData data)
+    {
+        EnemyType type = enemy.GetComponent<EnemyType>();
+
+        EnemyVariant.Kind kind =
+            type != null && type.IsBomber()
+                ? EnemyVariant.Kind.None
+                : EnemyVariant.Roll(GetCurrentLevel());
+
+        if (kind == EnemyVariant.Kind.Splitter && string.IsNullOrEmpty(data.poolKey))
+        {
+            kind = EnemyVariant.Kind.None;
+        }
+
+        EnemyVariant.Apply(enemy, kind);
     }
 
     // ==================================

@@ -24,6 +24,7 @@ public static class MainMenuBootstrap
         AddIfMissing<PermanentUpgradesUI>(ref host);
         AddIfMissing<AchievementsUI>(ref host);
         AddIfMissing<DailyRewardUI>(ref host);
+        AddIfMissing<DailyQuestsUI>(ref host);
         AddIfMissing<TutorialUI>(ref host);
         AddIfMissing<LeaderboardButton>(ref host);
     }

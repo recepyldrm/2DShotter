@@ -110,6 +110,9 @@ public class BossWaveManager : MonoBehaviour
         {
             instance = null;
         }
+
+        // Sahne değişince boss müziği açık kalmasın.
+        PlaySound(audio => audio.SetBossMusic(false));
     }
 
     void Update()
@@ -232,6 +235,7 @@ public class BossWaveManager : MonoBehaviour
 
         barName.text = bossName;
         barRoot.SetActive(true);
+        PlaySound(audio => audio.SetBossMusic(true));
 
         abilityRoutine = StartCoroutine(AbilityLoop(spawner));
 
@@ -383,6 +387,7 @@ public class BossWaveManager : MonoBehaviour
 
         bossMovement = null;
         barRoot.SetActive(false);
+        PlaySound(audio => audio.SetBossMusic(false));
     }
 
     static void PlaySound(System.Action<AudioManager> play)

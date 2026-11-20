@@ -24,6 +24,12 @@ public static class WeaponCatalog
         public int pellets = 1;
         public float spreadAngle;
 
+        // Her merminin yönüne eklenen rastgele sapma (± derece)
+        public float randomSpread;
+
+        // Bu silahın mermilerine eklenen kritik vuruş şansı (0.25 = +%25)
+        public float bonusCritChance;
+
         public float speedMultiplier = 1f;
 
         // Menzil: mermi ömrü çarpanı
@@ -99,11 +105,46 @@ public static class WeaponCatalog
         soundPitch = 0.55f
     };
 
+    public static readonly Weapon Minigun = new Weapon
+    {
+        id = "minigun",
+        title = "MİNİGUN",
+        description = "Mermi yağmuru: çok hızlı ama dağınık ateş eder.",
+        price = 2200,
+        fireIntervalMultiplier = 0.4f,
+        damageMultiplier = 0.45f,
+        randomSpread = 7f,
+        speedMultiplier = 1.15f,
+        lifetimeMultiplier = 0.8f,
+        tint = new Color(1f, 0.95f, 0.6f, 1f),
+        scale = new Vector2(0.8f, 0.6f),
+        soundPitch = 1.25f
+    };
+
+    public static readonly Weapon Sniper = new Weapon
+    {
+        id = "sniper",
+        title = "KESKİN NİŞANCI",
+        description = "Yavaş ateş eder; tek mermisi 2 düşmanı deler ve sık sık kritik vurur.",
+        price = 4000,
+        fireIntervalMultiplier = 3.5f,
+        damageMultiplier = 4f,
+        extraPierce = 2,
+        bonusCritChance = 0.3f,
+        speedMultiplier = 2.6f,
+        lifetimeMultiplier = 1.4f,
+        tint = new Color(0.75f, 1f, 0.45f, 1f),
+        scale = new Vector2(2.6f, 0.45f),
+        soundPitch = 0.65f
+    };
+
     public static readonly Weapon[] All =
     {
         Rifle,
         Shotgun,
+        Minigun,
         Laser,
+        Sniper,
         Rocket
     };
 

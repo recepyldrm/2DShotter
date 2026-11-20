@@ -37,6 +37,12 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)]
     public float musicVolume = 0.4f;
 
+    [Tooltip("Boss sırasında çalan müzik. Boş bırakılırsa ana müzik hızlanır ve üstüne gergin bir bas ritmi eklenir.")]
+    public AudioClip bossMusic;
+
+    [Tooltip("Boss müziğine geçiş süresi (saniye)")]
+    public float bossMusicFade = 1.2f;
+
     private const string MusicVolumeKey = GameKeys.MusicVolume;
     private const string SfxVolumeKey = GameKeys.SfxVolume;
 
@@ -47,6 +53,11 @@ public class AudioManager : MonoBehaviour
     private float previousSfxVolume = 1f;
 
     private bool allSoundMuted = false;
+
+    // Boss müziği: 0 = normal müzik, 1 = tamamen boss müziği
+    private AudioSource bossSource;
+    private bool bossMode;
+    private float bossBlend;
 
     // ==================================
     // SES KANALLARI
@@ -71,6 +82,7 @@ public class AudioManager : MonoBehaviour
     private Channel explosionChannel;
     private Channel uiChannel;
     private Channel eventChannel;
+    private Channel enemyShotChannel;
 
     void Awake()
     {
@@ -93,6 +105,7 @@ public class AudioManager : MonoBehaviour
         explosionChannel = CreateChannel(2, 0.1f);
         uiChannel = CreateChannel(3, 0.03f);
         eventChannel = CreateChannel(2, 0.2f);
+        enemyShotChannel = CreateChannel(2, 0.12f);
     }
 
     Channel CreateChannel(int voiceCount, float minInterval)
@@ -220,6 +233,143 @@ public class AudioManager : MonoBehaviour
     }
 
     // =====================================
+    // BOSS MÜZİĞİ
+    // =====================================
+
+    public void SetBossMusic(bool active)
+    {
+        if (bossMode == active)
+            return;
+
+        bossMode = active;
+
+        if (!active || musicSource == null)
+            return;
+
+        if (bossSource == null)
+        {
+            bossSource = gameObject.AddComponent<AudioSource>();
+            bossSource.playOnAwake = false;
+            bossSource.loop = true;
+            bossSource.spatialBlend = 0f;
+            bossSource.outputAudioMixerGroup = musicSource.outputAudioMixerGroup;
+            bossSource.volume = 0f;
+        }
+
+        if (bossSource.clip == null)
+        {
+            bossSource.clip = bossMusic != null ? bossMusic : CreateTensionPulse();
+        }
+
+        if (!bossSource.isPlaying)
+        {
+            bossSource.Play();
+        }
+    }
+
+    void Update()
+    {
+        float target = bossMode ? 1f : 0f;
+
+        if (Mathf.Approximately(bossBlend, target))
+            return;
+
+        bossBlend = Mathf.MoveTowards(
+            bossBlend,
+            target,
+            Time.unscaledDeltaTime / Mathf.Max(0.05f, bossMusicFade)
+        );
+
+        ApplyMusicBlend();
+
+        if (bossBlend <= 0f && bossSource != null && bossSource.isPlaying)
+        {
+            bossSource.Stop();
+        }
+    }
+
+    void ApplyMusicBlend()
+    {
+        if (musicSource == null)
+            return;
+
+        float volume = GetMusicVolume();
+
+        if (bossMusic != null)
+        {
+            // Ayrı boss müziği: iki parça arasında yumuşak geçiş
+            musicSource.volume = volume * (1f - bossBlend);
+            musicSource.pitch = 1f;
+        }
+        else
+        {
+            // Klip yoksa ana müzik biraz hızlanır, altına bas ritmi eklenir.
+            musicSource.volume = volume;
+            musicSource.pitch = Mathf.Lerp(1f, 1.1f, bossBlend);
+        }
+
+        if (bossSource != null)
+        {
+            bossSource.volume = volume * bossBlend * (bossMusic != null ? 1f : 1.3f);
+        }
+    }
+
+    // Kodla üretilen gergin ritim: dakikada 130 vuruşluk derin "kalp atışı"
+    // (çift vuruş) ve altta titreşen alçak bir uğultu. Döngüsel çalar.
+    static AudioClip CreateTensionPulse()
+    {
+        const int sampleRate = 22050;
+        const float bpm = 130f;
+        const int beats = 8;
+
+        float beatLength = 60f / bpm;
+        int length = Mathf.RoundToInt(sampleRate * beatLength * beats);
+        float[] data = new float[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            float t = (float)i / sampleRate;
+            float beatTime = t % beatLength;
+            int beatIndex = (int)(t / beatLength);
+
+            float sample = 0f;
+
+            // Her vuruşta perdesi düşen bir darbe (kick); tek vuruşlarda ikinci, hafif darbe
+            sample += Kick(beatTime) * 0.9f;
+
+            if (beatIndex % 2 == 1)
+            {
+                sample += Kick(beatTime - beatLength * 0.5f) * 0.45f;
+            }
+
+            // Alçak uğultu (41 Hz), vuruş hızında nefes alıyor
+            float tremolo = 0.6f + 0.4f * Mathf.Sin(2f * Mathf.PI * t / beatLength);
+            sample += Mathf.Sin(2f * Mathf.PI * 41.2f * t) * 0.18f * tremolo;
+
+            // Her dört vuruşta bir yükselen, gerilim veren ince ses
+            float bar = t % (beatLength * 4f) / (beatLength * 4f);
+            sample += Mathf.Sin(2f * Mathf.PI * (330f + 110f * bar) * t) * 0.025f * bar;
+
+            data[i] = Mathf.Clamp(sample, -1f, 1f);
+        }
+
+        AudioClip clip = AudioClip.Create("BossTensionPulse", length, 1, sampleRate, false);
+        clip.SetData(data, 0);
+        return clip;
+    }
+
+    static float Kick(float time)
+    {
+        if (time < 0f || time > 0.35f)
+            return 0f;
+
+        // 95 Hz'den 40 Hz'e inen sinüs, hızla sönüyor
+        float frequency = Mathf.Lerp(95f, 40f, Mathf.Clamp01(time / 0.12f));
+        float envelope = Mathf.Exp(-time * 11f);
+        return Mathf.Sin(2f * Mathf.PI * frequency * time) * envelope;
+    }
+
+    // =====================================
     // GENEL SFX ÇALMA
     // =====================================
 
@@ -243,6 +393,8 @@ public class AudioManager : MonoBehaviour
         {
             musicSource.volume = value;
         }
+
+        ApplyMusicBlend();
 
         PlayerPrefs.SetFloat(
             MusicVolumeKey,
@@ -407,6 +559,24 @@ public class AudioManager : MonoBehaviour
     public void PlayLevelUp()
     {
         Play(eventChannel, goldPickupClip, Mathf.Min(1f, goldPickupVolume * 1.6f), 1.35f);
+    }
+
+    // Uzaktan ateş eden düşman: silah sesinin kısa ve tiz hâli
+    public void PlayEnemyShot()
+    {
+        Play(enemyShotChannel, shootClip, shootVolume * 0.35f, 1.7f, 0.06f, 0.09f);
+    }
+
+    // Kalkana isabet: metalik, tiz bir tık
+    public void PlayShieldHit()
+    {
+        Play(hitChannel, enemyHitClip, enemyHitVolume * 0.7f, 2f, 0.08f);
+    }
+
+    // Kalkan kırıldı
+    public void PlayShieldBreak()
+    {
+        Play(explosionChannel, enemyHitClip, Mathf.Min(1f, enemyHitVolume * 1.5f), 1.3f, 0.05f);
     }
 
     // Boss uyarısı: çok derin bir darbe

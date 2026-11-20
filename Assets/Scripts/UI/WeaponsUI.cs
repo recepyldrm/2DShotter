@@ -140,6 +140,12 @@ public class WeaponsUI : MonoBehaviour
         else if (weapon.extraPierce > 0)
             parts.Add("+" + weapon.extraPierce + " delme");
 
+        if (weapon.bonusCritChance > 0f)
+            parts.Add("+%" + Mathf.RoundToInt(weapon.bonusCritChance * 100f) + " kritik");
+
+        if (weapon.randomSpread >= 5f)
+            parts.Add("Dağınık atış");
+
         if (weapon.explosionRadius > 0f)
             parts.Add(weapon.explosionRadius.ToString("0.#", new CultureInfo("tr-TR")) + " birim patlama");
 
