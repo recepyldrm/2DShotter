@@ -20,7 +20,7 @@ public class SettingsUI : MonoBehaviour
     void Awake()
     {
         theme = UITheme.Load();
-        Transform canvas = UIBuilder.CreateCanvas(transform, "SettingsCanvas", 300);
+        Transform canvas = UIBuilder.CreateCanvas(transform, "SettingsCanvas", 470);
         Build(canvas);
     }
 
@@ -28,6 +28,17 @@ public class SettingsUI : MonoBehaviour
     {
         Refresh();
         panel.SetActive(true);
+    }
+
+    public bool IsOpen => panel != null && panel.activeSelf;
+
+    public void Hide()
+    {
+        if (!IsOpen)
+            return;
+
+        panel.SetActive(false);
+        OnClosed?.Invoke();
     }
 
     void Close()
@@ -47,7 +58,8 @@ public class SettingsUI : MonoBehaviour
 
         vibrationText.text = Loc.T(Haptics.Enabled ? "AÇIK" : "KAPALI");
         graphicsText.text = GraphicsQuality.Label(GraphicsQuality.Current);
-        languageText.text = Loc.LanguageName(Loc.Current);
+        if (languageText != null)
+            languageText.text = Loc.LanguageName(Loc.Current);
     }
 
     // ==================================
@@ -115,11 +127,15 @@ public class SettingsUI : MonoBehaviour
         );
         hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
 
-        languageText = CreateToggleButton(CreateRow(content, "DİL"), () =>
+        // Dil değişince sahne yeniden yüklenir; oyun sırasında bu oyunu
+        // sıfırlayacağı için dil sadece ana menüden değiştirilebilir.
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == GameKeys.MainMenuScene)
         {
-            // Sahne yeniden yüklenir, bütün yazılar yeni dille kurulur.
-            Loc.SetLanguage(Loc.IsEnglish ? GameLanguage.Turkish : GameLanguage.English);
-        });
+            languageText = CreateToggleButton(CreateRow(content, "DİL"), () =>
+            {
+                Loc.SetLanguage(Loc.IsEnglish ? GameLanguage.Turkish : GameLanguage.English);
+            });
+        }
 
         panel.SetActive(false);
     }

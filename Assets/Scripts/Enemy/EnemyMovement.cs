@@ -290,6 +290,10 @@ public class EnemyMovement : MonoBehaviour
         globalDamageMultiplier *= Difficulty.EnemyDamageMultiplier;
         globalSpeedMultiplier *= Difficulty.EnemySpeedMultiplier;
 
+        // Bölüm kuralı
+        globalDamageMultiplier *= StageThemes.DamageMultiplier;
+        globalSpeedMultiplier *= StageThemes.SpeedMultiplier;
+
         // ==============================
         // ENEMY TYPE SCALING
         // ==============================

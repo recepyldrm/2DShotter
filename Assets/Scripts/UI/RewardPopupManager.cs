@@ -111,7 +111,7 @@ public class RewardPopupManager : MonoBehaviour
     // --- Hazır kısayollar ---
 
     public void ShowGold(int amount, Vector3 worldPosition)
-        => ShowReward($"+{amount} Altın", worldPosition, goldColor);
+        => ShowReward("+" + amount + " " + Loc.Pick("Altın", "Gold"), worldPosition, goldColor);
 
     public void ShowExp(int amount, Vector3 worldPosition)
         => ShowReward($"+{amount} XP", worldPosition, expColor);

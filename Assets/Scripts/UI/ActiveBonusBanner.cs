@@ -38,7 +38,7 @@ public class ActiveBonusBanner : MonoBehaviour
         TextMeshProUGUI text = UIBuilder.CreateText(
             theme,
             banner,
-            UIBuilder.ColorTag(theme.mainRedHover, "KALICI BONUSLAR") + "\n<size=28>" +
+            UIBuilder.ColorTag(theme.mainRedHover, Loc.Pick("KALICI BONUSLAR", "PERMANENT BONUSES")) + "\n<size=28>" +
             string.Join("   ·   ", bonuses) + "</size>",
             34f,
             TextAlignmentOptions.Center,

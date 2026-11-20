@@ -41,11 +41,15 @@ public class TutorialUI : MonoBehaviour
         ),
         new Page(
             "MAĞAZA VE DOST",
-            "Drone dostun seni takip eder ve hasarını artırır.\n\nBiriktirdiğin altınlarla MAĞAZA'dan ona yeni görünümler al."
+            "Drone dostun seni takip eder ve hasarını artırır. Her görünümün kendi yeteneği var: yakma, yavaşlatma, iyileştirme...\n\nBiriktirdiğin altınlarla MAĞAZA'dan yeni görünümler, SİLAHLAR'dan yeni silahlar al ve güçlendir."
+        ),
+        new Page(
+            "BOSSLAR VE BÖLÜMLER",
+            "Her 5 seviyede bir boss gelir; her boss tipinin kendine özgü saldırısı var. Her 10 seviyede yeni bir bölüme geçersin ve bölümün kuralları değişir.\n\nAna menüden ZORLUK seçebilirsin: zor modda daha çok altın kazanırsın."
         ),
         new Page(
             "HER GÜN GEL",
-            "Her gün GÜNLÜK ÖDÜL'ünü al. 7. gün büyük bir ödül seni bekliyor!\n\nBAŞARIMLAR'ı tamamlayarak altın kazan ve özel görünümlerin kilidini aç."
+            "Her gün GÜNLÜK ÖDÜL'ünü al ve GÖREVLER'i tamamla. Haftalık görevlerin hepsini bitirirsen haftalık sandık açılır.\n\nGörevler ve oyunlar SEZON puanı kazandırır; sezon seviyeleri yeni ödüller açar."
         ),
     };
 
@@ -137,11 +141,11 @@ public class TutorialUI : MonoBehaviour
     {
         Page page = Pages[pageIndex];
 
-        titleText.text = page.title;
-        bodyText.text = page.body;
+        titleText.text = Loc.T(page.title);
+        bodyText.text = Loc.T(page.body);
 
         bool isLast = pageIndex == Pages.Length - 1;
-        nextText.text = isLast ? "BAŞLA" : "İLERİ";
+        nextText.text = isLast ? Loc.Pick("BAŞLA", "START") : Loc.T("İLERİ");
 
         backButton.gameObject.SetActive(pageIndex > 0);
 

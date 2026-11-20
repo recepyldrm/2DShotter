@@ -16,7 +16,11 @@ public class QuestBoard
         Gold,       // Toplam altın kazan
         Bosses,     // Boss yen
         Level,      // Tek oyunda şu seviyeye ulaş
-        Runs        // Oyun oyna
+        Runs,       // Oyun oyna
+        ShieldedKills, // Kalkanlı düşman öldür
+        GunnerKills,   // Nişancı düşman öldür
+        BossStuns,     // Yıkıcı boss'u sersemlet
+        HardRuns       // Zor modda oyun oyna
     }
 
     public class Quest
@@ -40,6 +44,13 @@ public class QuestBoard
                             : Loc.Pick(target + " boss yen", "Defeat " + target + " bosses");
                     case QuestType.Level: return Loc.Pick("Tek oyunda " + target + ". seviyeye ulaş", "Reach level " + target + " in one run");
                     case QuestType.Runs: return Loc.Pick(target + " oyun oyna", "Play " + target + " runs");
+                    case QuestType.ShieldedKills: return Loc.Pick(target + " kalkanlı düşman öldür", "Kill " + target + " shielded enemies");
+                    case QuestType.GunnerKills: return Loc.Pick(target + " nişancı düşman öldür", "Kill " + target + " gunners");
+                    case QuestType.BossStuns:
+                        return target == 1
+                            ? Loc.Pick("Yıkıcı boss'u sersemlet", "Stun a Smasher boss")
+                            : Loc.Pick("Yıkıcı boss'u " + target + " kez sersemlet", "Stun a Smasher boss " + target + " times");
+                    case QuestType.HardRuns: return Loc.Pick("ZOR modda " + target + " oyun oyna", "Play " + target + " runs on HARD");
                     default: return string.Empty;
                 }
             }
@@ -65,7 +76,11 @@ public class QuestBoard
             { QuestType.Gold,   new[] { (300, 60), (750, 120), (1500, 200) } },
             { QuestType.Bosses, new[] { (1, 100), (2, 180), (3, 250) } },
             { QuestType.Level,  new[] { (8, 60), (12, 120), (16, 200) } },
-            { QuestType.Runs,   new[] { (2, 50), (3, 80), (5, 120) } }
+            { QuestType.Runs,   new[] { (2, 50), (3, 80), (5, 120) } },
+            { QuestType.ShieldedKills, new[] { (10, 80), (20, 140), (35, 220) } },
+            { QuestType.GunnerKills,   new[] { (15, 80), (30, 140), (50, 220) } },
+            { QuestType.BossStuns,     new[] { (1, 150), (2, 250), (3, 350) } },
+            { QuestType.HardRuns,      new[] { (1, 100), (2, 180), (3, 260) } }
         },
         chestReward: 0
     );
@@ -83,7 +98,11 @@ public class QuestBoard
             { QuestType.Gold,   new[] { (4000, 400), (7000, 600), (12000, 900) } },
             { QuestType.Bosses, new[] { (5, 450), (8, 650), (12, 950) } },
             { QuestType.Level,  new[] { (18, 400), (22, 600), (26, 900) } },
-            { QuestType.Runs,   new[] { (10, 300), (15, 450), (25, 700) } }
+            { QuestType.Runs,   new[] { (10, 300), (15, 450), (25, 700) } },
+            { QuestType.ShieldedKills, new[] { (80, 450), (150, 650), (250, 950) } },
+            { QuestType.GunnerKills,   new[] { (120, 450), (200, 650), (350, 950) } },
+            { QuestType.BossStuns,     new[] { (4, 500), (7, 750), (10, 1000) } },
+            { QuestType.HardRuns,      new[] { (5, 450), (8, 650), (12, 950) } }
         },
         chestReward: 1500
     );
@@ -170,11 +189,73 @@ public class QuestBoard
 
             if (cachedQuests == null || cachedPeriod != period)
             {
+                EnsureCurrent();
                 cachedPeriod = period;
-                cachedQuests = Generate(period);
+                cachedQuests = LoadSaved() ?? Generate(period);
             }
 
             return cachedQuests;
+        }
+    }
+
+    string ListKey => periodKey + "_List";
+
+    // Görev listesi dönem başında kaydedilir; oyuncu gün içinde ilerleyip yeni
+    // görev türleri açılsa bile o dönemin görevleri değişmez.
+    void SaveList(List<Quest> quests)
+    {
+        List<string> parts = new List<string>();
+
+        foreach (Quest quest in quests)
+        {
+            parts.Add((int)quest.type + ":" + quest.target + ":" + quest.reward);
+        }
+
+        PlayerPrefs.SetString(ListKey, string.Join(";", parts));
+    }
+
+    List<Quest> LoadSaved()
+    {
+        string saved = PlayerPrefs.GetString(ListKey, string.Empty);
+
+        if (string.IsNullOrEmpty(saved))
+            return null;
+
+        List<Quest> quests = new List<Quest>();
+        string[] entries = saved.Split(';');
+
+        for (int i = 0; i < entries.Length; i++)
+        {
+            string[] fields = entries[i].Split(':');
+
+            if (fields.Length != 3 ||
+                !int.TryParse(fields[0], out int type) ||
+                !int.TryParse(fields[1], out int target) ||
+                !int.TryParse(fields[2], out int reward) ||
+                !Enum.IsDefined(typeof(QuestType), type))
+            {
+                return null;
+            }
+
+            quests.Add(new Quest { index = i, type = (QuestType)type, target = target, reward = reward });
+        }
+
+        return quests.Count > 0 ? quests : null;
+    }
+
+    // Yeni içerik gerektiren görevler, oyuncu o içeriği görecek kadar ilerlediyse çıkar.
+    static bool IsEligible(QuestType type)
+    {
+        int best = PlayerProgress.BestLevel;
+
+        switch (type)
+        {
+            case QuestType.GunnerKills: return best >= 4;
+            case QuestType.ShieldedKills: return best >= 6;
+            case QuestType.HardRuns: return best >= 10;
+            case QuestType.BossStuns: return best >= 21;   // Yıkıcı 4. boss (20. seviye)
+            case QuestType.Bosses: return best >= 5;
+            default: return true;
         }
     }
 
@@ -183,7 +264,14 @@ public class QuestBoard
     {
         System.Random random = new System.Random(StableHash(id + period));
 
-        List<QuestType> pool = new List<QuestType>((QuestType[])Enum.GetValues(typeof(QuestType)));
+        List<QuestType> pool = new List<QuestType>();
+
+        foreach (QuestType type in (QuestType[])Enum.GetValues(typeof(QuestType)))
+        {
+            if (IsEligible(type))
+                pool.Add(type);
+        }
+
         List<Quest> quests = new List<Quest>();
 
         for (int i = 0; i < QuestCount && pool.Count > 0; i++)
@@ -205,6 +293,7 @@ public class QuestBoard
             });
         }
 
+        SaveList(quests);
         return quests;
     }
 
@@ -233,6 +322,8 @@ public class QuestBoard
             return;
 
         PlayerPrefs.SetString(periodKey, period);
+        PlayerPrefs.DeleteKey(ListKey);
+        cachedQuests = null;
 
         for (int i = 0; i < QuestCount; i++)
         {
@@ -337,6 +428,38 @@ public class QuestBoard
         }
     }
 
+    // Oyun sırasında anında sayılan görevler (kalkanlı / nişancı öldürme, sersemletme)
+    public static void Increment(QuestType type, int amount)
+    {
+        bool changed = false;
+
+        foreach (QuestBoard board in All)
+        {
+            board.EnsureCurrent();
+
+            foreach (Quest quest in board.Current)
+            {
+                if (quest.type != type || board.IsClaimed(quest))
+                    continue;
+
+                string key = board.progressPrefix + quest.index;
+                int current = PlayerPrefs.GetInt(key, 0);
+                int next = Mathf.Min(quest.target, current + amount);
+
+                if (next != current)
+                {
+                    PlayerPrefs.SetInt(key, next);
+                    changed = true;
+                }
+            }
+        }
+
+        if (changed)
+        {
+            OnChanged?.Invoke();
+        }
+    }
+
     bool Record(int kills, int goldEarned, int levelReached, bool countRun, int bossKills)
     {
         EnsureCurrent();
@@ -359,6 +482,7 @@ public class QuestBoard
                 case QuestType.Bosses: next += bossKills; break;
                 case QuestType.Level: next = Mathf.Max(current, levelReached); break;
                 case QuestType.Runs: next += countRun ? 1 : 0; break;
+                case QuestType.HardRuns: next += countRun && Difficulty.Current == Difficulty.Level.Hard ? 1 : 0; break;
             }
 
             next = Mathf.Min(next, quest.target);
@@ -383,6 +507,7 @@ public class QuestBoard
         PlayerPrefs.Save();
 
         PlayerProgress.AddGold(quest.reward);
+        SeasonPass.AddPoints(HasChest ? SeasonPass.PointsPerWeeklyQuest : SeasonPass.PointsPerDailyQuest);
 
         if (HasChest)
             GameAnalytics.WeeklyQuestClaimed(quest.type.ToString(), quest.target, quest.reward);
@@ -402,6 +527,7 @@ public class QuestBoard
         PlayerPrefs.Save();
 
         PlayerProgress.AddGold(chestReward);
+        SeasonPass.AddPoints(SeasonPass.PointsPerWeeklyChest);
         GameAnalytics.WeeklyQuestClaimed("chest", 0, chestReward);
 
         OnChanged?.Invoke();

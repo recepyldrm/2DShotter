@@ -24,7 +24,7 @@ public static class Difficulty
     public static float EnemyHealthMultiplier => Pick(0.7f, 1f, 1.45f);
     public static float EnemyDamageMultiplier => Pick(0.65f, 1f, 1.35f);
     public static float EnemySpeedMultiplier => Pick(0.92f, 1f, 1.1f);
-    public static float GoldMultiplier => Pick(0.75f, 1f, 1.6f);
+    public static float GoldMultiplier => Pick(0.7f, 1f, 1.4f);
 
     static float Pick(float easy, float normal, float hard)
     {
@@ -51,8 +51,8 @@ public static class Difficulty
     {
         switch (level)
         {
-            case Level.Easy: return Loc.Pick("Zayıf düşmanlar · %75 altın", "Weaker enemies · 75% gold");
-            case Level.Hard: return Loc.Pick("Güçlü düşmanlar · %160 altın", "Stronger enemies · 160% gold");
+            case Level.Easy: return Loc.Pick("Zayıf düşmanlar · %70 altın", "Weaker enemies · 70% gold");
+            case Level.Hard: return Loc.Pick("Güçlü düşmanlar · %140 altın", "Stronger enemies · 140% gold");
             default: return Loc.Pick("Dengeli · %100 altın", "Balanced · 100% gold");
         }
     }

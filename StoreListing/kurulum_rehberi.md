@@ -43,8 +43,11 @@ senin yapman gereken kısımlar. Sırayla gitmek en kolayı.
 3. **Kayıtlı Oyunlar**'ı aç (Yapılandırma sayfasında "Saved Games: Açık").
 4. **Liderlik tablosu oluştur:** Başarılar ve liderlik tabloları > **Liderlik tablosu ekle**
    (ad: "En Yüksek Skor", sıralama: büyük olan daha iyi).
-5. Tablonun kimliğini kopyala ve `Assets/Scripts/Systems/GooglePlayGamesService.cs` içinde
-   `LeaderboardId = ""` satırına yapıştır.
+   Her zorluk için ayrı tablo oluştur: "En Yüksek Skor - Kolay", "En Yüksek Skor - Normal",
+   "En Yüksek Skor - Zor" (üçü de: büyük olan daha iyi).
+5. Tabloların kimliklerini kopyala ve `Assets/Scripts/Systems/GooglePlayGamesService.cs` içinde
+   `LeaderboardIdEasy`, `LeaderboardIdNormal`, `LeaderboardIdHard` satırlarına yapıştır.
+   Boş bırakılan zorluğun skorları gönderilmez.
 6. Unity'de **Window > Google Play Games > Setup > Android Setup** ekranına
    Play Console'un verdiği kaynak XML'ini yapıştır > **Setup**.
 7. **Test kullanıcıları:** Play Games Hizmetleri > Test kullanıcıları'na kendi Gmail adresini ekle.
@@ -74,7 +77,22 @@ Google hesabına kaydedilir ve telefon değişse de geri gelir.
 
 ---
 
-## 5. Play Console beyanları
+## 5. Uygulama içi ürünler (5 dk)
+
+Play Console > uygulaman > **Para kazanma > Ürünler > Uygulama içi ürünler** sayfasında
+aşağıdaki kimliklerle ürün oluştur (kimlikler birebir aynı olmalı):
+
+| Kimlik | Tür | Ne verir |
+|---|---|---|
+| `gold_500`, `gold_1500`, `gold_5000` | Tüketilebilir | Altın paketleri |
+| `skin_chopper`, `skin_jet` | Tüketilemez | Premium drone görünümleri |
+| `season_pass` | Tüketilebilir | O sezonun (30 gün) premium sezon bileti ödülleri |
+
+> Sezon bileti her sezon yeniden satın alınabilir; bu yüzden tüketilebilir ürün olmalı.
+
+---
+
+## 6. Play Console beyanları
 
 - **Uygulama içeriği > Reklamlar:** "Evet, uygulamam reklam içeriyor".
 - **Veri güvenliği formu:** cihaz kimlikleri (AdMob reklam kimliği), uygulama etkinliği,

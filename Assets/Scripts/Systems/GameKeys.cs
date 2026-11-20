@@ -50,6 +50,11 @@ public static class GameKeys
     public const string WeeklyQuestProgressPrefix = "WeeklyQuestProgress_";
     public const string WeeklyQuestClaimedPrefix = "WeeklyQuestClaimed_";
     public const string WeeklyChestClaimed = "WeeklyChestClaimed";
+    public const string SeasonIndex = "SeasonIndex";
+    public const string SeasonPoints = "SeasonPoints";
+    public const string SeasonPremium = "SeasonPremium";
+    public const string SeasonFreeClaimed = "SeasonFreeClaimed";
+    public const string SeasonPremiumClaimed = "SeasonPremiumClaimed";
 
     // Kalıcı yükseltmeler: önek + yükseltme Id'si (örn. "PermUpgrade_start_health")
     public const string PermanentUpgradePrefix = "PermUpgrade_";

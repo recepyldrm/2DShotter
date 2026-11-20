@@ -41,6 +41,14 @@ public class SaveSnapshot
     public int totalGoldEarned;
     public int totalBossKills;
 
+    // Sezon bileti (premium parayla alınır; cihaz değişse de kaybolmamalı).
+    // Aynı sezonsa: puanın büyüğü, premium herhangi birinde varsa açık, ödüller birleşim.
+    public int seasonIndex = -1;
+    public int seasonPoints;
+    public int seasonPremium;
+    public string seasonFreeClaimed;
+    public string seasonPremiumClaimed;
+
     public string ToJson() => JsonUtility.ToJson(this);
 
     public static SaveSnapshot FromJson(string json)
@@ -88,7 +96,12 @@ public class SaveSnapshot
             totalRuns = PlayerProgress.TotalRuns,
             bestLevel = PlayerProgress.BestLevel,
             totalGoldEarned = PlayerProgress.TotalGoldEarned,
-            totalBossKills = PlayerProgress.TotalBossKills
+            totalBossKills = PlayerProgress.TotalBossKills,
+            seasonIndex = PlayerPrefs.GetInt(GameKeys.SeasonIndex, -1),
+            seasonPoints = PlayerPrefs.GetInt(GameKeys.SeasonPoints, 0),
+            seasonPremium = PlayerPrefs.GetInt(GameKeys.SeasonPremium, 0),
+            seasonFreeClaimed = PlayerPrefs.GetString(GameKeys.SeasonFreeClaimed, string.Empty),
+            seasonPremiumClaimed = PlayerPrefs.GetString(GameKeys.SeasonPremiumClaimed, string.Empty)
         };
     }
 
@@ -111,6 +124,15 @@ public class SaveSnapshot
         foreach (KeyValuePair<string, int> upgrade in ParseUpgrades(permanentUpgrades))
         {
             PlayerPrefs.SetInt(GameKeys.PermanentUpgradePrefix + upgrade.Key, upgrade.Value);
+        }
+
+        if (seasonIndex >= 0)
+        {
+            PlayerPrefs.SetInt(GameKeys.SeasonIndex, seasonIndex);
+            PlayerPrefs.SetInt(GameKeys.SeasonPoints, seasonPoints);
+            PlayerPrefs.SetInt(GameKeys.SeasonPremium, seasonPremium);
+            PlayerPrefs.SetString(GameKeys.SeasonFreeClaimed, seasonFreeClaimed ?? string.Empty);
+            PlayerPrefs.SetString(GameKeys.SeasonPremiumClaimed, seasonPremiumClaimed ?? string.Empty);
         }
 
         PlayerPrefs.SetInt(GameKeys.HighScore, highScore);
@@ -159,7 +181,47 @@ public class SaveSnapshot
             totalBossKills = Math.Max(a.totalBossKills, b.totalBossKills)
         };
 
+        MergeSeason(a, b, merged);
+
         return merged;
+    }
+
+    static void MergeSeason(SaveSnapshot a, SaveSnapshot b, SaveSnapshot merged)
+    {
+        // Farklı sezonlarsa yeni sezonun kaydı geçerli.
+        if (a.seasonIndex != b.seasonIndex)
+        {
+            SaveSnapshot latest = a.seasonIndex > b.seasonIndex ? a : b;
+            merged.seasonIndex = latest.seasonIndex;
+            merged.seasonPoints = latest.seasonPoints;
+            merged.seasonPremium = latest.seasonPremium;
+            merged.seasonFreeClaimed = latest.seasonFreeClaimed;
+            merged.seasonPremiumClaimed = latest.seasonPremiumClaimed;
+            return;
+        }
+
+        merged.seasonIndex = a.seasonIndex;
+        merged.seasonPoints = Math.Max(a.seasonPoints, b.seasonPoints);
+        merged.seasonPremium = Math.Max(a.seasonPremium, b.seasonPremium);
+        merged.seasonFreeClaimed = UnionCsv(a.seasonFreeClaimed, b.seasonFreeClaimed);
+        merged.seasonPremiumClaimed = UnionCsv(a.seasonPremiumClaimed, b.seasonPremiumClaimed);
+    }
+
+    static string UnionCsv(string a, string b)
+    {
+        SortedSet<int> values = new SortedSet<int>();
+
+        foreach (string part in ((a ?? string.Empty) + "," + (b ?? string.Empty)).Split(','))
+        {
+            if (int.TryParse(part, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
+                values.Add(value);
+        }
+
+        List<string> parts = new List<string>();
+        foreach (int value in values)
+            parts.Add(value.ToString(CultureInfo.InvariantCulture));
+
+        return string.Join(",", parts);
     }
 
     public bool ContentEquals(SaveSnapshot other)

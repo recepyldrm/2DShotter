@@ -125,6 +125,7 @@ public static class PlayerProgress
         }
 
         QuestBoard.RecordAll(kills, goldEarned, levelReached, countRun, bossKills);
+        SeasonPass.RecordRun(kills, levelReached, countRun, bossKills);
 
         if (countRun)
         {

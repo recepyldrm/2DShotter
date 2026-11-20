@@ -145,6 +145,9 @@ public class LevelUpCardManager : MonoBehaviour
         freeRerollsPerCard += PermanentUpgrades.BonusFreeRerolls;
 
         SetupButtons();
+
+        // Yeni düşmanlara karşı kartlar (asset gerektirmez)
+        AddRuntimeCards();
     }
 
     void OnDestroy()
@@ -306,8 +309,8 @@ public class LevelUpCardManager : MonoBehaviour
             theme,
             banner,
             UIBuilder.ColorTag(theme.mainRedHover, Loc.T("SEVİYE ATLADIN!")) +
-            "  Güçlenmek için bir kart seç.\n" +
-            "<size=28>Nadir kartlar daha güçlüdür. YENİLE ile bir kartı yenisiyle değiştirebilirsin.</size>",
+            Loc.Pick("  Güçlenmek için bir kart seç.\n", "  Pick a card to grow stronger.\n") +
+            Loc.Pick("<size=28>Nadir kartlar daha güçlüdür. YENİLE ile bir kartı yenisiyle değiştirebilirsin.</size>", "<size=28>Rarer cards are stronger. Use REROLL to swap a card for a new one.</size>"),
             36f,
             TextAlignmentOptions.Center,
             theme.mainWhite
@@ -332,6 +335,70 @@ public class LevelUpCardManager : MonoBehaviour
     // UYGUN KARTLARI BUL
     // ==================================
 
+    // KALKAN KIRICI, BÖLÜNME ENGELİ ve BOSS AVCISI kartlarını kodla oluşturur.
+    // Simgeleri mevcut kartlardan ödünç alır.
+    void AddRuntimeCards()
+    {
+        AddRuntimeCard(
+            UpgradeCardData.UpgradeType.ShieldBreaker,
+            "KALKAN KIRICI",
+            UpgradeCardData.UpgradeType.Piercing,
+            3
+        );
+
+        AddRuntimeCard(
+            UpgradeCardData.UpgradeType.SplitStopper,
+            "BÖLÜNME ENGELİ",
+            UpgradeCardData.UpgradeType.ExplosiveBullet,
+            3
+        );
+
+        AddRuntimeCard(
+            UpgradeCardData.UpgradeType.BossHunter,
+            "BOSS AVCISI",
+            UpgradeCardData.UpgradeType.CriticalChance,
+            4
+        );
+    }
+
+    void AddRuntimeCard(UpgradeCardData.UpgradeType type, string cardName, UpgradeCardData.UpgradeType iconFrom, int maxLevel)
+    {
+        foreach (UpgradeCardData existing in allCards)
+        {
+            if (existing != null && existing.upgradeType == type)
+                return;
+        }
+
+        UpgradeCardData card = ScriptableObject.CreateInstance<UpgradeCardData>();
+        card.name = cardName;
+        card.cardName = cardName;
+        card.upgradeType = type;
+        card.maxLevel = maxLevel;
+
+        foreach (UpgradeCardData existing in allCards)
+        {
+            if (existing != null && existing.upgradeType == iconFrom)
+            {
+                card.icon = existing.icon;
+                break;
+            }
+        }
+
+        allCards.Add(card);
+    }
+
+    // Yeni kartlar ilgili düşman / boss çıkmaya başlayınca sunulur.
+    static bool IsCardUnlocked(UpgradeCardData.UpgradeType type, int playerLevel)
+    {
+        switch (type)
+        {
+            case UpgradeCardData.UpgradeType.ShieldBreaker: return playerLevel >= 5;
+            case UpgradeCardData.UpgradeType.SplitStopper: return playerLevel >= 7;
+            case UpgradeCardData.UpgradeType.BossHunter: return playerLevel >= 4;
+            default: return true;
+        }
+    }
+
     List<UpgradeCardData> GetAvailableCards()
     {
         List<UpgradeCardData> availableCards =
@@ -350,7 +417,7 @@ public class LevelUpCardManager : MonoBehaviour
                     card.upgradeType
                 );
 
-            if (currentLevel < card.maxLevel)
+            if (currentLevel < card.maxLevel && IsCardUnlocked(card.upgradeType, CurrentPlayerLevel))
             {
                 availableCards.Add(card);
             }
@@ -518,19 +585,19 @@ public class LevelUpCardManager : MonoBehaviour
 
         if (!CanReroll(cardIndex))
         {
-            label = "YENİLE - BİTTİ";
+            label = Loc.Pick("YENİLE - BİTTİ", "REROLL - NONE LEFT");
             interactable = false;
         }
         else if (HasFreeReroll(cardIndex))
         {
-            label = "YENİLE - ÜCRETSİZ";
+            label = Loc.Pick("YENİLE - ÜCRETSİZ", "REROLL - FREE");
             interactable = true;
         }
         else
         {
             int cost = GetPaidRerollCost(cardIndex);
 
-            label = "YENİLE - " + cost + " ALTIN";
+            label = Loc.Pick("YENİLE - ", "REROLL - ") + cost + " " + Loc.T("ALTIN");
             interactable =
                 GameManager.Instance != null &&
                 GameManager.Instance.gold >= cost;
@@ -602,16 +669,16 @@ public class LevelUpCardManager : MonoBehaviour
         switch (rarity)
         {
             case UpgradeCardData.Rarity.Rare:
-                return "NADİR";
+                return Loc.Pick("NADİR", "RARE");
 
             case UpgradeCardData.Rarity.Epic:
-                return "EPİK";
+                return Loc.Pick("EPİK", "EPIC");
 
             case UpgradeCardData.Rarity.Legendary:
-                return "EFSANEVİ";
+                return Loc.Pick("EFSANEVİ", "LEGENDARY");
 
             default:
-                return "SIRADAN";
+                return Loc.Pick("SIRADAN", "COMMON");
         }
     }
 
@@ -653,7 +720,7 @@ public class LevelUpCardManager : MonoBehaviour
 
         if (cardUI.nameText != null)
         {
-            cardUI.nameText.text = data.cardName;
+            cardUI.nameText.text = Loc.T(data.cardName);
         }
 
         if (cardUI.levelText != null &&
@@ -734,7 +801,7 @@ public class LevelUpCardManager : MonoBehaviour
         PlayerStats stats = PlayerStats.Instance;
 
         if (stats == null)
-            return data.description;
+            return Loc.T(data.description);
 
         float rarity = GetRarityMultiplier(choice.rarity);
         float floatValue = data.floatValue * rarity;
@@ -747,29 +814,37 @@ public class LevelUpCardManager : MonoBehaviour
         switch (data.upgradeType)
         {
             case UpgradeCardData.UpgradeType.Damage:
-                return "Silah hasarını " + Percent(floatValue) + " artırır.";
+                return L("Silah hasarını " + Percent(floatValue) + " artırır.", "Increases weapon damage by " + Percent(floatValue) + ".");
 
             case UpgradeCardData.UpgradeType.FireRate:
-                return "Ateş hızını " + Percent(floatValue) + " artırır.";
+                return L("Ateş hızını " + Percent(floatValue) + " artırır.", "Increases fire rate by " + Percent(floatValue) + ".");
 
             case UpgradeCardData.UpgradeType.MaxHealth:
-                return "Maksimum canı " + intValue + " artırır.";
+                return L("Maksimum canı " + intValue + " artırır.", "Increases max health by " + intValue + ".");
 
             case UpgradeCardData.UpgradeType.BulletSpeed:
-                return "Mermi hızını " + Percent(floatValue) + " artırır.";
+                return L("Mermi hızını " + Percent(floatValue) + " artırır.", "Increases bullet speed by " + Percent(floatValue) + ".");
 
             case UpgradeCardData.UpgradeType.CriticalChance:
             {
                 float total = Mathf.Clamp01(stats.criticalChance + floatValue);
-                return "Kritik vuruş şansını " + Percent(floatValue) + " artırır (toplam " + Percent(total) + "). " +
-                       "Kritik vuruş " + Number(stats.criticalDamageMultiplier) + " kat hasar verir.";
+                return L(
+                    "Kritik vuruş şansını " + Percent(floatValue) + " artırır (toplam " + Percent(total) + "). Kritik vuruş " + Number(stats.criticalDamageMultiplier) + " kat hasar verir.",
+                    "Increases critical chance by " + Percent(floatValue) + " (total " + Percent(total) + "). Critical hits deal " + Number(stats.criticalDamageMultiplier) + "x damage."
+                );
             }
 
             case UpgradeCardData.UpgradeType.Piercing:
-                return "Mermiler +" + intValue + " düşmanı delip geçer (toplam " + (stats.piercing + intValue) + ").";
+                return L(
+                    "Mermiler +" + intValue + " düşmanı delip geçer (toplam " + (stats.piercing + intValue) + ").",
+                    "Bullets pierce +" + intValue + " enemies (total " + (stats.piercing + intValue) + ")."
+                );
 
             case UpgradeCardData.UpgradeType.ExtraBullet:
-                return "Mermi hasarını %100 artırır (toplam " + (stats.extraBullets + 2) + " kat hasar).";
+                return L(
+                    "Mermi hasarını %100 artırır (toplam " + (stats.extraBullets + 2) + " kat hasar).",
+                    "Increases bullet damage by 100% (total " + (stats.extraBullets + 2) + "x damage)."
+                );
 
             case UpgradeCardData.UpgradeType.ExplosiveBullet:
             {
@@ -777,8 +852,10 @@ public class LevelUpCardManager : MonoBehaviour
                 float damage = stats.explosionDamageMultiplier + stats.explosionDamagePerLevel * step;
 
                 return firstPick
-                    ? "Mermiler çarptığı yerde patlar: " + Number(radius) + " birim çevredeki düşmanlara " + Percent(damage) + " hasar verir."
-                    : "Patlama alanı " + Number(radius) + " birim, patlama hasarı " + Percent(damage) + " olur.";
+                    ? L("Mermiler çarptığı yerde patlar: " + Number(radius) + " birim çevredeki düşmanlara " + Percent(damage) + " hasar verir.",
+                        "Bullets explode on impact, dealing " + Percent(damage) + " damage to enemies within " + Number(radius) + " units.")
+                    : L("Patlama alanı " + Number(radius) + " birim, patlama hasarı " + Percent(damage) + " olur.",
+                        "Explosion radius becomes " + Number(radius) + " units, explosion damage " + Percent(damage) + ".");
             }
 
             case UpgradeCardData.UpgradeType.FreezeBullet:
@@ -787,8 +864,10 @@ public class LevelUpCardManager : MonoBehaviour
                 float duration = stats.freezeDuration + stats.freezeDurationPerLevel * step;
 
                 return firstPick
-                    ? "Mermiler düşmanları " + Number(duration) + " saniye boyunca " + Percent(slow) + " yavaşlatır."
-                    : "Yavaşlatma " + Percent(slow) + ", süresi " + Number(duration) + " saniye olur.";
+                    ? L("Mermiler düşmanları " + Number(duration) + " saniye boyunca " + Percent(slow) + " yavaşlatır.",
+                        "Bullets slow enemies by " + Percent(slow) + " for " + Number(duration) + " seconds.")
+                    : L("Yavaşlatma " + Percent(slow) + ", süresi " + Number(duration) + " saniye olur.",
+                        "Slow becomes " + Percent(slow) + " for " + Number(duration) + " seconds.");
             }
 
             case UpgradeCardData.UpgradeType.BurnBullet:
@@ -796,8 +875,9 @@ public class LevelUpCardManager : MonoBehaviour
                 int damage = stats.burnDamage + Mathf.RoundToInt(stats.burnDamagePerLevel * step);
 
                 return firstPick
-                    ? "Mermiler düşmanları " + Number(stats.burnDuration) + " saniye boyunca saniyede " + damage + " hasarla yakar."
-                    : "Yanma hasarı saniyede " + damage + " olur.";
+                    ? L("Mermiler düşmanları " + Number(stats.burnDuration) + " saniye boyunca saniyede " + damage + " hasarla yakar. Yanma kalkanları deler.",
+                        "Bullets burn enemies for " + damage + " damage per second for " + Number(stats.burnDuration) + " seconds. Burn ignores shields.")
+                    : L("Yanma hasarı saniyede " + damage + " olur.", "Burn damage becomes " + damage + " per second.");
             }
 
             case UpgradeCardData.UpgradeType.ChainLightning:
@@ -806,24 +886,53 @@ public class LevelUpCardManager : MonoBehaviour
                 float range = stats.chainRange + stats.chainRangePerLevel * step;
 
                 return firstPick
-                    ? "İsabet eden mermiden " + count + " düşmana sıçrayan yıldırım çıkar (" +
-                      Percent(stats.chainDamageMultiplier) + " hasar, " + Number(range) + " birim menzil)."
-                    : "Yıldırım " + count + " düşmana sıçrar, menzili " + Number(range) + " birim olur.";
+                    ? L("İsabet eden mermiden " + count + " düşmana sıçrayan yıldırım çıkar (" + Percent(stats.chainDamageMultiplier) + " hasar, " + Number(range) + " birim menzil).",
+                        "Hits release lightning that jumps to " + count + " enemies (" + Percent(stats.chainDamageMultiplier) + " damage, " + Number(range) + " unit range).")
+                    : L("Yıldırım " + count + " düşmana sıçrar, menzili " + Number(range) + " birim olur.",
+                        "Lightning jumps to " + count + " enemies with " + Number(range) + " unit range.");
+            }
+
+            case UpgradeCardData.UpgradeType.ShieldBreaker:
+            {
+                float next = firstPick
+                    ? 1f + Mathf.Max(1f, rarity)
+                    : stats.shieldDamageMultiplier + 0.5f * Mathf.Max(1f, rarity);
+                next = Mathf.Min(next, 4f);
+
+                return L("Kalkanlara " + Number(next) + " kat hasar verirsin. Kalkanlı düşmanlar ve muhafız boss çok daha çabuk açılır.",
+                         "You deal " + Number(next) + "x damage to shields. Shielded enemies and Guardian bosses open up much faster.");
+            }
+
+            case UpgradeCardData.UpgradeType.SplitStopper:
+            {
+                float chance = Mathf.Clamp01(stats.splitBlockChance + 0.35f * Mathf.Max(1f, rarity));
+                return L("Bölünen düşmanlar " + Percent(chance) + " olasılıkla ölünce bölünmez.",
+                         "Splitters have a " + Percent(chance) + " chance not to split when they die.");
+            }
+
+            case UpgradeCardData.UpgradeType.BossHunter:
+            {
+                float bonus = stats.bossDamageMultiplier - 1f + 0.25f * Mathf.Max(1f, rarity);
+                return L("Bosslara " + Percent(bonus) + " fazla hasar verirsin (yanma dahil).",
+                         "You deal " + Percent(bonus) + " more damage to bosses (burn included).");
             }
 
             default:
-                return data.description;
+                return Loc.T(data.description);
         }
     }
 
+    static string L(string turkish, string english) => Loc.Pick(turkish, english);
+
     static string Percent(float value)
     {
-        return "%" + Mathf.RoundToInt(value * 100f);
+        int percent = Mathf.RoundToInt(value * 100f);
+        return Loc.IsEnglish ? percent + "%" : "%" + percent;
     }
 
     static string Number(float value)
     {
-        return value.ToString("0.#", Turkish);
+        return value.ToString("0.#", Loc.IsEnglish ? System.Globalization.CultureInfo.InvariantCulture : Turkish);
     }
 
     // ==================================
@@ -944,6 +1053,18 @@ public class LevelUpCardManager : MonoBehaviour
 
             case UpgradeCardData.UpgradeType.ChainLightning:
                 stats.UpgradeChainLightning(rarityMultiplier);
+                break;
+
+            case UpgradeCardData.UpgradeType.ShieldBreaker:
+                stats.UpgradeShieldBreaker(rarityMultiplier);
+                break;
+
+            case UpgradeCardData.UpgradeType.SplitStopper:
+                stats.UpgradeSplitStopper(rarityMultiplier);
+                break;
+
+            case UpgradeCardData.UpgradeType.BossHunter:
+                stats.UpgradeBossHunter(rarityMultiplier);
                 break;
         }
 

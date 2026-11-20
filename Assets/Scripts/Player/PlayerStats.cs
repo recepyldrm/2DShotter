@@ -113,6 +113,49 @@ public class PlayerStats : MonoBehaviour
     public int burnDamagePerLevel = 3;
 
     // ==================================
+    // YENİ DÜŞMANLARA KARŞI KARTLAR
+    // ==================================
+
+    [Header("Kalkan Kırıcı")]
+    public int shieldBreakerLevel = 0;
+
+    // Kalkana verilen hasar çarpanı (ilk seçimde 2 kat)
+    public float shieldDamageMultiplier = 1f;
+
+    [Header("Bölünme Engeli")]
+    public int splitStopperLevel = 0;
+
+    // Bölünen düşmanın ölünce bölünmeme olasılığı
+    [Range(0f, 1f)]
+    public float splitBlockChance = 0f;
+
+    [Header("Boss Avcısı")]
+    public int bossHunterLevel = 0;
+
+    // Bosslara verilen hasar çarpanı
+    public float bossDamageMultiplier = 1f;
+
+    public void UpgradeShieldBreaker(float rarityMultiplier)
+    {
+        shieldBreakerLevel++;
+        shieldDamageMultiplier = shieldBreakerLevel == 1
+            ? 1f + Mathf.Max(1f, rarityMultiplier)
+            : shieldDamageMultiplier + 0.5f * Mathf.Max(1f, rarityMultiplier);
+    }
+
+    public void UpgradeSplitStopper(float rarityMultiplier)
+    {
+        splitStopperLevel++;
+        splitBlockChance = Mathf.Clamp01(splitBlockChance + 0.35f * Mathf.Max(1f, rarityMultiplier));
+    }
+
+    public void UpgradeBossHunter(float rarityMultiplier)
+    {
+        bossHunterLevel++;
+        bossDamageMultiplier += 0.25f * Mathf.Max(1f, rarityMultiplier);
+    }
+
+    // ==================================
     // CRITICAL
     // ==================================
 
@@ -488,6 +531,15 @@ public class PlayerStats : MonoBehaviour
 
             case UpgradeCardData.UpgradeType.ChainLightning:
                 return chainLightningLevel;
+
+            case UpgradeCardData.UpgradeType.ShieldBreaker:
+                return shieldBreakerLevel;
+
+            case UpgradeCardData.UpgradeType.SplitStopper:
+                return splitStopperLevel;
+
+            case UpgradeCardData.UpgradeType.BossHunter:
+                return bossHunterLevel;
 
             default:
                 return 0;

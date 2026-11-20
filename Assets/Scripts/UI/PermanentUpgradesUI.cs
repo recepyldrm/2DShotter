@@ -110,7 +110,7 @@ public class PermanentUpgradesUI : MonoBehaviour
     {
         int gold = PlayerProgress.TotalGold;
 
-        goldLabel.text = UIBuilder.ColorTag(theme.mainRedHover, "ALTIN") + "  " + gold;
+        goldLabel.text = UIBuilder.ColorTag(theme.mainRedHover, Loc.T("ALTIN")) + "  " + gold;
 
         foreach (Row row in rows)
         {
@@ -138,7 +138,7 @@ public class PermanentUpgradesUI : MonoBehaviour
             {
                 theme.ApplyButton(row.button, (Image)row.button.targetGraphic, false);
                 row.button.interactable = false;
-                row.buttonText.text = "MAKS.";
+                row.buttonText.text = Loc.T("MAKS");
                 row.buttonText.color = theme.mainRedHover;
                 continue;
             }
@@ -148,7 +148,7 @@ public class PermanentUpgradesUI : MonoBehaviour
 
             theme.ApplyButton(row.button, (Image)row.button.targetGraphic, true);
             row.button.interactable = canAfford;
-            row.buttonText.text = cost + " ALTIN";
+            row.buttonText.text = cost + " " + Loc.T("ALTIN");
             row.buttonText.color = canAfford ? theme.mainWhite : theme.greyLight;
         }
 
@@ -159,7 +159,7 @@ public class PermanentUpgradesUI : MonoBehaviour
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            upgrade.bonusFormat,
+            Loc.T(upgrade.bonusFormat),
             Mathf.RoundToInt(value)
         );
     }

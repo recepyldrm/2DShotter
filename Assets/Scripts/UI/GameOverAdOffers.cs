@@ -11,8 +11,8 @@ using UnityEngine.UI;
 // ekler ve butonları Restart'ın altında oyunun temasıyla (UITheme) oluşturur.
 public class GameOverAdOffers : MonoBehaviour
 {
-    private const string ContinueReward = "DEVAM ET";
-    private const string DoubleGoldReward = "2x ALTIN";
+    private static string ContinueReward => Loc.Pick("DEVAM ET", "CONTINUE");
+    private static string DoubleGoldReward => Loc.Pick("2x ALTIN", "2x GOLD");
 
     [Header("Opsiyonel: kendi butonların")]
     public Button continueButton;
@@ -212,7 +212,7 @@ public class GameOverAdOffers : MonoBehaviour
 
         // Alt satır: küçük, soluk "watch ad" notu
         string subColor = ColorUtility.ToHtmlStringRGB(theme.greyLight);
-        text.text = label + "\n<size=24><color=#" + subColor + ">reklam izle</color></size>";
+        text.text = label + "\n<size=24><color=#" + subColor + ">" + Loc.Pick("reklam izle", "watch ad") + "</color></size>";
         text.fontSize = 44f;
         text.lineSpacing = -10f;
         text.alignment = TextAlignmentOptions.Center;

@@ -120,7 +120,7 @@ public class AchievementsUI : MonoBehaviour
             {
                 theme.ApplyButton(row.button, (Image)row.button.targetGraphic, false);
                 row.button.interactable = false;
-                row.buttonText.text = "ALINDI";
+                row.buttonText.text = Loc.T("ALINDI");
                 row.buttonText.color = theme.mainRedHover;
                 row.group.alpha = 0.6f;
             }
@@ -128,7 +128,7 @@ public class AchievementsUI : MonoBehaviour
             {
                 theme.ApplyButton(row.button, (Image)row.button.targetGraphic, true);
                 row.button.interactable = true;
-                row.buttonText.text = "AL " + reward;
+                row.buttonText.text = Loc.Pick("AL ", "CLAIM ") + reward;
                 row.buttonText.color = theme.mainWhite;
                 row.group.alpha = 1f;
             }
@@ -144,7 +144,7 @@ public class AchievementsUI : MonoBehaviour
 
         summaryText.text =
             UIBuilder.ColorTag(theme.mainRedHover, completed.ToString()) +
-            " / " + rows.Count + " TAMAMLANDI";
+            " / " + rows.Count + Loc.Pick(" TAMAMLANDI", " COMPLETED");
 
         UpdateBadge();
     }
@@ -160,10 +160,10 @@ public class AchievementsUI : MonoBehaviour
                 ? skin.displayName
                 : achievement.skinReward;
 
-            return "GÖRÜNÜM: " + skinName;
+            return Loc.Pick("GÖRÜNÜM: ", "SKIN: ") + skinName;
         }
 
-        return "+" + achievement.goldReward + " ALTIN";
+        return "+" + achievement.goldReward + " " + Loc.T("ALTIN");
     }
 
     // ==================================

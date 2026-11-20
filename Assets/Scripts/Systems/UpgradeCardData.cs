@@ -18,7 +18,12 @@ public class UpgradeCardData : ScriptableObject
         ExplosiveBullet,
         FreezeBullet,
         BurnBullet,
-        ChainLightning
+        ChainLightning,
+
+        // Yeni düşmanlara karşı (kodla oluşturulur, asset gerekmez)
+        ShieldBreaker,
+        SplitStopper,
+        BossHunter
     }
 
     public enum Rarity

@@ -235,3 +235,29 @@ MonoBehaviour:
     flipX: 0
     tint: {r: 1, g: 0.85, b: 0.4, a: 1}
     price: 900
+  - id: drone_season
+    displayName: SEZON SAVAŞÇISI
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: -2085297131118140966, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 2469033851445598716, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 3242852554281066579, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: -3312327535390791081, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 1033412679963994307, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 1601381086964363177, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 8325545706620066509, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 1755033254961316109, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 5448622151208290923, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 767275881243087891, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 4717479194549166724, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 741564202561748535, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: -2263443639419737509, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 5816005833443997956, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: -4321844286452402176, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    - {fileID: 6428867732993131146, guid: 9ee8cdb8d5a49ae4aa383945b9b56db4, type: 3}
+    framesPerSecond: 12
+    scale: 0.75
+    flipX: 1
+    tint: {r: 1, g: 0.62, b: 0.3, a: 1}
+    price: 0
+    unlockedByAchievement: 1

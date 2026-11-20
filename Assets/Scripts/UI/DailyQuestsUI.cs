@@ -29,6 +29,10 @@ public class DailyQuestsUI : MonoBehaviour
     private Button weeklyTab;
     private RectTransform dailyTabBadge;
     private RectTransform weeklyTabBadge;
+    private Button seasonTab;
+    private RectTransform seasonTabBadge;
+    private SeasonPassView seasonView;
+    private GameObject questContent;
 
     private QuestBoard board = QuestBoard.Daily;
     private string shownPeriod;
@@ -50,12 +54,15 @@ public class DailyQuestsUI : MonoBehaviour
         BuildPanel(canvas);
 
         QuestBoard.OnChanged += OnQuestsChanged;
+        SeasonPass.OnChanged += OnQuestsChanged;
         UpdateBadges();
     }
 
     void OnDestroy()
     {
         QuestBoard.OnChanged -= OnQuestsChanged;
+        SeasonPass.OnChanged -= OnQuestsChanged;
+        seasonView?.Dispose();
     }
 
     void Update()
@@ -69,6 +76,13 @@ public class DailyQuestsUI : MonoBehaviour
             return;
 
         timerRefresh = 1f;
+
+        // Sezon sekmesi kendi sayacını günceller.
+        if (board == null)
+        {
+            seasonView.UpdateTimer();
+            return;
+        }
 
         // Ekran açıkken dönem değişirse yeni görevler gelir.
         if (shownPeriod != board.Period)
@@ -97,21 +111,30 @@ public class DailyQuestsUI : MonoBehaviour
     void UpdateBadges()
     {
         if (badge != null)
-            badge.gameObject.SetActive(QuestBoard.TotalClaimable > 0);
+            badge.gameObject.SetActive(QuestBoard.TotalClaimable + SeasonPass.ClaimableCount > 0);
 
         if (dailyTabBadge != null)
             dailyTabBadge.gameObject.SetActive(QuestBoard.Daily.ClaimableCount > 0);
 
         if (weeklyTabBadge != null)
             weeklyTabBadge.gameObject.SetActive(QuestBoard.Weekly.ClaimableCount > 0);
+
+        if (seasonTabBadge != null)
+            seasonTabBadge.gameObject.SetActive(SeasonPass.ClaimableCount > 0);
     }
 
     public void Show()
     {
         // Günlükte alınacak bir şey yoksa ama haftalıkta varsa haftalıkla aç.
-        board = QuestBoard.Daily.ClaimableCount == 0 && QuestBoard.Weekly.ClaimableCount > 0
-            ? QuestBoard.Weekly
-            : QuestBoard.Daily;
+        // İkisinde de yoksa ama sezon ödülü varsa sezonla aç.
+        if (QuestBoard.Daily.ClaimableCount > 0)
+            board = QuestBoard.Daily;
+        else if (QuestBoard.Weekly.ClaimableCount > 0)
+            board = QuestBoard.Weekly;
+        else if (SeasonPass.ClaimableCount > 0)
+            board = null;
+        else
+            board = QuestBoard.Daily;
 
         Refresh();
         timerRefresh = 0f;
@@ -164,11 +187,24 @@ public class DailyQuestsUI : MonoBehaviour
 
     void Refresh()
     {
-        shownPeriod = board.Period;
-        IReadOnlyList<QuestBoard.Quest> quests = board.Current;
-
         theme.ApplyButton(dailyTab, (Image)dailyTab.targetGraphic, board == QuestBoard.Daily);
         theme.ApplyButton(weeklyTab, (Image)weeklyTab.targetGraphic, board == QuestBoard.Weekly);
+        theme.ApplyButton(seasonTab, (Image)seasonTab.targetGraphic, board == null);
+
+        // Sezon sekmesi: görev listesi gizlenir, sezon bileti görünür.
+        bool season = board == null;
+        questContent.SetActive(!season);
+        timerText.gameObject.SetActive(!season);
+        seasonView.SetVisible(season);
+
+        if (season)
+        {
+            UpdateBadges();
+            return;
+        }
+
+        shownPeriod = board.Period;
+        IReadOnlyList<QuestBoard.Quest> quests = board.Current;
 
         for (int i = 0; i < rows.Count; i++)
         {
@@ -263,19 +299,27 @@ public class DailyQuestsUI : MonoBehaviour
 
         // Sekmeler
         dailyTab = UIBuilder.CreateButton(theme, window, "DailyTab", "GÜNLÜK", true, out _);
-        UIBuilder.Place((RectTransform)dailyTab.transform, new Vector2(0.5f, 1f), new Vector2(-165f, -195f), new Vector2(310f, 80f));
+        UIBuilder.Place((RectTransform)dailyTab.transform, new Vector2(0.5f, 1f), new Vector2(-330f, -195f), new Vector2(300f, 80f));
         dailyTab.onClick.AddListener(() => SelectBoard(QuestBoard.Daily));
         dailyTabBadge = UIBuilder.CreateBadge(theme, (RectTransform)dailyTab.transform);
 
         weeklyTab = UIBuilder.CreateButton(theme, window, "WeeklyTab", "HAFTALIK", false, out _);
-        UIBuilder.Place((RectTransform)weeklyTab.transform, new Vector2(0.5f, 1f), new Vector2(165f, -195f), new Vector2(310f, 80f));
+        UIBuilder.Place((RectTransform)weeklyTab.transform, new Vector2(0.5f, 1f), new Vector2(0f, -195f), new Vector2(300f, 80f));
         weeklyTab.onClick.AddListener(() => SelectBoard(QuestBoard.Weekly));
         weeklyTabBadge = UIBuilder.CreateBadge(theme, (RectTransform)weeklyTab.transform);
+
+        seasonTab = UIBuilder.CreateButton(theme, window, "SeasonTab", "SEZON", false, out _);
+        UIBuilder.Place((RectTransform)seasonTab.transform, new Vector2(0.5f, 1f), new Vector2(330f, -195f), new Vector2(300f, 80f));
+        seasonTab.onClick.AddListener(() => SelectBoard(null));
+        seasonTabBadge = UIBuilder.CreateBadge(theme, (RectTransform)seasonTab.transform);
 
         timerText = UIBuilder.CreateText(theme, window, string.Empty, 28f, TextAlignmentOptions.Center, theme.greyLight);
         UIBuilder.AnchorTop(timerText.rectTransform, 245f, 45f);
 
         RectTransform content = UIBuilder.CreateScrollList(window, new Vector2(60f, 40f), new Vector2(-60f, -300f));
+        questContent = content.parent.parent.gameObject;
+
+        seasonView = new SeasonPassView(theme, window);
 
         for (int i = 0; i < QuestBoard.QuestCount; i++)
         {

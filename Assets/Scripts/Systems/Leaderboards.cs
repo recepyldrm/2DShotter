@@ -4,7 +4,8 @@ public interface ILeaderboardProvider
     // Oyuncu giriş yaptı ve tablo kullanılabilir mi?
     bool IsAvailable { get; }
 
-    void ReportScore(long score);
+    // Her zorluğun ayrı tablosu var (kolay modda yapılan skor zor tablosuna girmez).
+    void ReportScore(long score, Difficulty.Level difficulty);
 
     // Servisin kendi liderlik ekranını açar (arkadaşlar / herkes).
     void ShowLeaderboard();
@@ -24,7 +25,7 @@ public static class Leaderboards
     {
         if (score > 0 && IsAvailable)
         {
-            Provider.ReportScore(score);
+            Provider.ReportScore(score, Difficulty.Current);
         }
     }
 

@@ -296,7 +296,7 @@ public class SkinShopUI : MonoBehaviour
 
         if (goldLabel != null)
         {
-            goldLabel.text = ColorTag(theme.mainRedHover, "ALTIN") + "  " + totalGold;
+            goldLabel.text = ColorTag(theme.mainRedHover, Loc.T("ALTIN")) + "  " + totalGold;
         }
 
         bool storeReady = IAPManager.Instance != null && IAPManager.Instance.IsReady;
@@ -341,7 +341,7 @@ public class SkinShopUI : MonoBehaviour
             {
                 SetAction(
                     row.action,
-                    row.skin.price + " ALTIN",
+                    row.skin.price + " " + Loc.T("ALTIN"),
                     totalGold >= row.skin.price ? ButtonStyle.Buy : ButtonStyle.Locked
                 );
             }
@@ -357,7 +357,7 @@ public class SkinShopUI : MonoBehaviour
         action.button.interactable =
             style == ButtonStyle.Buy || style == ButtonStyle.Select;
 
-        action.text.text = label;
+        action.text.text = Loc.T(label);
 
         switch (style)
         {
@@ -383,7 +383,7 @@ public class SkinShopUI : MonoBehaviour
         string price = IAPManager.Instance.GetPriceString(productId);
 
         if (string.IsNullOrEmpty(price))
-            return "SATIN AL";
+            return Loc.T("SATIN AL");
 
         // Fontta ₺ işareti yok: "₺49,99" -> "49,99 TL"
         if (price.Contains("₺"))
@@ -404,7 +404,7 @@ public class SkinShopUI : MonoBehaviour
         if (statusLabel == null || string.IsNullOrEmpty(message))
             return;
 
-        statusLabel.text = message;
+        statusLabel.text = Loc.T(message);
         statusLabel.gameObject.SetActive(true);
         statusHideTime = Time.unscaledTime + StatusDuration;
     }
@@ -450,7 +450,7 @@ public class SkinShopUI : MonoBehaviour
         RectTransform safeRoot = CreateSafeRoot("OpenButtonSafeArea", canvas);
 
         ActionButton open = CreateActionButton(safeRoot, "ShopButton", true);
-        open.text.text = "MAĞAZA";
+        open.text.text = Loc.T("MAĞAZA");
         open.text.fontSize = 44f;
 
         RectTransform rect = (RectTransform)open.button.transform;
@@ -514,7 +514,7 @@ public class SkinShopUI : MonoBehaviour
         if (Application.platform == RuntimePlatform.IPhonePlayer)
         {
             ActionButton restore = CreateActionButton(window, "RestoreButton", false);
-            restore.text.text = "GERİ YÜKLE";
+            restore.text.text = Loc.T("GERİ YÜKLE");
             restore.text.fontSize = 28f;
 
             RectTransform restoreRect = (RectTransform)restore.button.transform;
@@ -642,7 +642,7 @@ public class SkinShopUI : MonoBehaviour
     {
         RectTransform rowRect = CreateRowBackground(content, "Pack_" + pack.productId, 130f);
 
-        string label = "+" + pack.gold + " " + ColorTag(theme.mainRedHover, "ALTIN");
+        string label = "+" + pack.gold + " " + ColorTag(theme.mainRedHover, Loc.T("ALTIN"));
 
         TextMeshProUGUI amountText = CreateText("Amount", rowRect, label, 48f, TextAlignmentOptions.MidlineLeft, theme.mainWhite);
         Stretch(amountText.rectTransform);
@@ -685,7 +685,7 @@ public class SkinShopUI : MonoBehaviour
         }
 
         // İsim
-        string displayName = string.IsNullOrEmpty(skin.displayName) ? skin.id : skin.displayName;
+        string displayName = string.IsNullOrEmpty(skin.displayName) ? skin.id : Loc.T(skin.displayName);
 
         if (skin.unlockedByAchievement)
         {
@@ -693,14 +693,14 @@ public class SkinShopUI : MonoBehaviour
             AchievementCatalog.Achievement achievement = AchievementCatalog.FindBySkinReward(skin.id);
             // Türkçe büyük harf: "i" -> "İ"
             string hint = achievement != null
-                ? achievement.description.ToUpper(new System.Globalization.CultureInfo("tr-TR"))
-                : "BAŞARIM ÖDÜLÜ";
+                ? (Loc.IsEnglish ? Loc.T(achievement.description).ToUpperInvariant() : achievement.description.ToUpper(new System.Globalization.CultureInfo("tr-TR")))
+                : skin.id == SeasonPass.RewardSkinId ? Loc.Pick("SEZON BİLETİ ÖDÜLÜ", "SEASON PASS REWARD") : Loc.Pick("BAŞARIM ÖDÜLÜ", "ACHIEVEMENT REWARD");
 
             displayName += "\n<size=24>" + ColorTag(theme.greyLight, hint) + "</size>";
         }
         else if (skin.IsPremium)
         {
-            displayName += "\n<size=26>" + ColorTag(theme.mainRedHover, "PREMİUM") + "</size>";
+            displayName += "\n<size=26>" + ColorTag(theme.mainRedHover, "PREMIUM") + "</size>";
         }
 
         // Drone yeteneği

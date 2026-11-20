@@ -13,26 +13,78 @@ public class StageThemes : MonoBehaviour
 
     private const float TransitionDuration = 2.5f;
 
-    private struct Theme
+    // Bölüm: renk + oyun kuralı (düşman çarpanları ve özel düşman olasılıkları)
+    private class Theme
     {
         public string name;
         public Color tint;
 
-        public Theme(string name, Color tint)
-        {
-            this.name = name;
-            this.tint = tint;
-        }
+        public float health = 1f;
+        public float speed = 1f;
+        public float damage = 1f;
+        public float rangedChance = 1f;
+        public float shieldedChance = 1f;
+        public float splitterChance = 1f;
+
+        public string ruleTurkish = string.Empty;
+        public string ruleEnglish = string.Empty;
     }
 
     private static readonly Theme[] Themes =
     {
-        new Theme("ÇORAK TOPRAKLAR", Color.white),
-        new Theme("KIZIL ÇÖL", new Color(1f, 0.7f, 0.58f, 1f)),
-        new Theme("ZEHİRLİ BATAKLIK", new Color(0.68f, 0.95f, 0.62f, 1f)),
-        new Theme("BUZUL SINIR", new Color(0.68f, 0.86f, 1f, 1f)),
-        new Theme("KARANLIK BÖLGE", new Color(0.6f, 0.52f, 0.8f, 1f))
+        new Theme
+        {
+            name = "ÇORAK TOPRAKLAR",
+            tint = Color.white
+        },
+        new Theme
+        {
+            name = "KIZIL ÇÖL",
+            tint = new Color(1f, 0.7f, 0.58f, 1f),
+            rangedChance = 2.2f,
+            ruleTurkish = "Nişancılar çoğaldı",
+            ruleEnglish = "More gunners"
+        },
+        new Theme
+        {
+            name = "ZEHİRLİ BATAKLIK",
+            tint = new Color(0.68f, 0.95f, 0.62f, 1f),
+            splitterChance = 2.2f,
+            speed = 1.05f,
+            ruleTurkish = "Bölünenler çoğaldı, düşmanlar biraz hızlı",
+            ruleEnglish = "More splitters, enemies slightly faster"
+        },
+        new Theme
+        {
+            name = "BUZUL SINIR",
+            tint = new Color(0.68f, 0.86f, 1f, 1f),
+            speed = 0.8f,
+            health = 1.25f,
+            ruleTurkish = "Düşmanlar yavaş ama dayanıklı",
+            ruleEnglish = "Enemies are slow but tough"
+        },
+        new Theme
+        {
+            name = "KARANLIK BÖLGE",
+            tint = new Color(0.6f, 0.52f, 0.8f, 1f),
+            shieldedChance = 2.2f,
+            damage = 1.15f,
+            ruleTurkish = "Kalkanlılar çoğaldı, düşmanlar daha sert vurur",
+            ruleEnglish = "More shielded enemies, enemies hit harder"
+        }
     };
+
+    // Şu anki bölümün kuralları (bölüm 1'de hepsi 1)
+    private static Theme activeTheme = Themes[0];
+
+    public static float HealthMultiplier => activeTheme.health;
+    public static float SpeedMultiplier => activeTheme.speed;
+    public static float DamageMultiplier => activeTheme.damage;
+    public static float RangedChanceMultiplier => activeTheme.rangedChance;
+    public static float ShieldedChanceMultiplier => activeTheme.shieldedChance;
+    public static float SplitterChanceMultiplier => activeTheme.splitterChance;
+
+    public static string StageName(int stage) => Loc.T(ThemeForStage(stage).name);
 
     private static StageThemes instance;
 
@@ -49,6 +101,7 @@ public class StageThemes : MonoBehaviour
     private CanvasGroup bannerGroup;
     private TextMeshProUGUI bannerTitle;
     private TextMeshProUGUI bannerName;
+    private TextMeshProUGUI bannerRule;
 
     public static int StageForLevel(int level) => Mathf.Max(0, (level - 1) / LevelsPerStage);
 
@@ -88,6 +141,9 @@ public class StageThemes : MonoBehaviour
         if (instance == this)
         {
             instance = null;
+
+            // Yeni oyunda bölüm 1 kurallarıyla başla
+            activeTheme = Themes[0];
         }
     }
 
@@ -127,8 +183,9 @@ public class StageThemes : MonoBehaviour
             StopCoroutine(transition);
         }
 
+        activeTheme = target;
         transition = StartCoroutine(Transition(target.tint));
-        StartCoroutine(ShowBanner(stage, target.name));
+        StartCoroutine(ShowBanner(stage, target));
     }
 
     IEnumerator Transition(Color targetTint)
@@ -170,14 +227,15 @@ public class StageThemes : MonoBehaviour
     // BÖLÜM ADI
     // ==================================
 
-    IEnumerator ShowBanner(int stage, string stageName)
+    IEnumerator ShowBanner(int stage, Theme stageTheme)
     {
         // Seviye kartı kapanana kadar bekle
         while (TimeScaleController.IsPaused)
             yield return null;
 
         bannerTitle.text = Loc.T("BÖLÜM") + " " + (stage + 1);
-        bannerName.text = Loc.T(stageName);
+        bannerName.text = Loc.T(stageTheme.name);
+        bannerRule.text = Loc.Pick(stageTheme.ruleTurkish, stageTheme.ruleEnglish);
         bannerGroup.gameObject.SetActive(true);
 
         const float fade = 0.5f;
@@ -205,7 +263,7 @@ public class StageThemes : MonoBehaviour
         RectTransform safeRoot = UIBuilder.CreateSafeRoot(canvas);
 
         RectTransform banner = UIBuilder.CreateRect("StageBanner", safeRoot);
-        UIBuilder.Place(banner, new Vector2(0.5f, 1f), new Vector2(0f, -260f), new Vector2(900f, 170f));
+        UIBuilder.Place(banner, new Vector2(0.5f, 1f), new Vector2(0f, -260f), new Vector2(900f, 215f));
 
         Image background = banner.gameObject.AddComponent<Image>();
         theme.ApplyNotice(background);
@@ -220,6 +278,9 @@ public class StageThemes : MonoBehaviour
 
         bannerName = UIBuilder.CreateText(theme, banner, string.Empty, 64f, TextAlignmentOptions.Center, theme.mainRedHover);
         UIBuilder.AnchorTop(bannerName.rectTransform, 62f, 85f);
+
+        bannerRule = UIBuilder.CreateText(theme, banner, string.Empty, 28f, TextAlignmentOptions.Center, theme.mainWhite);
+        UIBuilder.AnchorTop(bannerRule.rectTransform, 150f, 45f);
 
         banner.gameObject.SetActive(false);
     }

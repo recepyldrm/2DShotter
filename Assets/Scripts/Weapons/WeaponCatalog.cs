@@ -178,8 +178,8 @@ public static class WeaponCatalog
 
     public const int MaxLevel = 5;
 
-    // Her seviye: +%12 hasar, +%5 atış hızı
-    private const float DamagePerLevel = 0.12f;
+    // Her seviye: +%10 hasar, +%5 atış hızı
+    private const float DamagePerLevel = 0.1f;
     private const float FireRatePerLevel = 0.05f;
 
     public static int GetLevel(Weapon weapon) =>

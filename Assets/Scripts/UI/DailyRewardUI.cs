@@ -106,7 +106,7 @@ public class DailyRewardUI : MonoBehaviour
             AudioManager.Instance.PlayUpgradePurchase();
         }
 
-        rewardText.text = "+" + gold + " " + UIBuilder.ColorTag(theme.mainRedHover, "ALTIN");
+        rewardText.text = "+" + gold + " " + UIBuilder.ColorTag(theme.mainRedHover, Loc.T("ALTIN"));
         rewardText.gameObject.SetActive(true);
 
         Refresh();
@@ -147,7 +147,7 @@ public class DailyRewardUI : MonoBehaviour
 
         if (canClaim)
         {
-            claimText.text = "ÖDÜLÜ AL";
+            claimText.text = Loc.T("ÖDÜLÜ AL");
             claimText.color = theme.mainWhite;
             return;
         }
@@ -155,7 +155,7 @@ public class DailyRewardUI : MonoBehaviour
         TimeSpan wait = DailyReward.TimeUntilNextClaim;
 
         claimText.text = string.Format(
-            "YENİ ÖDÜL {0:00}:{1:00}:{2:00}",
+            Loc.Pick("YENİ ÖDÜL {0:00}:{1:00}:{2:00}", "NEXT REWARD {0:00}:{1:00}:{2:00}"),
             (int)wait.TotalHours,
             wait.Minutes,
             wait.Seconds
@@ -245,7 +245,9 @@ public class DailyRewardUI : MonoBehaviour
         TextMeshProUGUI dayText = UIBuilder.CreateText(
             theme,
             tileRect,
-            isBigDay ? "GÜN 7\n<size=22>BÜYÜK ÖDÜL</size>" : "GÜN " + (index + 1),
+            isBigDay
+                ? Loc.Pick("GÜN 7\n<size=22>BÜYÜK ÖDÜL</size>", "DAY 7\n<size=22>BIG REWARD</size>")
+                : Loc.Pick("GÜN ", "DAY ") + (index + 1),
             30f,
             TextAlignmentOptions.Center,
             isBigDay ? theme.mainRedHover : theme.greyLight

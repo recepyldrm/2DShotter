@@ -50,7 +50,7 @@ public class FakeRewardedAd : MonoBehaviour, IRewardedAdProvider
         remaining = AdDuration;
         isPlaying = true;
 
-        rewardText.text = string.IsNullOrEmpty(rewardLabel) ? "ÖDÜL" : rewardLabel;
+        rewardText.text = string.IsNullOrEmpty(rewardLabel) ? Loc.T("ÖDÜL") : Loc.T(rewardLabel);
 
         UpdateView();
         overlay.SetActive(true);
@@ -78,13 +78,13 @@ public class FakeRewardedAd : MonoBehaviour, IRewardedAdProvider
 
         countdownText.text =
             finished
-                ? "ÖDÜL KAZANILDI"
-                : "ÖDÜLE " + Mathf.CeilToInt(remaining);
+                ? Loc.T("ÖDÜL KAZANILDI")
+                : Loc.Pick("ÖDÜLE ", "REWARD IN ") + Mathf.CeilToInt(remaining);
 
         countdownText.color = finished ? theme.mainRedHover : theme.greyLight;
 
         claimButton.interactable = finished;
-        claimText.text = finished ? "ÖDÜLÜ AL" : "BEKLE...";
+        claimText.text = finished ? Loc.T("ÖDÜLÜ AL") : Loc.T("BEKLE...");
         claimText.color = finished ? theme.mainWhite : theme.greyLight;
 
         skipButton.gameObject.SetActive(!finished);
@@ -193,7 +193,7 @@ public class FakeRewardedAd : MonoBehaviour, IRewardedAdProvider
         // Atla (ödülsüz)
         skipButton = CreateButton(panel, "SkipButton", false, out TextMeshProUGUI skipText);
         Center((RectTransform)skipButton.transform, new Vector2(0f, -470f), new Vector2(300f, 80f));
-        skipText.text = "GEÇ";
+        skipText.text = Loc.T("GEÇ");
         skipText.fontSize = 30f;
         skipText.color = theme.greyLight;
         skipButton.onClick.AddListener(() => Finish(false));
@@ -221,7 +221,7 @@ public class FakeRewardedAd : MonoBehaviour, IRewardedAdProvider
 
         TextMeshProUGUI tmp = rect.gameObject.AddComponent<TextMeshProUGUI>();
         theme.ApplyText(tmp, color);
-        tmp.text = text;
+        tmp.text = Loc.T(text);
         tmp.fontSize = size;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.raycastTarget = false;

@@ -125,7 +125,7 @@ public static class PermanentUpgrades
             {
                 texts.Add(string.Format(
                     System.Globalization.CultureInfo.InvariantCulture,
-                    upgrade.bonusFormat,
+                    Loc.T(upgrade.bonusFormat),
                     Mathf.RoundToInt(GetValue(upgrade))
                 ));
             }

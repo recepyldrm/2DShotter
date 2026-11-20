@@ -181,19 +181,21 @@ public class EnemyVariant : MonoBehaviour
 
         if (level >= SplitterUnlockLevel)
         {
-            if (roll < SplitterChance) return Kind.Splitter;
-            roll -= SplitterChance;
+            float chance = SplitterChance * StageThemes.SplitterChanceMultiplier;
+            if (roll < chance) return Kind.Splitter;
+            roll -= chance;
         }
 
         if (level >= ShieldedUnlockLevel)
         {
-            if (roll < ShieldedChance) return Kind.Shielded;
-            roll -= ShieldedChance;
+            float chance = ShieldedChance * StageThemes.ShieldedChanceMultiplier;
+            if (roll < chance) return Kind.Shielded;
+            roll -= chance;
         }
 
         if (level >= RangedUnlockLevel)
         {
-            if (roll < RangedChance) return Kind.Ranged;
+            if (roll < RangedChance * StageThemes.RangedChanceMultiplier) return Kind.Ranged;
         }
 
         return Kind.None;
@@ -398,9 +400,16 @@ public class EnemyVariant : MonoBehaviour
         if (shieldHealth <= 0 || damage <= 0)
             return false;
 
-        int absorbed = Mathf.Min(shieldHealth, damage);
+        // "Kalkan Kırıcı" kartı kalkana verilen hasarı katlar; kalkanı aşan
+        // kısım düşmana normal hasar olarak geçer.
+        float shieldMultiplier = PlayerStats.Instance != null
+            ? Mathf.Clamp(PlayerStats.Instance.shieldDamageMultiplier, 1f, 4f)
+            : 1f;
+
+        int boosted = Mathf.RoundToInt(damage * shieldMultiplier);
+        int absorbed = Mathf.Min(shieldHealth, boosted);
         shieldHealth -= absorbed;
-        damage -= absorbed;
+        damage = Mathf.Max(0, Mathf.RoundToInt((boosted - absorbed) / shieldMultiplier));
 
         DamageNumbers.Show(numberPosition, absorbed, DamageNumbers.Style.Shield);
 
@@ -432,6 +441,7 @@ public class EnemyVariant : MonoBehaviour
 
     void BreakShield()
     {
+        RunStats.RegisterShieldBroken();
         temporaryShieldTimer = 0f;
 
         if (shield != null)
@@ -523,8 +533,21 @@ public class EnemyVariant : MonoBehaviour
     // EnemyHealth.Die çağırır (ödüller verildikten sonra).
     public void OnOwnerDied()
     {
+        // Ölüm animasyonu boyunca hale / kalkan cesette kalmasın.
+        shieldHealth = 0;
+        temporaryShieldTimer = 0f;
+        if (glow != null) glow.gameObject.SetActive(false);
+        if (shield != null) shield.gameObject.SetActive(false);
+
         if (CurrentKind != Kind.Splitter || health == null)
             return;
+
+        // "Bölünme Engeli" kartı
+        if (PlayerStats.Instance != null && Random.value < PlayerStats.Instance.splitBlockChance)
+        {
+            ExplosionBlast.Play(transform.position, GetBodySize() * 0.6f, Color.white, SplitterGlow);
+            return;
+        }
 
         float offset = GetBodySize() * 0.35f;
 

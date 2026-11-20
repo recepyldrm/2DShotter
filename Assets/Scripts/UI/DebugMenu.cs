@@ -304,6 +304,9 @@ public class DebugMenu : MonoBehaviour
         AddButton(content, "GÖREVLERİ TAMAMLA", QuestBoard.CompleteAllForDebug, false, false);
         AddButton(content, "GÖREVLERİ SIFIRLA", QuestBoard.ResetAllForDebug, false, false);
         AddButton(content, "TANITIMLARI SIFIRLA", ResetIntros, false, false);
+        AddButton(content, "+1 SEZON SEVİYESİ", SeasonPass.AddTierForDebug, false, false);
+        AddButton(content, "SEZONU SIFIRLA", SeasonPass.ResetForDebug, false, false);
+        AddButton(content, "SEZON PREMİUM AÇ", SeasonPass.UnlockPremium, false, false);
         resetAllText = AddButton(content, "TÜM KAYITLARI SİL", ResetAll, false, false);
 
         panel.SetActive(false);

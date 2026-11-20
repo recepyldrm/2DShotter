@@ -46,8 +46,9 @@ public class CompanionAbilities : MonoBehaviour
         { "drone_shadow",      new Info(Ability.Pierce, 1f) },
         { "drone_phantom",     new Info(Ability.Pierce, 1f) },
         { "drone_jet",         new Info(Ability.Pierce, 1f) },
-        { "drone_chopper",     new Info(Ability.GoldMagnet, 0.15f) },
-        { "drone_golden",      new Info(Ability.GoldMagnet, 0.2f) }
+        { "drone_chopper",     new Info(Ability.GoldMagnet, 0.1f) },
+        { "drone_golden",      new Info(Ability.GoldMagnet, 0.15f) },
+        { "drone_season",      new Info(Ability.GoldMagnet, 0.15f) }
     };
 
     // Aktif yetenek bekleme süreleri (saniye)

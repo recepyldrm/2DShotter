@@ -323,6 +323,9 @@ public class EnemyHealth : MonoBehaviour
         // Ana menüde seçilen zorluk
         globalHealthMultiplier *= Difficulty.EnemyHealthMultiplier;
 
+        // Bölüm kuralı (örn. Buzul Sınır: dayanıklı düşmanlar)
+        globalHealthMultiplier *= StageThemes.HealthMultiplier;
+
         // Enemy type
         if (enemyType != null)
         {
@@ -364,12 +367,16 @@ public class EnemyHealth : MonoBehaviour
             damage
         );
 
+        // "Boss Avcısı" kartı
+        damage = ApplyBossHunter(damage);
+
         // Kalkanlı düşman: hasarı önce kalkan alır.
         if (Variant != null && Variant.AbsorbDamage(ref damage, GetDamageNumberPosition()))
             return;
 
         currentHealth -= damage;
 
+        RunStats.AddDamage(style, damage);
         DamageNumbers.Show(GetDamageNumberPosition(), damage, style);
 
         GameLog.Log(
@@ -580,13 +587,24 @@ public class EnemyHealth : MonoBehaviour
     // BURN DAMAGE
     // ==================================
 
+    int ApplyBossHunter(int damage)
+    {
+        if (!IsBoss || PlayerStats.Instance == null)
+            return damage;
+
+        return Mathf.RoundToInt(damage * PlayerStats.Instance.bossDamageMultiplier);
+    }
+
     void TakeBurnDamage(int damage)
     {
         if (isDead)
             return;
 
+        damage = ApplyBossHunter(damage);
+
         currentHealth -= damage;
 
+        RunStats.AddDamage(DamageNumbers.Style.Burn, damage);
         DamageNumbers.Show(GetDamageNumberPosition(), damage, DamageNumbers.Style.Burn);
 
         GameLog.Log(
@@ -710,6 +728,8 @@ public class EnemyHealth : MonoBehaviour
             TimeScaleController.HitStop(0.04f);
             Haptics.Light();
         }
+
+        RunStats.RegisterKill(Variant != null ? Variant.CurrentKind : EnemyVariant.Kind.None, IsBoss);
 
         OnDied?.Invoke(this);
 
@@ -1056,6 +1076,9 @@ public class EnemyHealth : MonoBehaviour
     // GOLD
     // ==================================
 
+    // Kalıcı yükseltme x zorluk x drone altın bonuslarının toplam üst sınırı
+    private const float MaxGoldBonusMultiplier = 1.9f;
+
     void GrantDeathGold()
     {
         if (deathGoldMax <= 0)
@@ -1083,14 +1106,15 @@ public class EnemyHealth : MonoBehaviour
                 enemyType.goldMultiplier;
         }
 
-        // Kalıcı "Altın Avcısı" yükseltmesi
-        multiplier *= PermanentUpgrades.GoldMultiplier;
+        // Altın bonusları: kalıcı "Altın Avcısı" yükseltmesi, zorluk ve drone
+        // "altın mıknatısı". Hepsi üst üste binince ekonomi bozulmasın diye
+        // toplam bonus MaxGoldBonusMultiplier ile sınırlı.
+        float goldBonus =
+            PermanentUpgrades.GoldMultiplier *
+            Difficulty.GoldMultiplier *
+            CompanionAbilities.GoldMultiplier;
 
-        // Zorluk: zor modda daha çok altın
-        multiplier *= Difficulty.GoldMultiplier;
-
-        // Drone "altın mıknatısı" yeteneği
-        multiplier *= CompanionAbilities.GoldMultiplier;
+        multiplier *= Mathf.Min(goldBonus, MaxGoldBonusMultiplier);
 
         multiplier *= bossRewardMultiplier * VariantRewardMultiplier;
 
@@ -1105,6 +1129,8 @@ public class EnemyHealth : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
+            RunStats.AddKillGold(finalAmount);
+
             GameManager.Instance.AddGold(
                 finalAmount
             );

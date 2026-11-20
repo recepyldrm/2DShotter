@@ -92,6 +92,7 @@ public class GameManager : MonoBehaviour
         highScore = PlayerPrefs.GetInt(GameKeys.HighScore, 0);
         UpdateUI();
 
+        RunStats.Reset();
         GameAnalytics.RunStarted(WeaponCatalog.Selected.id + "|" + Difficulty.Current);
 
         // Kalıcı geliştirmeler uygulandı; oyuncuya göster.
@@ -348,6 +349,15 @@ public class GameManager : MonoBehaviour
         TimeScaleController.Pause(this);
 
         GetAdOffers().Show();
+
+        // Sağ tarafta bu oyunun özeti
+        RunSummaryUI.Show(score, CurrentLevel, killsThisRun, goldEarnedThisRun, Time.timeSinceLevelLoad);
+
+        // Canlanmadan önce 2x altın alındıysa özet onu da göstersin.
+        if (doubleGoldUsed)
+        {
+            RunSummaryUI.SetDoubleGoldBonus(doubleGoldBonus);
+        }
     }
 
     void UpdateEarnedGoldText()
@@ -356,7 +366,7 @@ public class GameManager : MonoBehaviour
             return;
 
         earnedGoldText.text =
-            "+" + (goldEarnedThisRun + doubleGoldBonus) + " ALTIN" +
+            "+" + (goldEarnedThisRun + doubleGoldBonus) + " " + Loc.T("ALTIN") +
             (doubleGoldUsed ? " (x2)" : string.Empty);
     }
 
@@ -389,6 +399,8 @@ public class GameManager : MonoBehaviour
 
         reviveUsed = true;
         isGameOver = false;
+
+        RunSummaryUI.Hide();
 
         if (gameOverPanel != null)
         {
@@ -427,6 +439,7 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateEarnedGoldText();
+        RunSummaryUI.SetDoubleGoldBonus(doubleGoldBonus);
     }
 
     static void ClearEnemiesAround(Vector3 center, float radius)

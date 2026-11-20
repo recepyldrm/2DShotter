@@ -107,6 +107,9 @@ public class IAPManager : MonoBehaviour
             definitions.Add(new ProductDefinition(pack.productId, ProductType.Consumable));
         }
 
+        // Sezon bileti: her sezon yeniden alınabilir
+        definitions.Add(new ProductDefinition(SeasonPass.ProductId, ProductType.Consumable));
+
         CompanionSkinDatabase database = CompanionSkinDatabase.Load();
 
         if (database != null)
@@ -263,6 +266,18 @@ public class IAPManager : MonoBehaviour
     // ==================================
 
     void GrantProduct(string productId)
+    {
+        if (productId == SeasonPass.ProductId)
+        {
+            SeasonPass.UnlockPremium();
+            GameLog.Log("IAP: Sezon bileti açıldı.");
+            return;
+        }
+
+        GrantProductInternal(productId);
+    }
+
+    void GrantProductInternal(string productId)
     {
         if (StoreCatalog.TryGetGoldPack(productId, out StoreCatalog.GoldPack pack))
         {

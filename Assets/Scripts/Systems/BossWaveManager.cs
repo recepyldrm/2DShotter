@@ -505,6 +505,7 @@ public class BossWaveManager : MonoBehaviour
         {
             // Sersemledi: bir süre hareketsiz kalır.
             ShowBanner(Loc.T("SERSEMLEDİ!"), 1.5f);
+            RunStats.RegisterBossStun();
             ExplosionBlast.Play(GetBossCenter(), GetBossSize() * 0.5f, Color.white, color);
             PlaySound(audio => audio.PlayShieldBreak());
             Haptics.Medium();

@@ -143,11 +143,14 @@ public static class LocEnglish
         { "Düşmanlar altın düşürür. Oyun sırasında altını kart yenilemeye ve geliştirmelere harcayabilirsin.\n\nBir oyunda kazandığın tüm altınlar MAĞAZA için kasana da eklenir.",
           "Enemies drop gold. During a run you can spend it on rerolls and upgrades.\n\nAll gold earned in a run is also added to your SHOP bank." },
         { "MAĞAZA VE DOST", "SHOP AND COMPANION" },
-        { "Drone dostun seni takip eder ve hasarını artırır.\n\nBiriktirdiğin altınlarla MAĞAZA'dan ona yeni görünümler al.",
-          "Your drone companion follows you and boosts your damage.\n\nUse your saved gold to buy it new looks in the SHOP." },
+        { "Drone dostun seni takip eder ve hasarını artırır. Her görünümün kendi yeteneği var: yakma, yavaşlatma, iyileştirme...\n\nBiriktirdiğin altınlarla MAĞAZA'dan yeni görünümler, SİLAHLAR'dan yeni silahlar al ve güçlendir.",
+          "Your drone companion follows you and boosts your damage. Every skin has its own ability: burning, slowing, healing...\n\nSpend your saved gold on new skins in the SHOP and on new weapons and upgrades in WEAPONS." },
+        { "BOSSLAR VE BÖLÜMLER", "BOSSES AND STAGES" },
+        { "Her 5 seviyede bir boss gelir; her boss tipinin kendine özgü saldırısı var. Her 10 seviyede yeni bir bölüme geçersin ve bölümün kuralları değişir.\n\nAna menüden ZORLUK seçebilirsin: zor modda daha çok altın kazanırsın.",
+          "A boss arrives every 5 levels, and each boss type has its own attack. Every 10 levels you enter a new stage with new rules.\n\nPick a DIFFICULTY in the main menu: hard mode pays more gold." },
         { "HER GÜN GEL", "COME BACK DAILY" },
-        { "Her gün GÜNLÜK ÖDÜL'ünü al. 7. gün büyük bir ödül seni bekliyor!\n\nBAŞARIMLAR'ı tamamlayarak altın kazan ve özel görünümlerin kilidini aç.",
-          "Claim your DAILY REWARD every day. A big prize awaits on day 7!\n\nComplete ACHIEVEMENTS to earn gold and unlock special skins." },
+        { "Her gün GÜNLÜK ÖDÜL'ünü al ve GÖREVLER'i tamamla. Haftalık görevlerin hepsini bitirirsen haftalık sandık açılır.\n\nGörevler ve oyunlar SEZON puanı kazandırır; sezon seviyeleri yeni ödüller açar.",
+          "Claim your DAILY REWARD and complete QUESTS every day. Finish all weekly quests to open the weekly chest.\n\nQuests and runs earn SEASON points; season tiers unlock new rewards." },
 
         // ---------- Düşman tanıtımları ----------
         { "YENİ DÜŞMAN", "NEW ENEMY" },
@@ -208,6 +211,83 @@ public static class LocEnglish
         { "İyileştirme", "Healing" },
         { "Altın mıknatısı", "Gold magnet" },
         { "Kritik destek", "Critical boost" },
-        { "Delici atış", "Piercing shot" }
+        { "Delici atış", "Piercing shot" },
+
+        // ---------- Seviye kartları ----------
+        { "MERMİ HIZI", "BULLET SPEED" },
+        { "YAKICI MERMİ", "BURNING BULLETS" },
+        { "ZİNCİR YILDIRIM", "CHAIN LIGHTNING" },
+        { "KRİTİK VURUŞ", "CRITICAL HIT" },
+        { "HASAR ARTIŞI", "DAMAGE UP" },
+        { "PATLAYICI MERMİ", "EXPLOSIVE BULLETS" },
+        { "ÇOKLU ATIŞ", "MULTISHOT" },
+        { "ATEŞ HIZI", "FIRE RATE" },
+        { "DONDURUCU MERMİ", "FREEZING BULLETS" },
+        { "MAKSİMUM CAN", "MAX HEALTH" },
+        { "DELİCİ MERMİ", "PIERCING BULLETS" },
+        { "KALKAN KIRICI", "SHIELD BREAKER" },
+        { "BÖLÜNME ENGELİ", "SPLIT STOPPER" },
+        { "BOSS AVCISI", "BOSS HUNTER" },
+        { "SIRADAN", "COMMON" },
+        { "NADİR", "RARE" },
+        { "EPİK", "EPIC" },
+        { "EFSANEVİ", "LEGENDARY" },
+
+        // ---------- Kalıcı geliştirme açıklamaları ----------
+        { "Kalıcı bonuslar her oyunun başında otomatik uygulanır.", "Permanent bonuses are applied automatically at the start of every run." },
+        { "+{0} maksimum can", "+{0} max health" },
+        { "+%{0} hasar", "+{0}% damage" },
+        { "+%{0} ateş hızı", "+{0}% fire rate" },
+        { "+%{0} oyun içi altın", "+{0}% run gold" },
+        { "+%{0} tecrübe puanı", "+{0}% XP" },
+        { "Kart başına +{0} ücretsiz yenileme", "+{0} free rerolls per card" },
+
+        // ---------- Mağaza ----------
+        { "ALTIN PAKETLERİ", "GOLD PACKS" },
+        { "DOST GÖRÜNÜMLERİ", "COMPANION SKINS" },
+        { "SATIN AL", "BUY" },
+        { "GERİ YÜKLE", "RESTORE" },
+        { "TEŞEKKÜRLER!", "THANK YOU!" },
+        { "GERİ YÜKLENİYOR...", "RESTORING..." },
+        { "SATIN ALIMLAR GERİ YÜKLENDİ", "PURCHASES RESTORED" },
+        { "GERİ YÜKLEME BAŞARISIZ", "RESTORE FAILED" },
+        { "MAĞAZA HAZIR DEĞİL", "STORE NOT READY" },
+        { "SATIN ALMA DOĞRULANAMADI", "PURCHASE COULD NOT BE VERIFIED" },
+        { "ÖDEME BEKLENİYOR", "PAYMENT PENDING" },
+        { "ÜRÜN KULLANILAMIYOR", "PRODUCT UNAVAILABLE" },
+        { "SATIN ALMA İPTAL EDİLDİ", "PURCHASE CANCELLED" },
+        { "ÖDEME REDDEDİLDİ", "PAYMENT DECLINED" },
+        { "BEKLEYEN BİR SATIN ALMA VAR", "A PURCHASE IS ALREADY PENDING" },
+        { "MAĞAZA KULLANILAMIYOR", "STORE UNAVAILABLE" },
+        { "SATIN ALMA BAŞARISIZ", "PURCHASE FAILED" },
+
+        // ---------- Drone görünümleri ----------
+        { "Standart", "Standard" },
+        { "NİNJA", "NINJA" },
+        { "DAİRE", "SAUCER" },
+        { "SÜZÜLEN", "HOVER" },
+        { "MİNİ KUTU", "MINI BOX" },
+        { "KUTU", "BOX" },
+        { "HELİKOPTER", "CHOPPER" },
+        { "JET", "JET" },
+        { "NÖBETÇİ", "SENTINEL" },
+        { "HAYALET", "PHANTOM" },
+        { "SAVAŞÇI", "WARRIOR" },
+        { "KIZIL DAİRE", "CRIMSON SAUCER" },
+        { "GÖLGE", "SHADOW" },
+        { "BUZ KUTUSU", "ICE BOX" },
+        { "ALTIN HELİKOPTER", "GOLDEN CHOPPER" },
+        { "SEZON SAVAŞÇISI", "SEASON WARRIOR" },
+
+        // ---------- Reklam ve ödüller ----------
+        { "ÖDÜL", "REWARD" },
+        { "ÖDÜLÜN", "YOUR REWARD" },
+        { "ÖDÜL KAZANILDI", "REWARD EARNED" },
+        { "BEKLE...", "WAIT..." },
+        { "2x ALTIN", "2x GOLD" },
+        { "Her gün gel, daha fazla altın kazan. Bir gün kaçırırsan seri sıfırlanır!", "Come back every day for more gold. Miss a day and your streak resets!" },
+
+        // ---------- Görevler ve sezon ----------
+        { "SEZON", "SEASON" }
     };
 }

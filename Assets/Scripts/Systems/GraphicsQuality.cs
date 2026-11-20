@@ -43,23 +43,22 @@ public static class GraphicsQuality
 
     public static void Apply()
     {
-        int count = QualitySettings.names.Length;
+        // Kalite seviyeleri adlarıyla seçilir. "Very Low" bilerek kullanılmaz:
+        // dokuları yarı çözünürlüğe indirir, pixel art bulanıklaşır.
+        string wanted;
 
-        if (count > 0)
+        switch (Current)
         {
-            int index;
+            case Level.Low: wanted = "Low"; break;
+            case Level.Medium: wanted = "Medium"; break;
+            default: wanted = "High"; break;
+        }
 
-            switch (Current)
-            {
-                case Level.Low: index = 0; break;
-                case Level.Medium: index = count / 2; break;
-                default: index = count - 1; break;
-            }
+        int index = System.Array.IndexOf(QualitySettings.names, wanted);
 
-            if (QualitySettings.GetQualityLevel() != index)
-            {
-                QualitySettings.SetQualityLevel(index, true);
-            }
+        if (index >= 0 && QualitySettings.GetQualityLevel() != index)
+        {
+            QualitySettings.SetQualityLevel(index, true);
         }
 
         // vSync açıkken targetFrameRate yok sayılır; mobilde zaten kapalıdır.
