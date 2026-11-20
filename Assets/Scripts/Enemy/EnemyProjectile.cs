@@ -45,6 +45,27 @@ public class EnemyProjectile : MonoBehaviour
         projectile.gameObject.SetActive(true);
     }
 
+    // Belirli bir yöne atış (boss yaylımı). target: hasar alacak oyuncu.
+    public static void FireDirection(Vector3 origin, Vector3 direction, Transform target, int damage)
+    {
+        if (target == null)
+            return;
+
+        EnsurePlayer(target);
+
+        direction.z = 0f;
+
+        if (direction.sqrMagnitude < 0.0001f)
+            direction = Vector3.left;
+
+        EnemyProjectile projectile = Get();
+        projectile.transform.position = new Vector3(origin.x, origin.y, 0f);
+        projectile.velocity = direction.normalized * Speed * 0.8f;
+        projectile.damage = damage;
+        projectile.age = 0f;
+        projectile.gameObject.SetActive(true);
+    }
+
     static void EnsurePlayer(Transform target)
     {
         if (playerHealth != null && playerHealth.transform == target)

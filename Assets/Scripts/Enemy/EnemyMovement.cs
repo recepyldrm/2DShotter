@@ -135,6 +135,9 @@ public class EnemyMovement : MonoBehaviour
         return viewport.x > 0.05f && viewport.x < 0.92f && viewport.y > 0.05f && viewport.y < 0.95f;
     }
 
+    // Boss yetenekleri hasarı buna göre ölçekler.
+    public int CurrentDamage => scaledDamage;
+
     public void SetChargeMultiplier(float multiplier)
     {
         chargeMultiplier = Mathf.Max(0f, multiplier);
@@ -282,6 +285,10 @@ public class EnemyMovement : MonoBehaviour
                 UpgradeManager.Instance
                     .EnemyDamageMultiplier;
         }
+
+        // Ana menüde seçilen zorluk
+        globalDamageMultiplier *= Difficulty.EnemyDamageMultiplier;
+        globalSpeedMultiplier *= Difficulty.EnemySpeedMultiplier;
 
         // ==============================
         // ENEMY TYPE SCALING

@@ -121,7 +121,8 @@ public static class UIBuilder
 
         TextMeshProUGUI tmp = rect.gameObject.AddComponent<TextMeshProUGUI>();
         theme.ApplyText(tmp, color);
-        tmp.text = text;
+        // İngilizce seçiliyse sözlükte karşılığı olan metinler çevrilir.
+        tmp.text = Loc.T(text);
         tmp.fontSize = size;
         tmp.alignment = alignment;
         tmp.raycastTarget = false;
@@ -249,6 +250,55 @@ public static class UIBuilder
 
         badge.gameObject.SetActive(false);
         return badge;
+    }
+
+    // Temaya uygun kaydırıcı (0-1). Koyu gri yol, kırmızı dolgu, açık renkli tutamak.
+    public static Slider CreateSlider(UITheme theme, Transform parent, float value)
+    {
+        RectTransform root = CreateRect("Slider", parent);
+
+        RectTransform background = CreateRect("Background", root);
+        background.anchorMin = new Vector2(0f, 0.35f);
+        background.anchorMax = new Vector2(1f, 0.65f);
+        background.offsetMin = Vector2.zero;
+        background.offsetMax = Vector2.zero;
+        background.gameObject.AddComponent<Image>().color = theme.greyDark;
+
+        RectTransform fillArea = CreateRect("FillArea", root);
+        fillArea.anchorMin = new Vector2(0f, 0.35f);
+        fillArea.anchorMax = new Vector2(1f, 0.65f);
+        fillArea.offsetMin = Vector2.zero;
+        fillArea.offsetMax = Vector2.zero;
+
+        RectTransform fill = CreateRect("Fill", fillArea);
+        fill.sizeDelta = Vector2.zero;
+        fill.gameObject.AddComponent<Image>().color = theme.mainRed;
+
+        RectTransform handleArea = CreateRect("HandleArea", root);
+        Stretch(handleArea);
+        handleArea.offsetMin = new Vector2(20f, 0f);
+        handleArea.offsetMax = new Vector2(-20f, 0f);
+
+        RectTransform handle = CreateRect("Handle", handleArea);
+        handle.sizeDelta = new Vector2(40f, 0f);
+        Image handleImage = handle.gameObject.AddComponent<Image>();
+        handleImage.color = theme.greyLight;
+
+        Slider slider = root.gameObject.AddComponent<Slider>();
+        slider.fillRect = fill;
+        slider.handleRect = handle;
+        slider.targetGraphic = handleImage;
+        slider.direction = Slider.Direction.LeftToRight;
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.SetValueWithoutNotify(Mathf.Clamp01(value));
+
+        ColorBlock colors = slider.colors;
+        colors.highlightedColor = Color.white;
+        colors.pressedColor = theme.mainRedHover;
+        slider.colors = colors;
+
+        return slider;
     }
 
     // Arka planı koyu gri, dolgu kırmızı ilerleme çubuğu. Dolgu: anchorMax.x ile ayarlanır.

@@ -41,6 +41,15 @@ public static class GameKeys
 
     // Ayarlar
     public const string VibrationEnabled = "VibrationEnabled";
+    public const string Language = "Language";
+    public const string GraphicsQuality = "GraphicsQuality";
+    public const string Difficulty = "Difficulty";
+    public const string IntroSeenPrefix = "IntroSeen_";
+    public const string WeaponLevelPrefix = "WeaponLevel_";
+    public const string WeeklyQuestWeek = "WeeklyQuestWeek";
+    public const string WeeklyQuestProgressPrefix = "WeeklyQuestProgress_";
+    public const string WeeklyQuestClaimedPrefix = "WeeklyQuestClaimed_";
+    public const string WeeklyChestClaimed = "WeeklyChestClaimed";
 
     // Kalıcı yükseltmeler: önek + yükseltme Id'si (örn. "PermUpgrade_start_health")
     public const string PermanentUpgradePrefix = "PermUpgrade_";

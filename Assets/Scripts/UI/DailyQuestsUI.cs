@@ -3,7 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Ana menüdeki günlük görevler ekranı: her gün yenilenen 3 görev ve altın ödülleri.
+// Ana menüdeki görevler ekranı: GÜNLÜK ve HAFTALIK sekmeleri.
+// Haftalık görevlerin üçü de alınınca haftalık sandık açılır.
 // Alınabilir ödül varsa "GÖREVLER" butonunda "!" rozeti görünür.
 public class DailyQuestsUI : MonoBehaviour
 {
@@ -22,15 +23,22 @@ public class DailyQuestsUI : MonoBehaviour
     private RectTransform badge;
     private TextMeshProUGUI timerText;
     private readonly List<Row> rows = new List<Row>();
+    private Row chestRow;
 
-    private string shownDate;
+    private Button dailyTab;
+    private Button weeklyTab;
+    private RectTransform dailyTabBadge;
+    private RectTransform weeklyTabBadge;
+
+    private QuestBoard board = QuestBoard.Daily;
+    private string shownPeriod;
     private float timerRefresh;
 
     void Start()
     {
         theme = UITheme.Load();
 
-        Transform canvas = UIBuilder.CreateCanvas(transform, "DailyQuestsCanvas", 150);
+        Transform canvas = UIBuilder.CreateCanvas(transform, "QuestsCanvas", 150);
 
         Button openButton = UIBuilder.CreateMenuButton(theme, canvas, "GÖREVLER", UIBuilder.MenuSlotQuests, out badge);
         openButton.onClick.AddListener(() =>
@@ -41,13 +49,13 @@ public class DailyQuestsUI : MonoBehaviour
 
         BuildPanel(canvas);
 
-        DailyQuests.OnQuestsChanged += OnQuestsChanged;
-        UpdateBadge();
+        QuestBoard.OnChanged += OnQuestsChanged;
+        UpdateBadges();
     }
 
     void OnDestroy()
     {
-        DailyQuests.OnQuestsChanged -= OnQuestsChanged;
+        QuestBoard.OnChanged -= OnQuestsChanged;
     }
 
     void Update()
@@ -62,19 +70,23 @@ public class DailyQuestsUI : MonoBehaviour
 
         timerRefresh = 1f;
 
-        // Ekran açıkken gece yarısı geçerse yeni görevler gelir.
-        if (shownDate != System.DateTime.Now.Date.ToString("yyyy-MM-dd"))
+        // Ekran açıkken dönem değişirse yeni görevler gelir.
+        if (shownPeriod != board.Period)
         {
             Refresh();
         }
 
-        System.TimeSpan left = DailyQuests.TimeUntilReset;
-        timerText.text = "Yeni görevler: " + string.Format("{0:00}:{1:00}:{2:00}", (int)left.TotalHours, left.Minutes, left.Seconds);
+        System.TimeSpan left = board.TimeUntilReset;
+        string time = left.TotalDays >= 1
+            ? Loc.Pick((int)left.TotalDays + " gün " + left.Hours + " sa", (int)left.TotalDays + "d " + left.Hours + "h")
+            : string.Format("{0:00}:{1:00}:{2:00}", (int)left.TotalHours, left.Minutes, left.Seconds);
+
+        timerText.text = Loc.Pick("Yeni görevler: ", "New quests in: ") + time;
     }
 
     void OnQuestsChanged()
     {
-        UpdateBadge();
+        UpdateBadges();
 
         if (panel != null && panel.activeSelf)
         {
@@ -82,16 +94,25 @@ public class DailyQuestsUI : MonoBehaviour
         }
     }
 
-    void UpdateBadge()
+    void UpdateBadges()
     {
         if (badge != null)
-        {
-            badge.gameObject.SetActive(DailyQuests.ClaimableCount > 0);
-        }
+            badge.gameObject.SetActive(QuestBoard.TotalClaimable > 0);
+
+        if (dailyTabBadge != null)
+            dailyTabBadge.gameObject.SetActive(QuestBoard.Daily.ClaimableCount > 0);
+
+        if (weeklyTabBadge != null)
+            weeklyTabBadge.gameObject.SetActive(QuestBoard.Weekly.ClaimableCount > 0);
     }
 
     public void Show()
     {
+        // Günlükte alınacak bir şey yoksa ama haftalıkta varsa haftalıkla aç.
+        board = QuestBoard.Daily.ClaimableCount == 0 && QuestBoard.Weekly.ClaimableCount > 0
+            ? QuestBoard.Weekly
+            : QuestBoard.Daily;
+
         Refresh();
         timerRefresh = 0f;
         panel.SetActive(true);
@@ -103,13 +124,35 @@ public class DailyQuestsUI : MonoBehaviour
         panel.SetActive(false);
     }
 
+    void SelectBoard(QuestBoard selected)
+    {
+        UIBuilder.PlayClick();
+        board = selected;
+        timerRefresh = 0f;
+        Refresh();
+    }
+
     void OnClaimClicked(int index)
     {
-        IReadOnlyList<DailyQuests.Quest> quests = DailyQuests.Today;
+        IReadOnlyList<QuestBoard.Quest> quests = board.Current;
 
-        if (index >= quests.Count || DailyQuests.Claim(quests[index]) <= 0)
+        if (index >= quests.Count || board.Claim(quests[index]) <= 0)
             return;
 
+        PlayReward();
+    }
+
+    void OnChestClicked()
+    {
+        if (board.ClaimChest() <= 0)
+            return;
+
+        PlayReward();
+        Haptics.Heavy();
+    }
+
+    void PlayReward()
+    {
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlayUpgradePurchase();
@@ -121,8 +164,11 @@ public class DailyQuestsUI : MonoBehaviour
 
     void Refresh()
     {
-        shownDate = System.DateTime.Now.Date.ToString("yyyy-MM-dd");
-        IReadOnlyList<DailyQuests.Quest> quests = DailyQuests.Today;
+        shownPeriod = board.Period;
+        IReadOnlyList<QuestBoard.Quest> quests = board.Current;
+
+        theme.ApplyButton(dailyTab, (Image)dailyTab.targetGraphic, board == QuestBoard.Daily);
+        theme.ApplyButton(weeklyTab, (Image)weeklyTab.targetGraphic, board == QuestBoard.Weekly);
 
         for (int i = 0; i < rows.Count; i++)
         {
@@ -133,44 +179,67 @@ public class DailyQuestsUI : MonoBehaviour
             if (!exists)
                 continue;
 
-            DailyQuests.Quest quest = quests[i];
-            int progress = Mathf.Min(DailyQuests.GetProgress(quest), quest.target);
-            bool completed = progress >= quest.target;
-            bool claimed = DailyQuests.IsClaimed(quest);
+            QuestBoard.Quest quest = quests[i];
+            int progress = Mathf.Min(board.GetProgress(quest), quest.target);
 
             row.title.text = quest.Title;
             row.progressFill.anchorMax = new Vector2((float)progress / quest.target, 1f);
             row.progressText.text = progress + " / " + quest.target;
 
-            string reward = "+" + quest.reward + " ALTIN";
-
-            if (claimed)
-            {
-                theme.ApplyButton(row.button, (Image)row.button.targetGraphic, false);
-                row.button.interactable = false;
-                row.buttonText.text = "ALINDI";
-                row.buttonText.color = theme.mainRedHover;
-                row.group.alpha = 0.6f;
-            }
-            else if (completed)
-            {
-                theme.ApplyButton(row.button, (Image)row.button.targetGraphic, true);
-                row.button.interactable = true;
-                row.buttonText.text = "AL " + reward;
-                row.buttonText.color = theme.mainWhite;
-                row.group.alpha = 1f;
-            }
-            else
-            {
-                theme.ApplyButton(row.button, (Image)row.button.targetGraphic, false);
-                row.button.interactable = false;
-                row.buttonText.text = reward;
-                row.buttonText.color = theme.greyLight;
-                row.group.alpha = 1f;
-            }
+            ApplyState(row, progress >= quest.target, board.IsClaimed(quest), "+" + quest.reward + " " + Loc.T("ALTIN"));
         }
 
-        UpdateBadge();
+        // Haftalık sandık
+        chestRow.group.gameObject.SetActive(board.HasChest);
+
+        if (board.HasChest)
+        {
+            int claimed = 0;
+            foreach (QuestBoard.Quest quest in quests)
+            {
+                if (board.IsClaimed(quest))
+                    claimed++;
+            }
+
+            chestRow.title.text = Loc.Pick("HAFTALIK SANDIK", "WEEKLY CHEST") +
+                UIBuilder.ColorTag(theme.greyLight, Loc.Pick("  <size=70%>(üç görevin ödülünü al)</size>", "  <size=70%>(claim all three quests)</size>"));
+            chestRow.progressFill.anchorMax = new Vector2((float)claimed / QuestBoard.QuestCount, 1f);
+            chestRow.progressText.text = claimed + " / " + QuestBoard.QuestCount;
+
+            ApplyState(chestRow, board.AllClaimed, board.IsChestClaimed, "+" + board.chestReward + " " + Loc.T("ALTIN"));
+        }
+
+        UpdateBadges();
+    }
+
+    void ApplyState(Row row, bool completed, bool claimed, string reward)
+    {
+        Image image = (Image)row.button.targetGraphic;
+
+        if (claimed)
+        {
+            theme.ApplyButton(row.button, image, false);
+            row.button.interactable = false;
+            row.buttonText.text = Loc.T("ALINDI");
+            row.buttonText.color = theme.mainRedHover;
+            row.group.alpha = 0.6f;
+        }
+        else if (completed)
+        {
+            theme.ApplyButton(row.button, image, true);
+            row.button.interactable = true;
+            row.buttonText.text = Loc.Pick("AL ", "CLAIM ") + reward;
+            row.buttonText.color = theme.mainWhite;
+            row.group.alpha = 1f;
+        }
+        else
+        {
+            theme.ApplyButton(row.button, image, false);
+            row.button.interactable = false;
+            row.buttonText.text = reward;
+            row.buttonText.color = theme.greyLight;
+            row.group.alpha = 1f;
+        }
     }
 
     // ==================================
@@ -179,67 +248,80 @@ public class DailyQuestsUI : MonoBehaviour
 
     void BuildPanel(Transform canvas)
     {
-        RectTransform dim = UIBuilder.CreateDim(canvas, "DailyQuestsPanel");
+        RectTransform dim = UIBuilder.CreateDim(canvas, "QuestsPanel");
         panel = dim.gameObject;
 
         RectTransform window = UIBuilder.CreateWindow(
             theme,
             UIBuilder.CreateSafeRoot(dim),
-            new Vector2(0.18f, 0.14f),
-            new Vector2(0.82f, 0.86f)
+            new Vector2(0.16f, 0.06f),
+            new Vector2(0.84f, 0.94f)
         );
 
-        UIBuilder.CreateWindowTitle(theme, window, "GÜNLÜK GÖREVLER");
+        UIBuilder.CreateWindowTitle(theme, window, "GÖREVLER");
         UIBuilder.CreateWindowCloseButton(theme, window).onClick.AddListener(Close);
 
-        timerText = UIBuilder.CreateText(theme, window, string.Empty, 32f, TextAlignmentOptions.MidlineLeft, theme.greyLight);
-        UIBuilder.AnchorTop(timerText.rectTransform, 25f, 100f);
-        timerText.rectTransform.offsetMin = new Vector2(70f, timerText.rectTransform.offsetMin.y);
+        // Sekmeler
+        dailyTab = UIBuilder.CreateButton(theme, window, "DailyTab", "GÜNLÜK", true, out _);
+        UIBuilder.Place((RectTransform)dailyTab.transform, new Vector2(0.5f, 1f), new Vector2(-165f, -195f), new Vector2(310f, 80f));
+        dailyTab.onClick.AddListener(() => SelectBoard(QuestBoard.Daily));
+        dailyTabBadge = UIBuilder.CreateBadge(theme, (RectTransform)dailyTab.transform);
 
-        RectTransform content = UIBuilder.CreateScrollList(window, new Vector2(60f, 45f), new Vector2(-60f, -150f));
+        weeklyTab = UIBuilder.CreateButton(theme, window, "WeeklyTab", "HAFTALIK", false, out _);
+        UIBuilder.Place((RectTransform)weeklyTab.transform, new Vector2(0.5f, 1f), new Vector2(165f, -195f), new Vector2(310f, 80f));
+        weeklyTab.onClick.AddListener(() => SelectBoard(QuestBoard.Weekly));
+        weeklyTabBadge = UIBuilder.CreateBadge(theme, (RectTransform)weeklyTab.transform);
 
-        for (int i = 0; i < DailyQuests.QuestCount; i++)
+        timerText = UIBuilder.CreateText(theme, window, string.Empty, 28f, TextAlignmentOptions.Center, theme.greyLight);
+        UIBuilder.AnchorTop(timerText.rectTransform, 245f, 45f);
+
+        RectTransform content = UIBuilder.CreateScrollList(window, new Vector2(60f, 40f), new Vector2(-60f, -300f));
+
+        for (int i = 0; i < QuestBoard.QuestCount; i++)
         {
-            rows.Add(CreateRow(content, i));
+            int index = i;
+            rows.Add(CreateRow(content, "Quest_" + i, () => OnClaimClicked(index)));
         }
+
+        chestRow = CreateRow(content, "WeeklyChest", OnChestClicked);
 
         panel.SetActive(false);
     }
 
-    Row CreateRow(RectTransform content, int index)
+    Row CreateRow(RectTransform content, string name, UnityEngine.Events.UnityAction onClaim)
     {
-        RectTransform rowRect = UIBuilder.CreateRect("Quest_" + index, content);
+        RectTransform rowRect = UIBuilder.CreateRect(name, content);
         theme.ApplyNotice(rowRect.gameObject.AddComponent<Image>());
-        rowRect.gameObject.AddComponent<LayoutElement>().preferredHeight = 150f;
+        rowRect.gameObject.AddComponent<LayoutElement>().preferredHeight = 140f;
 
         CanvasGroup group = rowRect.gameObject.AddComponent<CanvasGroup>();
 
-        TextMeshProUGUI title = UIBuilder.CreateText(theme, rowRect, string.Empty, 40f, TextAlignmentOptions.BottomLeft, theme.mainWhite);
+        TextMeshProUGUI title = UIBuilder.CreateText(theme, rowRect, string.Empty, 38f, TextAlignmentOptions.BottomLeft, theme.mainWhite);
         title.rectTransform.anchorMin = new Vector2(0f, 0.45f);
         title.rectTransform.anchorMax = new Vector2(1f, 1f);
         title.rectTransform.offsetMin = new Vector2(60f, 0f);
-        title.rectTransform.offsetMax = new Vector2(-380f, -18f);
+        title.rectTransform.offsetMax = new Vector2(-380f, -16f);
         title.enableAutoSizing = true;
-        title.fontSizeMin = 24f;
-        title.fontSizeMax = 40f;
+        title.fontSizeMin = 22f;
+        title.fontSizeMax = 38f;
 
         RectTransform bar = UIBuilder.CreateProgressBar(theme, rowRect, out RectTransform fill);
         bar.anchorMin = new Vector2(0f, 0f);
         bar.anchorMax = new Vector2(1f, 0f);
         bar.pivot = new Vector2(0f, 0f);
-        bar.offsetMin = new Vector2(60f, 32f);
-        bar.offsetMax = new Vector2(-560f, 48f);
+        bar.offsetMin = new Vector2(60f, 30f);
+        bar.offsetMax = new Vector2(-580f, 46f);
 
         TextMeshProUGUI progressText = UIBuilder.CreateText(theme, rowRect, string.Empty, 24f, TextAlignmentOptions.MidlineLeft, theme.greyLight);
         progressText.rectTransform.anchorMin = new Vector2(1f, 0f);
         progressText.rectTransform.anchorMax = new Vector2(1f, 0f);
         progressText.rectTransform.pivot = new Vector2(0f, 0f);
-        progressText.rectTransform.anchoredPosition = new Vector2(-545f, 23f);
-        progressText.rectTransform.sizeDelta = new Vector2(170f, 34f);
+        progressText.rectTransform.anchoredPosition = new Vector2(-565f, 21f);
+        progressText.rectTransform.sizeDelta = new Vector2(180f, 34f);
 
         Button button = UIBuilder.CreateButton(theme, rowRect, "ClaimButton", string.Empty, false, out TextMeshProUGUI buttonText);
-        UIBuilder.Place((RectTransform)button.transform, new Vector2(1f, 0.5f), new Vector2(-40f, 0f), new Vector2(320f, 100f));
-        button.onClick.AddListener(() => OnClaimClicked(index));
+        UIBuilder.Place((RectTransform)button.transform, new Vector2(1f, 0.5f), new Vector2(-40f, 0f), new Vector2(320f, 95f));
+        button.onClick.AddListener(onClaim);
 
         return new Row
         {

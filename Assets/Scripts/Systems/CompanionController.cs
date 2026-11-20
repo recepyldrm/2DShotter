@@ -25,6 +25,12 @@ public class CompanionController : MonoBehaviour
     void Awake()
     {
         Instance = this;
+
+        // Seçili görünümün yeteneği (yavaşlatma, yakma, iyileştirme...)
+        if (GetComponent<CompanionAbilities>() == null)
+        {
+            gameObject.AddComponent<CompanionAbilities>();
+        }
     }
 
     void Start()

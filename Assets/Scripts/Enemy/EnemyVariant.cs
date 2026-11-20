@@ -120,6 +120,11 @@ public class EnemyVariant : MonoBehaviour
 
     private float fireTimer;
 
+    // Boss kalkanı: süre dolunca kendiliğinden kalkar (0 = süresiz)
+    private float temporaryShieldTimer;
+
+    public bool HasShield => shieldHealth > 0;
+
     void Awake()
     {
         health = GetComponent<EnemyHealth>();
@@ -154,6 +159,7 @@ public class EnemyVariant : MonoBehaviour
     {
         CurrentKind = Kind.None;
         shieldHealth = 0;
+        temporaryShieldTimer = 0f;
 
         if (scaleCaptured)
         {
@@ -243,7 +249,48 @@ public class EnemyVariant : MonoBehaviour
                 ShowShield();
                 break;
         }
+
+        ShowIntroIfNew(kind);
     }
+
+    // İlk karşılaşmada kısa tanıtım
+    void ShowIntroIfNew(Kind kind)
+    {
+        switch (kind)
+        {
+            case Kind.Ranged:
+                EnemyIntroUI.ShowOnce(
+                    IntroIds[0],
+                    Loc.T("NİŞANCI"),
+                    Loc.T("Kırmızı haleli düşmanlar sana yaklaşmaz; belli bir mesafede durup uzaktan ateş eder. Onları öncelikli hedef al."),
+                    new Color(1f, 0.35f, 0.3f, 1f),
+                    transform
+                );
+                break;
+
+            case Kind.Shielded:
+                EnemyIntroUI.ShowOnce(
+                    IntroIds[1],
+                    Loc.T("KALKANLI"),
+                    Loc.T("Önündeki mavi kalkan hasarı emer ve vurdukça solar. Kalkan kırılınca savunmasız kalır.\n<color=#FF9A3C>Yanma hasarı kalkanı deler!</color>"),
+                    new Color(0.55f, 0.8f, 1f, 1f),
+                    transform
+                );
+                break;
+
+            case Kind.Splitter:
+                EnemyIntroUI.ShowOnce(
+                    IntroIds[2],
+                    Loc.T("BÖLÜNEN"),
+                    Loc.T("Mor haleli düşmanlar ölünce iki küçük ve hızlı kopyaya ayrılır. Patlayıcı ve delici mermiler çok işe yarar."),
+                    new Color(0.8f, 0.45f, 1f, 1f),
+                    transform
+                );
+                break;
+        }
+    }
+
+    public static readonly string[] IntroIds = { "variant_ranged", "variant_shielded", "variant_splitter" };
 
     // ==================================
     // GÖRSELLER
@@ -348,7 +395,7 @@ public class EnemyVariant : MonoBehaviour
     // düşmana geçer (damage güncellenir). true = hasarın tamamı kalkanda kaldı.
     public bool AbsorbDamage(ref int damage, Vector3 numberPosition)
     {
-        if (CurrentKind != Kind.Shielded || shieldHealth <= 0 || damage <= 0)
+        if (shieldHealth <= 0 || damage <= 0)
             return false;
 
         int absorbed = Mathf.Min(shieldHealth, damage);
@@ -374,8 +421,19 @@ public class EnemyVariant : MonoBehaviour
         return damage <= 0;
     }
 
+    // Boss yeteneği: belli süre hasarı emen kalkan açar.
+    public void GrantTemporaryShield(int amount, float duration)
+    {
+        shieldMaxHealth = Mathf.Max(1, amount);
+        shieldHealth = shieldMaxHealth;
+        temporaryShieldTimer = duration;
+        ShowShield();
+    }
+
     void BreakShield()
     {
+        temporaryShieldTimer = 0f;
+
         if (shield != null)
         {
             ExplosionBlast.Play(
@@ -433,6 +491,18 @@ public class EnemyVariant : MonoBehaviour
         if (CurrentKind == Kind.Ranged && glow != null && glow.color != RangedGlow)
         {
             glow.color = Color.Lerp(glow.color, RangedGlow, Time.deltaTime * 6f);
+        }
+
+        // Süreli kalkan bitti: sessizce kaybolur.
+        if (temporaryShieldTimer > 0f)
+        {
+            temporaryShieldTimer -= Time.deltaTime;
+
+            if (temporaryShieldTimer <= 0f)
+            {
+                shieldHealth = 0;
+                if (shield != null) shield.gameObject.SetActive(false);
+            }
         }
 
         if (shield != null && shield.gameObject.activeSelf)

@@ -58,14 +58,14 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    public void Configure(int multiplier, WeaponCatalog.Weapon weapon)
+    public void Configure(int multiplier, WeaponCatalog.Weapon weapon, float levelDamageBonus = 1f)
     {
         shotMultiplier = Mathf.Max(1, multiplier);
 
         if (weapon == null)
             return;
 
-        weaponDamageMultiplier = weapon.damageMultiplier;
+        weaponDamageMultiplier = weapon.damageMultiplier * levelDamageBonus;
         weaponSpeedMultiplier = weapon.speedMultiplier;
         weaponExplosionRadius = weapon.explosionRadius;
         weaponCritBonus = weapon.bonusCritChance;
@@ -122,6 +122,9 @@ public class Bullet : MonoBehaviour
             remainingPiercing =
                 PlayerStats.Instance.piercing;
         }
+
+        // Drone "delici atış" yeteneği
+        remainingPiercing += CompanionAbilities.BonusPierce;
 
         Invoke(
             nameof(ReturnToPool),
@@ -221,7 +224,7 @@ public class Bullet : MonoBehaviour
         bool isCritical = false;
 
         // "<" kullanılıyor: kritik şansı 0 iken asla kritik olmaz.
-        float critChance = weaponCritBonus;
+        float critChance = weaponCritBonus + CompanionAbilities.BonusCritChance;
         float critMultiplier = 2f;
 
         if (PlayerStats.Instance != null)

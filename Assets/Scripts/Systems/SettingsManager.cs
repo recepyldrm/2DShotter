@@ -46,7 +46,8 @@ public class SettingsManager : MonoBehaviour
                 sfxSlider.value = AudioManager.Instance.GetSfxVolume();
         }
 
-        CreateVibrationToggle();
+        // Ayarlar artık kodla kurulan temalı pencerede (ses, titreşim, grafik, dil).
+        settingsUI = gameObject.AddComponent<SettingsUI>();
     }
 
     // ==================================
@@ -54,6 +55,8 @@ public class SettingsManager : MonoBehaviour
     // ==================================
 
     private TMPro.TextMeshProUGUI vibrationText;
+
+    private SettingsUI settingsUI;
 
     // Ayarlar panelinin altına "TİTREŞİM: AÇIK/KAPALI" butonu ekler.
     void CreateVibrationToggle()
@@ -90,6 +93,15 @@ public class SettingsManager : MonoBehaviour
     // SETTINGS AÇ
     public void OpenSettings()
     {
+        if (settingsUI != null)
+        {
+            if (settingsPanel != null)
+                settingsPanel.SetActive(false);
+
+            settingsUI.Show();
+            return;
+        }
+
         // Main Menu arkada kalır
         if (mainMenuPanel != null)
             mainMenuPanel.SetActive(true);

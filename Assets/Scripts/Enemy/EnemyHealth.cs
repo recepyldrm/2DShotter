@@ -320,6 +320,9 @@ public class EnemyHealth : MonoBehaviour
                 UpgradeManager.Instance.EnemyHealthMultiplier;
         }
 
+        // Ana menüde seçilen zorluk
+        globalHealthMultiplier *= Difficulty.EnemyHealthMultiplier;
+
         // Enemy type
         if (enemyType != null)
         {
@@ -1082,6 +1085,12 @@ public class EnemyHealth : MonoBehaviour
 
         // Kalıcı "Altın Avcısı" yükseltmesi
         multiplier *= PermanentUpgrades.GoldMultiplier;
+
+        // Zorluk: zor modda daha çok altın
+        multiplier *= Difficulty.GoldMultiplier;
+
+        // Drone "altın mıknatısı" yeteneği
+        multiplier *= CompanionAbilities.GoldMultiplier;
 
         multiplier *= bossRewardMultiplier * VariantRewardMultiplier;
 

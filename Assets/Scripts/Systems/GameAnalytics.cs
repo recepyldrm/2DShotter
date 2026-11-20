@@ -45,6 +45,8 @@ public static class GameAnalytics
     public const string Permanent_Upgrade = "permanent_upgrade";
     public const string Daily_Reward = "daily_reward";
     public const string Daily_Quest = "daily_quest";
+    public const string Weapon_Upgrade = "weapon_upgrade";
+    public const string Weekly_Quest = "weekly_quest";
     public const string Achievement = "achievement";
     public const string Boss_Spawned = "boss_spawned";
     public const string Boss_Defeated = "boss_defeated";
@@ -124,6 +126,12 @@ public static class GameAnalytics
 
     public static void DailyRewardClaimed(int day) =>
         Send(new AnalyticsRecord { e = Daily_Reward, value = day });
+
+    public static void WeaponUpgraded(string weaponId, int level) =>
+        Send(new AnalyticsRecord { e = Weapon_Upgrade, value = level, detail = weaponId });
+
+    public static void WeeklyQuestClaimed(string questType, int target, int reward) =>
+        Send(new AnalyticsRecord { e = Weekly_Quest, value = reward, detail = questType + ":" + target });
 
     public static void DailyQuestClaimed(string questType, int target, int reward) =>
         Send(new AnalyticsRecord { e = Daily_Quest, value = reward, detail = questType + ":" + target });

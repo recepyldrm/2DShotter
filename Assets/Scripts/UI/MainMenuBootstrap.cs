@@ -27,6 +27,7 @@ public static class MainMenuBootstrap
         AddIfMissing<DailyQuestsUI>(ref host);
         AddIfMissing<TutorialUI>(ref host);
         AddIfMissing<LeaderboardButton>(ref host);
+        AddIfMissing<DifficultySelector>(ref host);
     }
 
     static void AddIfMissing<T>(ref GameObject host) where T : Component

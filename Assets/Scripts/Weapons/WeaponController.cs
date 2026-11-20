@@ -15,11 +15,18 @@ public class WeaponController : MonoBehaviour
 
     private float fireTimer;
 
+    private float levelDamageBonus = 1f;
+    private float levelFireRateBonus = 1f;
+
     public WeaponCatalog.Weapon CurrentWeapon => weapon;
 
     void Awake()
     {
         weapon = WeaponCatalog.Selected;
+
+        // Silah güçlendirme seviyesi (oyun boyunca değişmez)
+        levelDamageBonus = WeaponCatalog.DamageBonus(weapon);
+        levelFireRateBonus = WeaponCatalog.FireRateBonus(weapon);
     }
 
     void Update()
@@ -30,7 +37,7 @@ public class WeaponController : MonoBehaviour
         {
             Shoot();
 
-            float finalFireRate = fireRate * weapon.fireIntervalMultiplier;
+            float finalFireRate = fireRate * weapon.fireIntervalMultiplier / levelFireRateBonus;
 
             if (PlayerStats.Instance != null)
             {
@@ -136,7 +143,7 @@ public class WeaponController : MonoBehaviour
 
         if (bulletComponent != null)
         {
-            bulletComponent.Configure(shotMultiplier, weapon);
+            bulletComponent.Configure(shotMultiplier, weapon, levelDamageBonus);
         }
     }
 

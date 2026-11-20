@@ -703,7 +703,13 @@ public class SkinShopUI : MonoBehaviour
             displayName += "\n<size=26>" + ColorTag(theme.mainRedHover, "PREMİUM") + "</size>";
         }
 
+        // Drone yeteneği
+        displayName += "\n<size=24>" + ColorTag(new Color(0.55f, 0.85f, 1f, 1f), CompanionAbilities.Describe(CompanionAbilities.For(skin.id))) + "</size>";
+
         TextMeshProUGUI nameText = CreateText("Name", rowRect, displayName, 42f, TextAlignmentOptions.MidlineLeft, theme.mainWhite);
+        nameText.enableAutoSizing = true;
+        nameText.fontSizeMin = 20f;
+        nameText.fontSizeMax = 42f;
         Stretch(nameText.rectTransform);
         nameText.rectTransform.offsetMin = new Vector2(180f, 0f);
         nameText.rectTransform.offsetMax = new Vector2(-320f, 0f);
@@ -810,7 +816,7 @@ public class SkinShopUI : MonoBehaviour
             tmp.font = font;
         }
 
-        tmp.text = text;
+        tmp.text = Loc.T(text);
         tmp.fontSize = size;
         tmp.alignment = alignment;
         tmp.raycastTarget = false;

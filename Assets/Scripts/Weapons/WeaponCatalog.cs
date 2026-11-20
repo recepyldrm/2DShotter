@@ -172,6 +172,53 @@ public static class WeaponCatalog
         }
     }
 
+    // ==================================
+    // GÜÇLENDİRME (seviye 1-5)
+    // ==================================
+
+    public const int MaxLevel = 5;
+
+    // Her seviye: +%12 hasar, +%5 atış hızı
+    private const float DamagePerLevel = 0.12f;
+    private const float FireRatePerLevel = 0.05f;
+
+    public static int GetLevel(Weapon weapon) =>
+        Mathf.Clamp(PlayerPrefs.GetInt(GameKeys.WeaponLevelPrefix + weapon.id, 1), 1, MaxLevel);
+
+    public static float DamageBonus(Weapon weapon) => 1f + DamagePerLevel * (GetLevel(weapon) - 1);
+
+    public static float FireRateBonus(Weapon weapon) => 1f + FireRatePerLevel * (GetLevel(weapon) - 1);
+
+    public static int DamagePercentAt(int level) => Mathf.RoundToInt(DamagePerLevel * (level - 1) * 100f);
+
+    public static int FireRatePercentAt(int level) => Mathf.RoundToInt(FireRatePerLevel * (level - 1) * 100f);
+
+    // Bir sonraki seviyenin fiyatı (maks. seviyede 0). Pahalı silahlar daha pahalıya güçlenir.
+    public static int UpgradeCost(Weapon weapon)
+    {
+        int level = GetLevel(weapon);
+
+        if (level >= MaxLevel)
+            return 0;
+
+        float baseCost = Mathf.Max(300f, weapon.price * 0.35f);
+        return Mathf.RoundToInt(baseCost * Mathf.Pow(1.6f, level - 1) / 10f) * 10;
+    }
+
+    public static bool TryUpgrade(Weapon weapon)
+    {
+        if (!IsOwned(weapon) || GetLevel(weapon) >= MaxLevel)
+            return false;
+
+        if (!PlayerProgress.TrySpendGold(UpgradeCost(weapon)))
+            return false;
+
+        PlayerPrefs.SetInt(GameKeys.WeaponLevelPrefix + weapon.id, GetLevel(weapon) + 1);
+        PlayerProgress.NotifySaveDataChanged();
+        GameAnalytics.WeaponUpgraded(weapon.id, GetLevel(weapon));
+        return true;
+    }
+
     public static bool TryBuy(Weapon weapon)
     {
         if (IsOwned(weapon))

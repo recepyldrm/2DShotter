@@ -70,6 +70,9 @@ public class LevelSystem : MonoBehaviour
         // Her 5 seviyede bir boss (kart seçildikten sonra gelir)
         BossWaveManager.NotifyLevelUp(currentLevel);
 
+        // Her 10 seviyede yeni bölüm: arka plan rengi değişir
+        StageThemes.NotifyLevelUp(currentLevel);
+
         xpNeeded = Mathf.RoundToInt(
             xpNeeded * xpMultiplier
         );
@@ -105,7 +108,7 @@ public class LevelSystem : MonoBehaviour
 
         if (levelText != null)
         {
-            levelText.text = "SV. " + currentLevel;
+            levelText.text = Loc.T("SV. ") + currentLevel;
         }
     }
 }

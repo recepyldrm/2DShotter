@@ -68,6 +68,14 @@ public static class PlayerProgress
         OnSaveDataChanged?.Invoke();
     }
 
+    // Başka sistemler (silah seviyesi vb.) kayıtlı veriyi değiştirince çağırır.
+    public static void NotifySaveDataChanged()
+    {
+        Touch();
+        PlayerPrefs.Save();
+        NotifyProgressChanged();
+    }
+
     // Buluttan gelen kayıt uygulandıktan sonra bütün ekranlar güncellensin.
     public static void NotifyAllChanged()
     {
@@ -116,7 +124,7 @@ public static class PlayerProgress
             PlayerPrefs.SetInt(GameKeys.StatBestLevel, levelReached);
         }
 
-        DailyQuests.Record(kills, goldEarned, levelReached, countRun, bossKills);
+        QuestBoard.RecordAll(kills, goldEarned, levelReached, countRun, bossKills);
 
         if (countRun)
         {

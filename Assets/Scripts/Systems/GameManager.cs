@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
         highScore = PlayerPrefs.GetInt(GameKeys.HighScore, 0);
         UpdateUI();
 
-        GameAnalytics.RunStarted(WeaponCatalog.Selected.id);
+        GameAnalytics.RunStarted(WeaponCatalog.Selected.id + "|" + Difficulty.Current);
 
         // Kalıcı geliştirmeler uygulandı; oyuncuya göster.
         ActiveBonusBanner.ShowIfAny();
@@ -331,13 +331,13 @@ public class GameManager : MonoBehaviour
         if (finalScoreText != null)
         {
             finalScoreText.text =
-                "SKOR: " + score;
+                Loc.T("SKOR: ") + score;
         }
 
         if (bestScoreText != null)
         {
             bestScoreText.text =
-                "EN İYİ: " + highScore;
+                Loc.T("EN İYİ: ") + highScore;
         }
 
         if (gameOverPanel != null)

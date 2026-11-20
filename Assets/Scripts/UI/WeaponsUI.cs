@@ -13,6 +13,10 @@ public class WeaponsUI : MonoBehaviour
         public WeaponCatalog.Weapon weapon;
         public Button button;
         public TextMeshProUGUI buttonText;
+        public Button upgradeButton;
+        public TextMeshProUGUI upgradeText;
+        public TextMeshProUGUI title;
+        public TextMeshProUGUI stats;
     }
 
     private UITheme theme;
@@ -86,29 +90,85 @@ public class WeaponsUI : MonoBehaviour
         Refresh();
     }
 
+    void OnUpgradeClicked(WeaponCatalog.Weapon weapon)
+    {
+        if (!WeaponCatalog.TryUpgrade(weapon))
+            return;
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayUpgradePurchase();
+        }
+
+        Haptics.Light();
+        Refresh();
+    }
+
+    void RefreshUpgrade(Row row, int gold)
+    {
+        WeaponCatalog.Weapon weapon = row.weapon;
+        int level = WeaponCatalog.GetLevel(weapon);
+        bool owned = WeaponCatalog.IsOwned(weapon);
+
+        row.title.text =
+            Loc.T(weapon.title) + "  " +
+            UIBuilder.ColorTag(theme.greyLight, "<size=65%>" + Loc.T("SV. ") + level + "/" + WeaponCatalog.MaxLevel + "</size>");
+
+        row.stats.text = GetStatsLine(weapon, level);
+
+        Image image = (Image)row.upgradeButton.targetGraphic;
+
+        if (!owned)
+        {
+            row.upgradeButton.gameObject.SetActive(false);
+            return;
+        }
+
+        row.upgradeButton.gameObject.SetActive(true);
+
+        if (level >= WeaponCatalog.MaxLevel)
+        {
+            theme.ApplyButton(row.upgradeButton, image, false);
+            row.upgradeButton.interactable = false;
+            row.upgradeText.text = Loc.T("MAKS");
+            row.upgradeText.color = theme.mainRedHover;
+            return;
+        }
+
+        int cost = WeaponCatalog.UpgradeCost(weapon);
+        bool canAfford = gold >= cost;
+
+        theme.ApplyButton(row.upgradeButton, image, false);
+        row.upgradeButton.interactable = canAfford;
+        row.upgradeText.text = Loc.T("GÜÇLENDİR") + "  " + cost;
+        row.upgradeText.color = canAfford ? theme.mainWhite : theme.greyLight;
+    }
+
     void Refresh()
     {
         int gold = PlayerProgress.TotalGold;
         WeaponCatalog.Weapon selected = WeaponCatalog.Selected;
 
-        goldLabel.text = UIBuilder.ColorTag(theme.mainRedHover, "ALTIN") + "  " + gold;
+        goldLabel.text = UIBuilder.ColorTag(theme.mainRedHover, Loc.T("ALTIN")) + "  " + gold;
 
         foreach (Row row in rows)
         {
+            RefreshUpgrade(row, gold);
+
             Image image = (Image)row.button.targetGraphic;
 
             if (row.weapon == selected)
             {
                 theme.ApplyButton(row.button, image, false);
                 row.button.interactable = false;
-                row.buttonText.text = "SEÇİLİ";
+                row.buttonText.text = Loc.T("SEÇİLİ");
                 row.buttonText.color = theme.mainRedHover;
             }
             else if (WeaponCatalog.IsOwned(row.weapon))
             {
                 theme.ApplyButton(row.button, image, false);
                 row.button.interactable = true;
-                row.buttonText.text = "SEÇ";
+                row.buttonText.text = Loc.T("SEÇ");
                 row.buttonText.color = theme.mainWhite;
             }
             else
@@ -117,40 +177,43 @@ public class WeaponsUI : MonoBehaviour
 
                 theme.ApplyButton(row.button, image, true);
                 row.button.interactable = canAfford;
-                row.buttonText.text = row.weapon.price + " ALTIN";
+                row.buttonText.text = row.weapon.price + " " + Loc.T("ALTIN");
                 row.buttonText.color = canAfford ? theme.mainWhite : theme.greyLight;
             }
         }
     }
 
-    // Tüfeğe göre kısa karşılaştırma (örn. "Atış hızı %45 · Mermi hasarı %55 · 5 saçma")
-    static string GetStatsLine(WeaponCatalog.Weapon weapon)
+    // Tüfeğe göre kısa karşılaştırma; güçlendirme seviyesi de hesaba katılır.
+    static string GetStatsLine(WeaponCatalog.Weapon weapon, int level = 1)
     {
+        float fireRate = 100f / weapon.fireIntervalMultiplier * (1f + WeaponCatalog.FireRatePercentAt(level) / 100f);
+        float damage = weapon.damageMultiplier * 100f * (1f + WeaponCatalog.DamagePercentAt(level) / 100f);
+
         List<string> parts = new List<string>
         {
-            "Atış hızı %" + Mathf.RoundToInt(100f / weapon.fireIntervalMultiplier),
-            "Mermi hasarı %" + Mathf.RoundToInt(weapon.damageMultiplier * 100f)
+            Loc.Pick("Atış hızı %", "Fire rate ") + Mathf.RoundToInt(fireRate) + Loc.Pick("", "%"),
+            Loc.Pick("Mermi hasarı %", "Damage ") + Mathf.RoundToInt(damage) + Loc.Pick("", "%")
         };
 
         if (weapon.pellets > 1)
-            parts.Add(weapon.pellets + " saçma");
+            parts.Add(weapon.pellets + Loc.Pick(" saçma", " pellets"));
 
         if (weapon.extraPierce >= 100)
-            parts.Add("Sınırsız delme");
+            parts.Add(Loc.Pick("Sınırsız delme", "Infinite pierce"));
         else if (weapon.extraPierce > 0)
-            parts.Add("+" + weapon.extraPierce + " delme");
+            parts.Add("+" + weapon.extraPierce + Loc.Pick(" delme", " pierce"));
 
         if (weapon.bonusCritChance > 0f)
-            parts.Add("+%" + Mathf.RoundToInt(weapon.bonusCritChance * 100f) + " kritik");
+            parts.Add("+" + Loc.Pick("%" + Mathf.RoundToInt(weapon.bonusCritChance * 100f) + " kritik", Mathf.RoundToInt(weapon.bonusCritChance * 100f) + "% crit"));
 
         if (weapon.randomSpread >= 5f)
-            parts.Add("Dağınık atış");
+            parts.Add(Loc.Pick("Dağınık atış", "Wide spread"));
 
         if (weapon.explosionRadius > 0f)
-            parts.Add(weapon.explosionRadius.ToString("0.#", new CultureInfo("tr-TR")) + " birim patlama");
+            parts.Add(weapon.explosionRadius.ToString("0.#", CultureInfo.InvariantCulture) + Loc.Pick(" birim patlama", " unit blast"));
 
         if (weapon.lifetimeMultiplier < 0.5f)
-            parts.Add("Kısa menzil");
+            parts.Add(Loc.Pick("Kısa menzil", "Short range"));
 
         return string.Join("   ·   ", parts);
     }
@@ -236,14 +299,23 @@ public class WeaponsUI : MonoBehaviour
         stats.fontSizeMax = 22f;
 
         Button button = UIBuilder.CreateButton(theme, rowRect, "ActionButton", string.Empty, true, out TextMeshProUGUI buttonText);
-        UIBuilder.Place((RectTransform)button.transform, new Vector2(1f, 0.5f), new Vector2(-40f, 0f), new Vector2(300f, 100f));
+        UIBuilder.Place((RectTransform)button.transform, new Vector2(1f, 0.5f), new Vector2(-40f, 42f), new Vector2(300f, 76f));
         button.onClick.AddListener(() => OnWeaponClicked(weapon));
+
+        // Güçlendirme: sahip olunan silah 5 seviyeye kadar altınla güçlenir.
+        Button upgradeButton = UIBuilder.CreateButton(theme, rowRect, "UpgradeButton", string.Empty, false, out TextMeshProUGUI upgradeText);
+        UIBuilder.Place((RectTransform)upgradeButton.transform, new Vector2(1f, 0.5f), new Vector2(-40f, -42f), new Vector2(300f, 76f));
+        upgradeButton.onClick.AddListener(() => OnUpgradeClicked(weapon));
 
         return new Row
         {
             weapon = weapon,
             button = button,
-            buttonText = buttonText
+            buttonText = buttonText,
+            upgradeButton = upgradeButton,
+            upgradeText = upgradeText,
+            title = title,
+            stats = stats
         };
     }
 }

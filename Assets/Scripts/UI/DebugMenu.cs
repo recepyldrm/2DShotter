@@ -196,6 +196,13 @@ public class DebugMenu : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    // Düşman ve boss tanıtımları tekrar gösterilsin
+    void ResetIntros()
+    {
+        EnemyIntroUI.ResetAll(EnemyVariant.IntroIds);
+        EnemyIntroUI.ResetAll(BossWaveManager.IntroIds);
+    }
+
     void ResetDailyReward()
     {
         PlayerPrefs.DeleteKey(GameKeys.DailyLastClaimDate);
@@ -294,8 +301,9 @@ public class DebugMenu : MonoBehaviour
         AddButton(content, "TÜM SİLAHLARI AÇ", UnlockAllWeapons, false, false);
         AddButton(content, "EĞİTİMİ SIFIRLA", ResetTutorial, false, false);
         AddButton(content, "GÜNLÜK ÖDÜLÜ SIFIRLA", ResetDailyReward, false, false);
-        AddButton(content, "GÖREVLERİ TAMAMLA", DailyQuests.CompleteAllForDebug, false, false);
-        AddButton(content, "GÖREVLERİ SIFIRLA", DailyQuests.ResetToday, false, false);
+        AddButton(content, "GÖREVLERİ TAMAMLA", QuestBoard.CompleteAllForDebug, false, false);
+        AddButton(content, "GÖREVLERİ SIFIRLA", QuestBoard.ResetAllForDebug, false, false);
+        AddButton(content, "TANITIMLARI SIFIRLA", ResetIntros, false, false);
         resetAllText = AddButton(content, "TÜM KAYITLARI SİL", ResetAll, false, false);
 
         panel.SetActive(false);

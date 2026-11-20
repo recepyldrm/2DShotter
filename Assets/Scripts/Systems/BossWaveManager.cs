@@ -29,6 +29,55 @@ public class BossWaveManager : MonoBehaviour
     private const float TelegraphDuration = 0.8f;
     private const int MaxMinions = 3;
 
+    // Topçu: yelpaze şeklinde mermi yağmuru
+    private const int BarrageVolleys = 3;
+    private const int BarrageProjectiles = 5;
+    private const float BarrageSpread = 34f;
+    private const float BarrageDamageMultiplier = 0.35f;
+
+    // Muhafız: süreli kalkan (canın bu oranı kadar hasar emer)
+    private const float ShieldRatio = 0.12f;
+    private const float ShieldDuration = 5f;
+
+    // Yıkıcı: yere vuruş. Hazırlık sırasında canının bu oranı kadar
+    // hasar alırsa sersemler ve vuruş iptal olur.
+    private const float SlamWindup = 1.8f;
+    private const float SlamInterruptRatio = 0.06f;
+    private const float SlamDamageMultiplier = 1.6f;
+    private const float StunDuration = 2.2f;
+
+    public enum Archetype
+    {
+        Charger,
+        Artillery,
+        Guardian,
+        Smasher
+    }
+
+    private static readonly string[] ArchetypeTitles = { "HÜCUMCU", "TOPÇU", "MUHAFIZ", "YIKICI" };
+
+    private static readonly string[] ArchetypeIntros =
+    {
+        "Gövdesi şiştiğinde sana doğru hızla atılır ve yardımcı düşmanlar çağırır.",
+        "Uzaktan yelpaze şeklinde mermi yağdırır. Ne kadar çabuk ölürse o kadar az hasar alırsın.",
+        "Belirli aralıklarla mavi bir kalkan açar. Kalkan kısa sürede kendiliğinden kalkar; yanma hasarı kalkanı deler.",
+        "Durup yere vurmaya hazırlanır. Hazırlık sırasında ona yeterince hasar verirsen sersemler; veremezsen ağır bir şok dalgası gelir!"
+    };
+
+    private static readonly Color[] ArchetypeColors =
+    {
+        new Color(1f, 0.35f, 0.25f, 1f),
+        new Color(1f, 0.6f, 0.2f, 1f),
+        new Color(0.55f, 0.8f, 1f, 1f),
+        new Color(0.85f, 0.4f, 1f, 1f)
+    };
+
+    private Archetype archetype;
+    private EnemyVariant bossVariant;
+    private int healthAtSlamStart;
+
+    public static string[] IntroIds => new[] { "boss_charger", "boss_artillery", "boss_guardian", "boss_smasher" };
+
     private static readonly string[] BossNames =
     {
         "ÇELİK DEV",
@@ -155,7 +204,7 @@ public class BossWaveManager : MonoBehaviour
             // bu bekleme kart seçildikten sonra işlemeye devam eder.
             yield return new WaitForSeconds(1f);
 
-            ShowBanner("BOSS GELİYOR!", 2.5f);
+            ShowBanner(Loc.T("BOSS GELİYOR!"), 2.5f);
             PlaySound(audio => audio.PlayBossWarning());
             Shake(0.2f, 0.4f);
             Haptics.Heavy();
@@ -233,7 +282,29 @@ public class BossWaveManager : MonoBehaviour
         boss.OnDied += OnBossDied;
         bossSpawnTime = Time.time;
 
-        barName.text = bossName;
+        // Boss tipi sırayla değişir: hücumcu, topçu, muhafız, yıkıcı...
+        archetype = (Archetype)((n - 1) % ArchetypeTitles.Length);
+        int archetypeIndex = (int)archetype;
+
+        bossVariant = bossObject.GetComponent<EnemyVariant>();
+        if (bossVariant == null)
+        {
+            bossVariant = bossObject.AddComponent<EnemyVariant>();
+        }
+
+
+        barName.text =
+            Loc.T(bossName) + "  " +
+            UIBuilder.ColorTag(ArchetypeColors[archetypeIndex], "<size=75%>" + Loc.T(ArchetypeTitles[archetypeIndex]) + "</size>");
+
+        EnemyIntroUI.ShowOnce(
+            IntroIds[archetypeIndex],
+            Loc.T(ArchetypeTitles[archetypeIndex]),
+            Loc.T(ArchetypeIntros[archetypeIndex]),
+            ArchetypeColors[archetypeIndex],
+            bossObject.transform,
+            true
+        );
         barRoot.SetActive(true);
         PlaySound(audio => audio.SetBossMusic(true));
 
@@ -282,27 +353,243 @@ public class BossWaveManager : MonoBehaviour
 
     IEnumerator AbilityLoop(EnemySpawner spawner)
     {
-        bool chargeNext = true;
+        int step = 0;
 
         while (boss != null)
         {
-            yield return new WaitForSeconds(AbilityInterval);
+            // Topçu daha sık ateş eder; diğerleri normal aralıkla.
+            float interval = archetype == Archetype.Artillery ? AbilityInterval * 0.6f : AbilityInterval;
+            yield return new WaitForSeconds(interval);
 
             if (boss == null)
                 yield break;
 
-            if (chargeNext)
+            bool primary = step % 2 == 0;
+
+            switch (archetype)
             {
-                yield return Charge();
-            }
-            else
-            {
-                yield return SummonMinions(spawner);
+                case Archetype.Charger:
+                    yield return primary ? Charge() : SummonMinions(spawner);
+                    break;
+
+                case Archetype.Artillery:
+                    // Üç atıştan biri yardımcı çağırma
+                    yield return step % 3 == 2 ? SummonMinions(spawner) : Barrage();
+                    break;
+
+                case Archetype.Guardian:
+                    yield return primary ? RaiseShield() : SummonMinions(spawner);
+                    break;
+
+                case Archetype.Smasher:
+                    yield return primary ? GroundSlam() : Charge();
+                    break;
             }
 
-            chargeNext = !chargeNext;
+            step++;
         }
     }
+
+    // ==================================
+    // TOPÇU: MERMİ YAĞMURU
+    // ==================================
+
+    IEnumerator Barrage()
+    {
+        yield return Telegraph(0.6f, ArchetypeColors[(int)Archetype.Artillery]);
+
+        Transform player = FindPlayer();
+
+        for (int volley = 0; volley < BarrageVolleys; volley++)
+        {
+            if (boss == null || player == null)
+                yield break;
+
+            Vector3 origin = GetBossCenter();
+            origin.x -= GetBossSize() * 0.4f;
+
+            Vector2 toPlayer = player.position - origin;
+            float baseAngle = Mathf.Atan2(toPlayer.y, toPlayer.x) * Mathf.Rad2Deg;
+            int damage = Mathf.Max(1, Mathf.RoundToInt(GetBossDamage() * BarrageDamageMultiplier));
+
+            // Her yaylım biraz kayık: aralarında boşluk olsun.
+            float offset = (volley % 2 == 0 ? 0f : BarrageSpread / (BarrageProjectiles - 1) / 2f);
+
+            for (int i = 0; i < BarrageProjectiles; i++)
+            {
+                float t = i / (float)(BarrageProjectiles - 1);
+                float angle = baseAngle + Mathf.Lerp(-BarrageSpread / 2f, BarrageSpread / 2f, t) + offset;
+                Vector3 direction = Quaternion.Euler(0f, 0f, angle) * Vector3.right;
+                EnemyProjectile.FireDirection(origin, direction, player, damage);
+            }
+
+            PlaySound(audio => audio.PlayEnemyShot());
+            yield return new WaitForSeconds(0.45f);
+        }
+    }
+
+    // ==================================
+    // MUHAFIZ: KALKAN
+    // ==================================
+
+    IEnumerator RaiseShield()
+    {
+        if (bossVariant == null || bossVariant.HasShield)
+            yield break;
+
+        yield return Telegraph(0.5f, ArchetypeColors[(int)Archetype.Guardian]);
+
+        if (boss == null)
+            yield break;
+
+        int amount = Mathf.RoundToInt(boss.GetMaxHealth() * ShieldRatio);
+        bossVariant.GrantTemporaryShield(amount, ShieldDuration);
+
+        ExplosionBlast.Play(GetBossCenter(), GetBossSize() * 0.7f, Color.white, ArchetypeColors[(int)Archetype.Guardian]);
+        PlaySound(audio => audio.PlayShieldHit());
+    }
+
+    // ==================================
+    // YIKICI: YERE VURUŞ
+    // ==================================
+
+    IEnumerator GroundSlam()
+    {
+        if (boss == null)
+            yield break;
+
+        healthAtSlamStart = boss.GetCurrentHealth();
+        int interruptDamage = Mathf.Max(1, Mathf.RoundToInt(boss.GetMaxHealth() * SlamInterruptRatio));
+
+        if (bossMovement != null)
+        {
+            bossMovement.SetChargeMultiplier(0f);
+        }
+
+        ShowBanner(Loc.T("DURDUR ONU!"), SlamWindup);
+        Color color = ArchetypeColors[(int)Archetype.Smasher];
+
+        float elapsed = 0f;
+        bool interrupted = false;
+
+        while (elapsed < SlamWindup)
+        {
+            if (boss == null)
+            {
+                yield break;
+            }
+
+            elapsed += Time.deltaTime;
+
+            // Yavaşça şişer ve renklenir
+            float t = elapsed / SlamWindup;
+            boss.transform.localScale = bossBaseScale * (1f + 0.12f * t + 0.03f * Mathf.Sin(elapsed * 30f));
+
+            if (healthAtSlamStart - boss.GetCurrentHealth() >= interruptDamage)
+            {
+                interrupted = true;
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (boss == null)
+        {
+            yield break;
+        }
+
+        boss.transform.localScale = bossBaseScale;
+
+        if (interrupted)
+        {
+            // Sersemledi: bir süre hareketsiz kalır.
+            ShowBanner(Loc.T("SERSEMLEDİ!"), 1.5f);
+            ExplosionBlast.Play(GetBossCenter(), GetBossSize() * 0.5f, Color.white, color);
+            PlaySound(audio => audio.PlayShieldBreak());
+            Haptics.Medium();
+
+            yield return new WaitForSeconds(StunDuration);
+        }
+        else
+        {
+            // Şok dalgası oyuncuya ulaşır.
+            Transform player = FindPlayer();
+
+            ExplosionBlast.Play(GetBossCenter(), GetBossSize() * 1.4f, Color.white, color);
+            PlaySound(audio => audio.PlayExplosion());
+            Shake(0.35f, 0.45f);
+            Haptics.Heavy();
+
+            if (player != null)
+            {
+                ExplosionBlast.Play(player.position, 1.4f, Color.white, color);
+
+                PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.TakeDamage(Mathf.Max(1, Mathf.RoundToInt(GetBossDamage() * SlamDamageMultiplier)));
+                }
+            }
+        }
+
+        if (bossMovement != null)
+        {
+            bossMovement.SetChargeMultiplier(1f);
+        }
+
+    }
+
+    // ==================================
+    // YARDIMCILAR
+    // ==================================
+
+    // Yetenekten önce kısa şişme uyarısı
+    IEnumerator Telegraph(float duration, Color color)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (boss == null)
+                yield break;
+
+            elapsed += Time.deltaTime;
+            float pulse = 1f + 0.1f * Mathf.Sin(elapsed / duration * Mathf.PI);
+            boss.transform.localScale = bossBaseScale * pulse;
+            yield return null;
+        }
+
+        if (boss != null)
+        {
+            boss.transform.localScale = bossBaseScale;
+        }
+    }
+
+    static Transform FindPlayer()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        return player != null ? player.transform : null;
+    }
+
+    Vector3 GetBossCenter()
+    {
+        Collider2D body = boss.GetComponent<Collider2D>();
+        return body != null ? body.bounds.center : boss.transform.position;
+    }
+
+    float GetBossSize()
+    {
+        SpriteRenderer renderer = boss.GetComponentInChildren<SpriteRenderer>();
+
+        if (renderer == null)
+            return 1.5f;
+
+        Vector3 size = renderer.bounds.size;
+        return Mathf.Max(0.5f, Mathf.Min(size.x, size.y));
+    }
+
+    int GetBossDamage() => bossMovement != null ? bossMovement.CurrentDamage : 15;
 
     // Kısa bir "şişme" uyarısının ardından oyuncuya doğru hızla atılır.
     IEnumerator Charge()
@@ -367,7 +654,7 @@ public class BossWaveManager : MonoBehaviour
         boss = null;
         EndBossFight();
 
-        ShowBanner("BOSS YENİLDİ!", 2.5f);
+        ShowBanner(Loc.T("BOSS YENİLDİ!"), 2.5f);
         PlaySound(audio => audio.PlayExplosion());
         Shake(0.25f, 0.5f);
     }

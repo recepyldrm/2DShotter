@@ -21,7 +21,7 @@ public class HighScoreUI : MonoBehaviour
         if (highScoreText != null)
         {
             highScoreText.text =
-                "EN YÜKSEK SKOR: " + highScore;
+                Loc.T("EN YÜKSEK SKOR: ") + highScore;
         }
     }
 }

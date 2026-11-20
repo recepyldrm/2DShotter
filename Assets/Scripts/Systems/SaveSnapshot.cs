@@ -30,6 +30,9 @@ public class SaveSnapshot
     // Kalıcı yükseltmeler "id:seviye" olarak; birleşirken yüksek seviye kazanır
     public List<string> permanentUpgrades = new List<string>();
 
+    // Silah güçlendirme seviyeleri "id:seviye"; birleşirken yüksek seviye kazanır
+    public List<string> weaponLevels = new List<string>();
+
     // En büyük değer kazanır
     public int highScore;
     public int totalKills;
@@ -79,6 +82,7 @@ public class SaveSnapshot
             claimedAchievements = ReadList(GameKeys.ClaimedAchievements),
             ownedWeapons = ReadList(GameKeys.OwnedWeapons),
             permanentUpgrades = CaptureUpgrades(),
+            weaponLevels = CaptureWeaponLevels(),
             highScore = PlayerProgress.BestScore,
             totalKills = PlayerProgress.TotalKills,
             totalRuns = PlayerProgress.TotalRuns,
@@ -99,6 +103,11 @@ public class SaveSnapshot
         PlayerPrefs.SetInt(GameKeys.DailyLastClaimIndex, dailyLastClaimIndex);
         PlayerPrefs.SetString(GameKeys.OwnedCompanionSkins, string.Join(Separator.ToString(), ownedSkins));
         PlayerPrefs.SetString(GameKeys.ClaimedAchievements, string.Join(Separator.ToString(), claimedAchievements));
+        foreach (KeyValuePair<string, int> weaponLevel in ParseUpgrades(weaponLevels))
+        {
+            PlayerPrefs.SetInt(GameKeys.WeaponLevelPrefix + weaponLevel.Key, weaponLevel.Value);
+        }
+
         foreach (KeyValuePair<string, int> upgrade in ParseUpgrades(permanentUpgrades))
         {
             PlayerPrefs.SetInt(GameKeys.PermanentUpgradePrefix + upgrade.Key, upgrade.Value);
@@ -141,6 +150,7 @@ public class SaveSnapshot
             claimedAchievements = Union(a.claimedAchievements, b.claimedAchievements),
             ownedWeapons = Union(a.ownedWeapons, b.ownedWeapons),
             permanentUpgrades = MergeUpgrades(a.permanentUpgrades, b.permanentUpgrades),
+            weaponLevels = MergeUpgrades(a.weaponLevels, b.weaponLevels),
             highScore = Math.Max(a.highScore, b.highScore),
             totalKills = Math.Max(a.totalKills, b.totalKills),
             totalRuns = Math.Max(a.totalRuns, b.totalRuns),
@@ -186,6 +196,23 @@ public class SaveSnapshot
             if (level > 0)
             {
                 list.Add(upgrade.id + ":" + level.ToString(CultureInfo.InvariantCulture));
+            }
+        }
+
+        return list;
+    }
+
+    static List<string> CaptureWeaponLevels()
+    {
+        List<string> list = new List<string>();
+
+        foreach (WeaponCatalog.Weapon weapon in WeaponCatalog.All)
+        {
+            int level = WeaponCatalog.GetLevel(weapon);
+
+            if (level > 1)
+            {
+                list.Add(weapon.id + ":" + level.ToString(CultureInfo.InvariantCulture));
             }
         }
 

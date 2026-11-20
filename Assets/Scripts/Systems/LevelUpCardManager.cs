@@ -305,7 +305,7 @@ public class LevelUpCardManager : MonoBehaviour
         TextMeshProUGUI text = UIBuilder.CreateText(
             theme,
             banner,
-            UIBuilder.ColorTag(theme.mainRedHover, "SEVİYE ATLADIN!") +
+            UIBuilder.ColorTag(theme.mainRedHover, Loc.T("SEVİYE ATLADIN!")) +
             "  Güçlenmek için bir kart seç.\n" +
             "<size=28>Nadir kartlar daha güçlüdür. YENİLE ile bir kartı yenisiyle değiştirebilirsin.</size>",
             36f,
@@ -665,7 +665,7 @@ public class LevelUpCardManager : MonoBehaviour
                 );
 
             cardUI.levelText.text =
-                "SV. " + currentLevel + " / " + data.maxLevel;
+                Loc.T("SV. ") + currentLevel + " / " + data.maxLevel;
         }
 
         Color rarityColor = GetRarityColor(choice.rarity);

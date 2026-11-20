@@ -119,7 +119,7 @@ public class PermanentUpgradesUI : MonoBehaviour
             int level = PermanentUpgrades.GetLevel(upgrade);
             bool maxed = level >= upgrade.maxLevel;
 
-            row.levelText.text = "SV. " + level + " / " + upgrade.maxLevel;
+            row.levelText.text = Loc.T("SV. ") + level + " / " + upgrade.maxLevel;
 
             for (int i = 0; i < row.pips.Count; i++)
             {
