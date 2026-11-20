@@ -17,6 +17,7 @@ public class WeaponController : MonoBehaviour
 
     private float levelDamageBonus = 1f;
     private float levelFireRateBonus = 1f;
+    private Color bulletTint = Color.white;
 
     public WeaponCatalog.Weapon CurrentWeapon => weapon;
 
@@ -27,6 +28,9 @@ public class WeaponController : MonoBehaviour
         // Silah güçlendirme seviyesi (oyun boyunca değişmez)
         levelDamageBonus = WeaponCatalog.DamageBonus(weapon);
         levelFireRateBonus = WeaponCatalog.FireRateBonus(weapon);
+
+        // Seçili mermi görünümü (klasikse silahın kendi rengi)
+        bulletTint = BulletSkins.TintFor(weapon);
     }
 
     void Update()
@@ -101,7 +105,7 @@ public class WeaponController : MonoBehaviour
 
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayShoot(weapon.soundPitch);
+            AudioManager.Instance.PlayWeaponShot(weapon);
         }
     }
 
@@ -143,7 +147,7 @@ public class WeaponController : MonoBehaviour
 
         if (bulletComponent != null)
         {
-            bulletComponent.Configure(shotMultiplier, weapon, levelDamageBonus);
+            bulletComponent.Configure(shotMultiplier, weapon, levelDamageBonus, bulletTint);
         }
     }
 

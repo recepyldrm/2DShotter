@@ -14,6 +14,7 @@ static class PluginDefines
     {
         ("GPGS_INSTALLED", "GooglePlayGames.PlayGamesPlatform"),
         ("ADMOB_INSTALLED", "GoogleMobileAds.Api.MobileAds"),
+        ("NOTIFICATIONS_INSTALLED", "Unity.Notifications.Android.AndroidNotificationCenter"),
     };
 
     private static readonly NamedBuildTarget[] Targets =

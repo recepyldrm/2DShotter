@@ -498,6 +498,10 @@ public class EnemyVariant : MonoBehaviour
 
     void Update()
     {
+        // Sıradan düşmanlarda (çoğunluk) her kare boşuna çalışmasın.
+        if (CurrentKind == Kind.None && shieldHealth <= 0)
+            return;
+
         if (CurrentKind == Kind.Ranged && glow != null && glow.color != RangedGlow)
         {
             glow.color = Color.Lerp(glow.color, RangedGlow, Time.deltaTime * 6f);

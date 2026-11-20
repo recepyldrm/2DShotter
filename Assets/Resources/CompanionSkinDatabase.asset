@@ -261,3 +261,59 @@ MonoBehaviour:
     tint: {r: 1, g: 0.62, b: 0.3, a: 1}
     price: 0
     unlockedByAchievement: 1
+  - id: drone_toxic
+    displayName: ZEHİR
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 4035959289877228764, guid: 1d6df14d63ef9e9489f91e485ae02b6e, type: 3}
+    - {fileID: -982904232830982447, guid: 1d6df14d63ef9e9489f91e485ae02b6e, type: 3}
+    - {fileID: -350908408369970039, guid: 1d6df14d63ef9e9489f91e485ae02b6e, type: 3}
+    - {fileID: -5409570386352685021, guid: 1d6df14d63ef9e9489f91e485ae02b6e, type: 3}
+    framesPerSecond: 8
+    scale: 0.4
+    flipX: 0
+    tint: {r: 0.55, g: 1, b: 0.45, a: 1}
+    price: 700
+  - id: drone_inferno
+    displayName: CEHENNEM
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: -805413805114763160, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: -5803609691046316526, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: 5138326885239486710, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: -995054736717307269, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: 4143707135291769662, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: -1080417984138988013, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: -3993288382825913822, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: 3670741218265302974, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: 2691763121051556535, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: -1680462239711885218, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: -4359432175685629772, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: -3128799501592378436, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: -8971719725132824670, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: 5001329240603080139, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: 8402186711763901599, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    - {fileID: 2558119740098343557, guid: 34a6c6556afd39149b6f9ff1b11b0607, type: 3}
+    framesPerSecond: 12
+    scale: 0.7
+    flipX: 1
+    tint: {r: 1, g: 0.55, b: 0.35, a: 1}
+    price: 1100
+  - id: drone_night
+    displayName: GECE NÖBETÇİSİ
+    sprite: {fileID: 0}
+    animationFrames:
+    - {fileID: 6135626727781893226, guid: fb8412a66327bb041b468a259f68a9fd, type: 3}
+    - {fileID: 6331134035273145613, guid: fb8412a66327bb041b468a259f68a9fd, type: 3}
+    - {fileID: 3536550053890646481, guid: fb8412a66327bb041b468a259f68a9fd, type: 3}
+    - {fileID: -3241717008164354252, guid: fb8412a66327bb041b468a259f68a9fd, type: 3}
+    - {fileID: 8346237947241947180, guid: fb8412a66327bb041b468a259f68a9fd, type: 3}
+    - {fileID: 4045134661210475976, guid: fb8412a66327bb041b468a259f68a9fd, type: 3}
+    - {fileID: 2797824172477583377, guid: fb8412a66327bb041b468a259f68a9fd, type: 3}
+    - {fileID: 1288387045261699583, guid: fb8412a66327bb041b468a259f68a9fd, type: 3}
+    framesPerSecond: 10
+    scale: 0.7
+    flipX: 0
+    tint: {r: 0.55, g: 0.6, b: 1, a: 1}
+    price: 0
+    unlockedByAchievement: 1

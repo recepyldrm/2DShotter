@@ -27,6 +27,7 @@ public class PauseManager : MonoBehaviour
     private TextMeshProUGUI restartText;
     private TextMeshProUGUI soundText;
     private TextMeshProUGUI infoText;
+    private TextMeshProUGUI tipText;
     private SettingsUI settingsUI;
 
     // Yeniden başlat yanlışlıkla basılmasın: ilk basış onay ister.
@@ -260,6 +261,8 @@ public class PauseManager : MonoBehaviour
             Loc.Pick("Seviye ", "Level ") + level + "   ·   " +
             Loc.Pick("Skor ", "Score ") + score + "   ·   " +
             Difficulty.Label(Difficulty.Current);
+
+        tipText.text = GameTips.Random();
     }
 
     void BuildMenu()
@@ -282,7 +285,7 @@ public class PauseManager : MonoBehaviour
 
         RectTransform column = UIBuilder.CreateRect("Buttons", window);
         UIBuilder.Stretch(column);
-        column.offsetMin = new Vector2(70f, 50f);
+        column.offsetMin = new Vector2(70f, 110f);
         column.offsetMax = new Vector2(-70f, -215f);
 
         VerticalLayoutGroup layout = column.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -298,6 +301,17 @@ public class PauseManager : MonoBehaviour
         AddButton(column, "AYARLAR", false, OnSettingsClicked, out _);
         AddButton(column, string.Empty, false, () => { UIBuilder.PlayClick(); ToggleSound(); }, out soundText);
         AddButton(column, "ANA MENÜ", false, () => { UIBuilder.PlayClick(); GoToMainMenu(); }, out _);
+
+        // Altta rastgele ipucu
+        tipText = UIBuilder.CreateText(theme, window, string.Empty, 22f, TextAlignmentOptions.Center, theme.greyLight);
+        tipText.rectTransform.anchorMin = new Vector2(0f, 0f);
+        tipText.rectTransform.anchorMax = new Vector2(1f, 0f);
+        tipText.rectTransform.pivot = new Vector2(0.5f, 0f);
+        tipText.rectTransform.offsetMin = new Vector2(50f, 28f);
+        tipText.rectTransform.offsetMax = new Vector2(-50f, 95f);
+        tipText.enableAutoSizing = true;
+        tipText.fontSizeMin = 16f;
+        tipText.fontSizeMax = 22f;
 
         menuRoot.SetActive(false);
     }

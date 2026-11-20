@@ -178,7 +178,7 @@ public class DailyQuestsUI : MonoBehaviour
     {
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayUpgradePurchase();
+            AudioManager.Instance.PlayReward();
         }
 
         Haptics.Light();

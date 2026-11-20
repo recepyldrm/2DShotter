@@ -17,13 +17,26 @@ public static class GraphicsQuality
         set
         {
             PlayerPrefs.SetInt(GameKeys.GraphicsQuality, (int)value);
+            cachedLevel = (int)value;
             PlayerPrefs.Save();
             Apply();
         }
     }
 
     // Düşük ayarda bazı süs efektleri azaltılır (hasar sayıları, sarsıntı vb. isterse buna bakar).
-    public static bool ReducedEffects => Current == Level.Low;
+    // Her karede PlayerPrefs okunmasın diye önbellekte tutulur.
+    private static int cachedLevel = -1;
+
+    public static bool ReducedEffects
+    {
+        get
+        {
+            if (cachedLevel < 0)
+                cachedLevel = (int)Current;
+
+            return cachedLevel == (int)Level.Low;
+        }
+    }
 
     public static string Label(Level level)
     {

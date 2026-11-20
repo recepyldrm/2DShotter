@@ -38,7 +38,8 @@ public class ExplosionBlast : MonoBehaviour
 
     public static void Play(Vector3 position, float radius, Color coreColor, Color edgeColor)
     {
-        if (radius <= 0f)
+        // Düşük grafik ayarında küçük süs patlamaları (isabet, drone atışı) atlanır.
+        if (radius <= 0f || (radius < 0.6f && GraphicsQuality.ReducedEffects))
             return;
 
         if (manager == null)

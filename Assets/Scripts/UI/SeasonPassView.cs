@@ -185,8 +185,15 @@ public class SeasonPassView
         {
             CompanionSkinDatabase database = CompanionSkinDatabase.Load();
             CompanionSkinDatabase.Skin skin = database != null ? database.Find(reward.skinId) : null;
-            string name = skin != null ? skin.displayName : reward.skinId;
-            return UIBuilder.ColorTag(theme.mainRedHover, name) + " + " + reward.gold;
+            string name = skin != null ? Loc.T(skin.displayName) : reward.skinId;
+            return UIBuilder.ColorTag(theme.mainRedHover, name) + (reward.gold > 0 ? " + " + reward.gold : string.Empty);
+        }
+
+        if (reward.IsBulletSkin)
+        {
+            BulletSkins.Skin bulletSkin = BulletSkins.Find(reward.bulletSkinId);
+            string name = bulletSkin != null ? Loc.T(bulletSkin.title) : reward.bulletSkinId;
+            return UIBuilder.ColorTag(bulletSkin != null ? bulletSkin.color : theme.mainRedHover, name) + (reward.gold > 0 ? " + " + reward.gold : string.Empty);
         }
 
         return "+" + reward.gold + " " + Loc.T("ALTIN");
@@ -200,7 +207,7 @@ public class SeasonPassView
             return;
 
         if (AudioManager.Instance != null)
-            AudioManager.Instance.PlayUpgradePurchase();
+            AudioManager.Instance.PlayReward();
 
         Haptics.Light();
         Refresh();

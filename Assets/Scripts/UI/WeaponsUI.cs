@@ -22,6 +22,7 @@ public class WeaponsUI : MonoBehaviour
     private UITheme theme;
     private GameObject panel;
     private TextMeshProUGUI goldLabel;
+    private TextMeshProUGUI hint;
     private readonly List<Row> rows = new List<Row>();
 
     void Start()
@@ -57,6 +58,8 @@ public class WeaponsUI : MonoBehaviour
 
     public void Show()
     {
+        pendingPurchase = null;
+        hint.text = Loc.T("Seçtiğin silah bir sonraki oyunda kullanılır.");
         Refresh();
         panel.SetActive(true);
     }
@@ -144,8 +147,125 @@ public class WeaponsUI : MonoBehaviour
         row.upgradeText.color = canAfford ? theme.mainWhite : theme.greyLight;
     }
 
+    // ==================================
+    // MERMİ GÖRÜNÜMLERİ
+    // ==================================
+
+    private class SwatchButton
+    {
+        public BulletSkins.Skin skin;
+        public Image image;
+        public Outline outline;
+    }
+
+    private readonly List<SwatchButton> swatches = new List<SwatchButton>();
+
+    // Satın almak için iki kez basılır: ilk basış fiyatı gösterir.
+    private BulletSkins.Skin pendingPurchase;
+
+    void BuildBulletSkinRow(RectTransform window)
+    {
+        const float size = 62f;
+        const float spacing = 12f;
+
+        TextMeshProUGUI label = UIBuilder.CreateText(theme, window, Loc.Pick("MERMİ", "BULLETS"), 32f, TextAlignmentOptions.MidlineRight, theme.greyLight);
+        float rowWidth = BulletSkins.All.Length * (size + spacing);
+        UIBuilder.Place(label.rectTransform, new Vector2(1f, 1f), new Vector2(-110f - rowWidth, -45f), new Vector2(160f, size));
+
+        for (int i = 0; i < BulletSkins.All.Length; i++)
+        {
+            BulletSkins.Skin skin = BulletSkins.All[i];
+
+            RectTransform rect = UIBuilder.CreateRect("BulletSkin_" + skin.id, window);
+            UIBuilder.Place(rect, new Vector2(1f, 1f), new Vector2(-100f - (BulletSkins.All.Length - 1 - i) * (size + spacing), -45f), new Vector2(size, size));
+
+            Image image = rect.gameObject.AddComponent<Image>();
+            Button button = rect.gameObject.AddComponent<Button>();
+            button.targetGraphic = image;
+
+            Outline outline = rect.gameObject.AddComponent<Outline>();
+            outline.effectDistance = new Vector2(4f, -4f);
+
+            // Klasik: silahların kendi renkleri olduğunu belli eden çok renkli şerit yerine "K"
+            if (skin.IsClassic)
+            {
+                TextMeshProUGUI mark = UIBuilder.CreateText(theme, rect, Loc.Pick("K", "C"), 34f, TextAlignmentOptions.Center, theme.greyDark);
+                UIBuilder.Stretch(mark.rectTransform);
+            }
+
+            button.onClick.AddListener(() => OnBulletSkinClicked(skin));
+
+            swatches.Add(new SwatchButton { skin = skin, image = image, outline = outline });
+        }
+    }
+
+    void OnBulletSkinClicked(BulletSkins.Skin skin)
+    {
+        string name = Loc.T(skin.title);
+
+        if (BulletSkins.IsOwned(skin))
+        {
+            UIBuilder.PlayClick();
+            BulletSkins.Select(skin);
+            pendingPurchase = null;
+            hint.text = Loc.Pick("Mermi görünümü: ", "Bullet skin: ") + UIBuilder.ColorTag(skin.IsClassic ? theme.mainWhite : skin.color, name);
+            Refresh();
+            return;
+        }
+
+        if (skin.seasonReward)
+        {
+            UIBuilder.PlayClick();
+            pendingPurchase = null;
+            hint.text = UIBuilder.ColorTag(skin.color, name) + Loc.Pick(" · sezon bileti ödülü", " · season pass reward");
+            return;
+        }
+
+        if (pendingPurchase != skin)
+        {
+            UIBuilder.PlayClick();
+            pendingPurchase = skin;
+            hint.text = UIBuilder.ColorTag(skin.color, name) + " · " + skin.price + " " + Loc.T("ALTIN") +
+                        Loc.Pick("  (almak için tekrar bas)", "  (tap again to buy)");
+            return;
+        }
+
+        pendingPurchase = null;
+
+        if (!BulletSkins.TryBuy(skin))
+        {
+            hint.text = Loc.Pick("Yeterli altın yok.", "Not enough gold.");
+            return;
+        }
+
+        BulletSkins.Select(skin);
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayUpgradePurchase();
+
+        hint.text = Loc.Pick("Mermi görünümü: ", "Bullet skin: ") + UIBuilder.ColorTag(skin.color, name);
+        Refresh();
+    }
+
+    void RefreshSwatches()
+    {
+        BulletSkins.Skin selected = BulletSkins.Selected;
+
+        foreach (SwatchButton swatch in swatches)
+        {
+            bool owned = BulletSkins.IsOwned(swatch.skin);
+            Color color = swatch.skin.IsClassic ? theme.greyLight : swatch.skin.color;
+            color.a = owned ? 1f : 0.3f;
+
+            swatch.image.color = color;
+            swatch.outline.effectColor = swatch.skin == selected ? theme.mainWhite : new Color(0f, 0f, 0f, 0.6f);
+        }
+    }
+
     void Refresh()
     {
+        RefreshSwatches();
+
         int gold = PlayerProgress.TotalGold;
         WeaponCatalog.Weapon selected = WeaponCatalog.Selected;
 
@@ -241,7 +361,7 @@ public class WeaponsUI : MonoBehaviour
         UIBuilder.AnchorTop(goldLabel.rectTransform, 25f, 100f);
         goldLabel.rectTransform.offsetMin = new Vector2(70f, goldLabel.rectTransform.offsetMin.y);
 
-        TextMeshProUGUI hint = UIBuilder.CreateText(
+        hint = UIBuilder.CreateText(
             theme,
             window,
             "Seçtiğin silah bir sonraki oyunda kullanılır.",
@@ -250,6 +370,8 @@ public class WeaponsUI : MonoBehaviour
             theme.greyLight
         );
         UIBuilder.AnchorTop(hint.rectTransform, 145f, 45f);
+
+        BuildBulletSkinRow(window);
 
         RectTransform content = UIBuilder.CreateScrollList(window, new Vector2(60f, 45f), new Vector2(-60f, -200f));
 

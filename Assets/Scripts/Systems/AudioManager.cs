@@ -31,6 +31,21 @@ public class AudioManager : MonoBehaviour
     public AudioClip buttonClickClip;
     [Range(0f, 1f)] public float buttonClickVolume = 1f;
 
+    [Header("Silah Sesleri (boşsa kodla üretilen ses çalar)")]
+    public AudioClip shotgunShotClip;
+    public AudioClip minigunShotClip;
+    public AudioClip laserShotClip;
+    public AudioClip sniperShotClip;
+    public AudioClip rocketShotClip;
+    [Range(0f, 1f)] public float weaponShotVolume = 0.55f;
+
+    [Header("Kalkan ve Ödül Sesleri (boşsa kodla üretilen ses çalar)")]
+    public AudioClip shieldHitClip;
+    public AudioClip shieldBreakClip;
+    public AudioClip rewardClip;
+    public AudioClip questCompleteClip;
+    [Range(0f, 1f)] public float rewardVolume = 0.7f;
+
     [Header("Müzik")]
     public AudioClip backgroundMusic;
 
@@ -567,16 +582,60 @@ public class AudioManager : MonoBehaviour
         Play(enemyShotChannel, shootClip, shootVolume * 0.35f, 1.7f, 0.06f, 0.09f);
     }
 
-    // Kalkana isabet: metalik, tiz bir tık
-    public void PlayShieldHit()
+    // Silaha özel ateş sesi. Tüfek orijinal sesi kullanır.
+    public void PlayWeaponShot(WeaponCatalog.Weapon weapon)
     {
-        Play(hitChannel, enemyHitClip, enemyHitVolume * 0.7f, 2f, 0.08f);
+        if (weapon == null || !weapon.useSynthSound)
+        {
+            PlayShoot(weapon != null ? weapon.soundPitch : 1f);
+            return;
+        }
+
+        AudioClip clip = WeaponClip(weapon.synthSound);
+        Play(shootChannel, clip, weaponShotVolume, 1f, 0.05f, clip != null ? clip.length : 0f);
     }
 
-    // Kalkan kırıldı
+    AudioClip WeaponClip(SynthSounds.Sound sound)
+    {
+        AudioClip custom = null;
+
+        switch (sound)
+        {
+            case SynthSounds.Sound.Shotgun: custom = shotgunShotClip; break;
+            case SynthSounds.Sound.Minigun: custom = minigunShotClip; break;
+            case SynthSounds.Sound.Laser: custom = laserShotClip; break;
+            case SynthSounds.Sound.Sniper: custom = sniperShotClip; break;
+            case SynthSounds.Sound.Rocket: custom = rocketShotClip; break;
+        }
+
+        return custom != null ? custom : SynthSounds.Get(sound);
+    }
+
+    static AudioClip OrSynth(AudioClip custom, SynthSounds.Sound sound) =>
+        custom != null ? custom : SynthSounds.Get(sound);
+
+    // Kalkana isabet: metalik tın
+    public void PlayShieldHit()
+    {
+        Play(hitChannel, OrSynth(shieldHitClip, SynthSounds.Sound.ShieldHit), enemyHitVolume * 0.8f, 1f, 0.08f);
+    }
+
+    // Kalkan kırıldı: cam kırılması
     public void PlayShieldBreak()
     {
-        Play(explosionChannel, enemyHitClip, Mathf.Min(1f, enemyHitVolume * 1.5f), 1.3f, 0.05f);
+        Play(explosionChannel, OrSynth(shieldBreakClip, SynthSounds.Sound.ShieldBreak), Mathf.Min(1f, enemyHitVolume * 1.6f), 1f, 0.05f);
+    }
+
+    // Ödül alındı (görev, sezon, günlük ödül, başarım)
+    public void PlayReward()
+    {
+        Play(uiChannel, OrSynth(rewardClip, SynthSounds.Sound.RewardChime), rewardVolume);
+    }
+
+    // Oyun sırasında bir görev tamamlandı
+    public void PlayQuestComplete()
+    {
+        Play(eventChannel, OrSynth(questCompleteClip, SynthSounds.Sound.QuestComplete), rewardVolume);
     }
 
     // Boss uyarısı: çok derin bir darbe

@@ -48,7 +48,10 @@ public class CompanionAbilities : MonoBehaviour
         { "drone_jet",         new Info(Ability.Pierce, 1f) },
         { "drone_chopper",     new Info(Ability.GoldMagnet, 0.1f) },
         { "drone_golden",      new Info(Ability.GoldMagnet, 0.15f) },
-        { "drone_season",      new Info(Ability.GoldMagnet, 0.15f) }
+        { "drone_season",      new Info(Ability.GoldMagnet, 0.15f) },
+        { "drone_toxic",       new Info(Ability.Burn, 1.2f) },
+        { "drone_inferno",     new Info(Ability.Burn, 1.8f) },
+        { "drone_night",       new Info(Ability.Slow, 1.3f) }
     };
 
     // Aktif yetenek bekleme süreleri (saniye)
@@ -72,7 +75,8 @@ public class CompanionAbilities : MonoBehaviour
         return new Info(Ability.None, 0f);
     }
 
-    public static Info Selected => For(PlayerProgress.SelectedCompanionSkin);
+    // Günlük meydan okumada drone yetenekleri kapalı (adil olsun).
+    public static Info Selected => DailyChallenge.IsActive ? new Info(Ability.None, 0f) : For(PlayerProgress.SelectedCompanionSkin);
 
     // Oyun içinde geçerli yetenek (sahnede drone yoksa yetenek de yok)
     private static Info active;

@@ -84,7 +84,7 @@ public class AchievementsUI : MonoBehaviour
 
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayUpgradePurchase();
+            AudioManager.Instance.PlayReward();
         }
 
         // Ödül skin ise otomatik seç.

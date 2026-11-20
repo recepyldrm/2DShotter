@@ -48,6 +48,8 @@ senin yapman gereken kısımlar. Sırayla gitmek en kolayı.
 5. Tabloların kimliklerini kopyala ve `Assets/Scripts/Systems/GooglePlayGamesService.cs` içinde
    `LeaderboardIdEasy`, `LeaderboardIdNormal`, `LeaderboardIdHard` satırlarına yapıştır.
    Boş bırakılan zorluğun skorları gönderilmez.
+   Günlük meydan okuma için dördüncü bir tablo ("Günlük Meydan Okuma") oluşturup kimliğini
+   `LeaderboardIdDailyChallenge` satırına yapıştır.
 6. Unity'de **Window > Google Play Games > Setup > Android Setup** ekranına
    Play Console'un verdiği kaynak XML'ini yapıştır > **Setup**.
 7. **Test kullanıcıları:** Play Games Hizmetleri > Test kullanıcıları'na kendi Gmail adresini ekle.
@@ -77,7 +79,16 @@ Google hesabına kaydedilir ve telefon değişse de geri gelir.
 
 ---
 
-## 5. Uygulama içi ürünler (5 dk)
+## 5. Telefon bildirimleri (2 dk)
+
+Unity'de **Window > Package Manager > Unity Registry** listesinden **Mobile Notifications**
+paketini kur. Kurulunca bildirim kodu kendiliğinden etkinleşir (NOTIFICATIONS_INSTALLED tanımı
+otomatik eklenir) ve Ayarlar ekranında **BİLDİRİMLER** satırı görünür. Android 13 ve üzerinde
+oyun ilk açılışta bildirim izni ister.
+
+---
+
+## 6. Uygulama içi ürünler (5 dk)
 
 Play Console > uygulaman > **Para kazanma > Ürünler > Uygulama içi ürünler** sayfasında
 aşağıdaki kimliklerle ürün oluştur (kimlikler birebir aynı olmalı):
@@ -92,7 +103,7 @@ aşağıdaki kimliklerle ürün oluştur (kimlikler birebir aynı olmalı):
 
 ---
 
-## 6. Play Console beyanları
+## 7. Play Console beyanları
 
 - **Uygulama içeriği > Reklamlar:** "Evet, uygulamam reklam içeriyor".
 - **Veri güvenliği formu:** cihaz kimlikleri (AdMob reklam kimliği), uygulama etkinliği,

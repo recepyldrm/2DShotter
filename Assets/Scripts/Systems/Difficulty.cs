@@ -13,7 +13,8 @@ public static class Difficulty
 
     public static Level Current
     {
-        get => (Level)Mathf.Clamp(PlayerPrefs.GetInt(GameKeys.Difficulty, (int)Level.Normal), 0, 2);
+        // Günlük meydan okuma her zaman Normal zorlukta oynanır.
+        get => DailyChallenge.IsActive ? Level.Normal : (Level)Mathf.Clamp(PlayerPrefs.GetInt(GameKeys.Difficulty, (int)Level.Normal), 0, 2);
         set
         {
             PlayerPrefs.SetInt(GameKeys.Difficulty, (int)value);

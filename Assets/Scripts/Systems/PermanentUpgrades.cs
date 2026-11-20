@@ -81,7 +81,9 @@ public static class PermanentUpgrades
         Mathf.RoundToInt(upgrade.baseCost * Mathf.Pow(upgrade.costGrowth, GetLevel(upgrade)));
 
     // Toplam bonus (örn. 3. seviye can = 30)
+    // Günlük meydan okumada kalıcı geliştirmeler uygulanmaz.
     public static float GetValue(Upgrade upgrade) =>
+        DailyChallenge.IsActive ? 0f :
         GetLevel(upgrade) * upgrade.valuePerLevel;
 
     public static float GetValueAtLevel(Upgrade upgrade, int level) =>

@@ -13,6 +13,8 @@ public class RunSummaryUI : MonoBehaviour
     private UITheme theme;
     private GameObject root;
     private TextMeshProUGUI bodyText;
+    private TextMeshProUGUI tipText;
+    private TextMeshProUGUI titleText;
 
     // Son gösterilen değerler (2x altın sonrası yenilemek için)
     private int score;
@@ -36,6 +38,7 @@ public class RunSummaryUI : MonoBehaviour
         instance.seconds = seconds;
         instance.doubleGoldBonus = 0;
         instance.Refresh();
+        instance.tipText.text = GameTips.Random();
         instance.root.SetActive(true);
     }
 
@@ -79,7 +82,20 @@ public class RunSummaryUI : MonoBehaviour
         Line(text, Loc.Pick("Seviye", "Level"), level.ToString());
         Line(text, Loc.Pick("Bölüm", "Stage"), stage + "  <size=75%><color=#" + dim + ">" + StageThemes.StageName(stage - 1) + "</color></size>");
         Line(text, Loc.Pick("Süre", "Time"), minutes + ":" + secs.ToString("00"));
-        Line(text, Loc.Pick("Zorluk", "Difficulty"), Difficulty.Label(Difficulty.Current));
+        if (DailyChallenge.IsActive)
+        {
+            titleText.text = Loc.Pick("MEYDAN OKUMA", "DAILY CHALLENGE");
+            Line(text, Loc.Pick("Günün en iyisi", "Today's best"), "<color=#" + accent + ">" + DailyChallenge.BestToday + "</color>");
+            Line(text, Loc.Pick("Kural", "Rule"), DailyChallenge.ModifierName(DailyChallenge.TodayModifier));
+
+            if (DailyChallenge.LastReward > 0)
+                Line(text, Loc.Pick("Katılım ödülü", "Entry reward"), "+" + DailyChallenge.LastReward);
+        }
+        else
+        {
+            titleText.text = Loc.Pick("OYUN ÖZETİ", "RUN SUMMARY");
+            Line(text, Loc.Pick("Zorluk", "Difficulty"), Difficulty.Label(Difficulty.Current));
+        }
 
         text.Append('\n');
 
@@ -160,8 +176,8 @@ public class RunSummaryUI : MonoBehaviour
         theme.ApplyNotice(background);
         background.raycastTarget = false;
 
-        TextMeshProUGUI title = UIBuilder.CreateText(theme, panel, Loc.Pick("OYUN ÖZETİ", "RUN SUMMARY"), 44f, TextAlignmentOptions.Center, theme.mainWhite);
-        UIBuilder.AnchorTop(title.rectTransform, 22f, 60f);
+        titleText = UIBuilder.CreateText(theme, panel, Loc.Pick("OYUN ÖZETİ", "RUN SUMMARY"), 44f, TextAlignmentOptions.Center, theme.mainWhite);
+        UIBuilder.AnchorTop(titleText.rectTransform, 22f, 60f);
 
         RectTransform divider = UIBuilder.CreateRect("Divider", panel);
         divider.anchorMin = new Vector2(0.08f, 1f);
@@ -174,12 +190,23 @@ public class RunSummaryUI : MonoBehaviour
         bodyText = UIBuilder.CreateText(theme, panel, string.Empty, 28f, TextAlignmentOptions.TopLeft, theme.mainWhite);
         bodyText.rectTransform.anchorMin = Vector2.zero;
         bodyText.rectTransform.anchorMax = Vector2.one;
-        bodyText.rectTransform.offsetMin = new Vector2(40f, 30f);
+        bodyText.rectTransform.offsetMin = new Vector2(40f, 120f);
         bodyText.rectTransform.offsetMax = new Vector2(-40f, -110f);
         bodyText.enableAutoSizing = true;
         bodyText.fontSizeMin = 18f;
         bodyText.fontSizeMax = 28f;
         bodyText.richText = true;
+
+        // Altta rastgele ipucu
+        tipText = UIBuilder.CreateText(theme, panel, string.Empty, 22f, TextAlignmentOptions.Center, theme.greyLight);
+        tipText.rectTransform.anchorMin = new Vector2(0f, 0f);
+        tipText.rectTransform.anchorMax = new Vector2(1f, 0f);
+        tipText.rectTransform.pivot = new Vector2(0.5f, 0f);
+        tipText.rectTransform.offsetMin = new Vector2(30f, 20f);
+        tipText.rectTransform.offsetMax = new Vector2(-30f, 110f);
+        tipText.enableAutoSizing = true;
+        tipText.fontSizeMin = 16f;
+        tipText.fontSizeMax = 22f;
 
         root = canvas.gameObject;
         root.SetActive(false);

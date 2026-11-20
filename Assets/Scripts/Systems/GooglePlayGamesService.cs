@@ -17,18 +17,22 @@ using UnityEngine;
 public static class GooglePlayGamesConfig
 {
     // Play Console > Play Games hizmetleri > Liderlik tabloları > tablonun kimliği
-    // (örn. "CgkI1a2b3c4dEAIQAQ"). Her zorluğun kendi tablosu var; boş bırakılan
-    // zorluğun skorları gönderilmez. Üçü de boşsa liderlik tablosu kapalı kalır.
+    // (örn. "CgkI1a2b3c4dEAIQAQ"). Her zorluğun ve günlük meydan okumanın kendi
+    // tablosu var; boş bırakılan tabloya skor gönderilmez. Hepsi boşsa liderlik kapalı kalır.
     public const string LeaderboardIdEasy = "";
     public const string LeaderboardIdNormal = "";
     public const string LeaderboardIdHard = "";
 
-    public static string LeaderboardIdFor(Difficulty.Level difficulty)
+    // Günlük meydan okuma tablosu (Play Console'da "günlük" görünümüyle bakılabilir)
+    public const string LeaderboardIdDailyChallenge = "";
+
+    public static string LeaderboardIdFor(LeaderboardKind kind)
     {
-        switch (difficulty)
+        switch (kind)
         {
-            case Difficulty.Level.Easy: return LeaderboardIdEasy;
-            case Difficulty.Level.Hard: return LeaderboardIdHard;
+            case LeaderboardKind.Easy: return LeaderboardIdEasy;
+            case LeaderboardKind.Hard: return LeaderboardIdHard;
+            case LeaderboardKind.DailyChallenge: return LeaderboardIdDailyChallenge;
             default: return LeaderboardIdNormal;
         }
     }
@@ -36,7 +40,8 @@ public static class GooglePlayGamesConfig
     public static bool AnyLeaderboard =>
         !string.IsNullOrEmpty(LeaderboardIdEasy) ||
         !string.IsNullOrEmpty(LeaderboardIdNormal) ||
-        !string.IsNullOrEmpty(LeaderboardIdHard);
+        !string.IsNullOrEmpty(LeaderboardIdHard) ||
+        !string.IsNullOrEmpty(LeaderboardIdDailyChallenge);
 
     // Bulut kayıt dosyasının adı (değiştirme; oyuncuların kayıtları bu adla saklanır).
     public const string SaveFileName = "progress";
@@ -103,9 +108,9 @@ public class GooglePlayGamesService : MonoBehaviour, ILeaderboardProvider
     // LİDERLİK TABLOSU
     // ==================================
 
-    public void ReportScore(long score, Difficulty.Level difficulty)
+    public void ReportScore(long score, LeaderboardKind kind)
     {
-        string leaderboardId = GooglePlayGamesConfig.LeaderboardIdFor(difficulty);
+        string leaderboardId = GooglePlayGamesConfig.LeaderboardIdFor(kind);
 
         if (string.IsNullOrEmpty(leaderboardId))
             return;
@@ -122,7 +127,7 @@ public class GooglePlayGamesService : MonoBehaviour, ILeaderboardProvider
     public void ShowLeaderboard()
     {
         // Seçili zorluğun tablosu varsa onu, yoksa bütün tabloların listesini aç.
-        string leaderboardId = GooglePlayGamesConfig.LeaderboardIdFor(Difficulty.Current);
+        string leaderboardId = GooglePlayGamesConfig.LeaderboardIdFor(Leaderboards.CurrentDifficultyKind);
 
         if (string.IsNullOrEmpty(leaderboardId))
             PlayGamesPlatform.Instance.ShowLeaderboardUI();

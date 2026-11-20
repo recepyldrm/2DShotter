@@ -822,7 +822,8 @@ public class EnemyHealth : MonoBehaviour
         // DEATH PARTICLE
         // ==================================
 
-        if (deathParticlePrefab != null)
+        // Düşük grafik ayarında ölüm parçacıkları gösterilmez.
+        if (deathParticlePrefab != null && !GraphicsQuality.ReducedEffects)
         {
             ObjectPool.SpawnTemporary(
                 deathParticlePrefab,
@@ -1077,7 +1078,11 @@ public class EnemyHealth : MonoBehaviour
     // ==================================
 
     // Kalıcı yükseltme x zorluk x drone altın bonuslarının toplam üst sınırı
-    private const float MaxGoldBonusMultiplier = 1.9f;
+    public const float MaxGoldBonusMultiplier = 1.9f;
+
+    // Altın bonuslarının toplamı (üst sınırlı). Testlerden de çağrılır.
+    public static float CombinedGoldBonus(float permanent, float difficulty, float drone) =>
+        Mathf.Min(permanent * difficulty * drone, MaxGoldBonusMultiplier);
 
     void GrantDeathGold()
     {
@@ -1109,12 +1114,15 @@ public class EnemyHealth : MonoBehaviour
         // Altın bonusları: kalıcı "Altın Avcısı" yükseltmesi, zorluk ve drone
         // "altın mıknatısı". Hepsi üst üste binince ekonomi bozulmasın diye
         // toplam bonus MaxGoldBonusMultiplier ile sınırlı.
-        float goldBonus =
-            PermanentUpgrades.GoldMultiplier *
-            Difficulty.GoldMultiplier *
-            CompanionAbilities.GoldMultiplier;
 
-        multiplier *= Mathf.Min(goldBonus, MaxGoldBonusMultiplier);
+        multiplier *= CombinedGoldBonus(
+            PermanentUpgrades.GoldMultiplier,
+            Difficulty.GoldMultiplier,
+            CompanionAbilities.GoldMultiplier
+        );
+
+        // Günlük meydan okuma "Çift Altın" kuralı (üst sınırın dışında)
+        multiplier *= DailyChallenge.GoldMultiplier;
 
         multiplier *= bossRewardMultiplier * VariantRewardMultiplier;
 
@@ -1221,5 +1229,21 @@ public class EnemyHealth : MonoBehaviour
     public int GetMaxHealth()
     {
         return scaledMaxHealth;
+    }
+
+    // Yanıyor mu? (Yenilenen boss yanarken iyileşemez.)
+    public bool IsBurning => !isDead && burnCoroutine != null && burnTimeRemaining > 0f;
+
+    // Canın bir kısmını doldurur, yeşil sayı gösterir. Doldurulan miktarı döner.
+    public int HealFraction(float fraction)
+    {
+        if (isDead || currentHealth >= scaledMaxHealth)
+            return 0;
+
+        int amount = Mathf.Min(scaledMaxHealth - currentHealth, Mathf.Max(1, Mathf.RoundToInt(scaledMaxHealth * fraction)));
+        currentHealth += amount;
+
+        DamageNumbers.Show(GetDamageNumberPosition(), amount, DamageNumbers.Style.Heal);
+        return amount;
     }
 }

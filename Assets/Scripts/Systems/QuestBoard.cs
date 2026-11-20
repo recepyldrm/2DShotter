@@ -428,6 +428,18 @@ public class QuestBoard
         }
     }
 
+    // Bir görev tamamlandığı anda (ilerleme hedefe ulaşınca) haber verir.
+    public static event Action<QuestBoard, Quest> OnQuestCompleted;
+
+    void NotifyIfCompleted(Quest quest, int before, int after)
+    {
+        if (before < quest.target && after >= quest.target)
+        {
+            OnQuestCompleted?.Invoke(this, quest);
+            QuestToast.Show(this, quest);
+        }
+    }
+
     // Oyun sırasında anında sayılan görevler (kalkanlı / nişancı öldürme, sersemletme)
     public static void Increment(QuestType type, int amount)
     {
@@ -449,6 +461,7 @@ public class QuestBoard
                 if (next != current)
                 {
                     PlayerPrefs.SetInt(key, next);
+                    board.NotifyIfCompleted(quest, current, next);
                     changed = true;
                 }
             }
@@ -490,6 +503,7 @@ public class QuestBoard
             if (next != current)
             {
                 PlayerPrefs.SetInt(key, next);
+                NotifyIfCompleted(quest, current, next);
                 changed = true;
             }
         }

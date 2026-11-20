@@ -694,7 +694,7 @@ public class SkinShopUI : MonoBehaviour
             // Türkçe büyük harf: "i" -> "İ"
             string hint = achievement != null
                 ? (Loc.IsEnglish ? Loc.T(achievement.description).ToUpperInvariant() : achievement.description.ToUpper(new System.Globalization.CultureInfo("tr-TR")))
-                : skin.id == SeasonPass.RewardSkinId ? Loc.Pick("SEZON BİLETİ ÖDÜLÜ", "SEASON PASS REWARD") : Loc.Pick("BAŞARIM ÖDÜLÜ", "ACHIEVEMENT REWARD");
+                : SeasonPass.IsSeasonRewardSkin(skin.id) ? Loc.Pick("SEZON BİLETİ ÖDÜLÜ", "SEASON PASS REWARD") : Loc.Pick("BAŞARIM ÖDÜLÜ", "ACHIEVEMENT REWARD");
 
             displayName += "\n<size=24>" + ColorTag(theme.greyLight, hint) + "</size>";
         }

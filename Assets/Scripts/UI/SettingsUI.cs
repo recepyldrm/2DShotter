@@ -12,6 +12,7 @@ public class SettingsUI : MonoBehaviour
     private Slider musicSlider;
     private Slider sfxSlider;
     private TextMeshProUGUI vibrationText;
+    private TextMeshProUGUI notificationsText;
     private TextMeshProUGUI graphicsText;
     private TextMeshProUGUI languageText;
 
@@ -57,6 +58,9 @@ public class SettingsUI : MonoBehaviour
         }
 
         vibrationText.text = Loc.T(Haptics.Enabled ? "AÇIK" : "KAPALI");
+
+        if (notificationsText != null)
+            notificationsText.text = Loc.T(GameNotifications.Enabled ? "AÇIK" : "KAPALI");
         graphicsText.text = GraphicsQuality.Label(GraphicsQuality.Current);
         if (languageText != null)
             languageText.text = Loc.LanguageName(Loc.Current);
@@ -111,6 +115,15 @@ public class SettingsUI : MonoBehaviour
             Haptics.Enabled = !Haptics.Enabled;
             Haptics.Medium();
         });
+
+        // Bildirimler (paket kurulu değilse satır görünmez)
+        if (GameNotifications.IsSupported)
+        {
+            notificationsText = CreateToggleButton(CreateRow(content, "BİLDİRİMLER"), () =>
+            {
+                GameNotifications.Enabled = !GameNotifications.Enabled;
+            });
+        }
 
         graphicsText = CreateToggleButton(CreateRow(content, "GRAFİK"), () =>
         {

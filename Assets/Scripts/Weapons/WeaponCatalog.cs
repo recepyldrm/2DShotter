@@ -47,6 +47,10 @@ public static class WeaponCatalog
 
         // Ateş sesinin perdesi (1 = normal, düşük = tok, yüksek = ince)
         public float soundPitch = 1f;
+
+        // true ise kodla üretilen kendi ateş sesi çalar (tüfek orijinal sesi kullanır)
+        public bool useSynthSound;
+        public SynthSounds.Sound synthSound;
     }
 
     public static readonly Weapon Rifle = new Weapon
@@ -71,7 +75,9 @@ public static class WeaponCatalog
         lifetimeMultiplier = 0.18f,
         tint = new Color(1f, 0.85f, 0.35f, 1f),
         scale = new Vector2(0.7f, 0.7f),
-        soundPitch = 0.75f
+        soundPitch = 0.75f,
+        useSynthSound = true,
+        synthSound = SynthSounds.Sound.Shotgun
     };
 
     public static readonly Weapon Laser = new Weapon
@@ -86,7 +92,9 @@ public static class WeaponCatalog
         extraPierce = 999,
         tint = new Color(0.4f, 0.9f, 1f, 1f),
         scale = new Vector2(2.2f, 0.5f),
-        soundPitch = 1.5f
+        soundPitch = 1.5f,
+        useSynthSound = true,
+        synthSound = SynthSounds.Sound.Laser
     };
 
     public static readonly Weapon Rocket = new Weapon
@@ -102,7 +110,9 @@ public static class WeaponCatalog
         explosionRadius = 1.8f,
         tint = new Color(1f, 0.5f, 0.15f, 1f),
         scale = new Vector2(1.5f, 1.2f),
-        soundPitch = 0.55f
+        soundPitch = 0.55f,
+        useSynthSound = true,
+        synthSound = SynthSounds.Sound.Rocket
     };
 
     public static readonly Weapon Minigun = new Weapon
@@ -118,7 +128,9 @@ public static class WeaponCatalog
         lifetimeMultiplier = 0.8f,
         tint = new Color(1f, 0.95f, 0.6f, 1f),
         scale = new Vector2(0.8f, 0.6f),
-        soundPitch = 1.25f
+        soundPitch = 1.25f,
+        useSynthSound = true,
+        synthSound = SynthSounds.Sound.Minigun
     };
 
     public static readonly Weapon Sniper = new Weapon
@@ -135,7 +147,9 @@ public static class WeaponCatalog
         lifetimeMultiplier = 1.4f,
         tint = new Color(0.75f, 1f, 0.45f, 1f),
         scale = new Vector2(2.6f, 0.45f),
-        soundPitch = 0.65f
+        soundPitch = 0.65f,
+        useSynthSound = true,
+        synthSound = SynthSounds.Sound.Sniper
     };
 
     public static readonly Weapon[] All =
@@ -167,6 +181,10 @@ public static class WeaponCatalog
     {
         get
         {
+            // Günlük meydan okumada herkes aynı silahla oynar.
+            if (DailyChallenge.IsActive)
+                return DailyChallenge.TodayWeapon;
+
             Weapon weapon = Find(PlayerProgress.SelectedWeapon);
             return weapon != null && IsOwned(weapon) ? weapon : Rifle;
         }
@@ -185,9 +203,10 @@ public static class WeaponCatalog
     public static int GetLevel(Weapon weapon) =>
         Mathf.Clamp(PlayerPrefs.GetInt(GameKeys.WeaponLevelPrefix + weapon.id, 1), 1, MaxLevel);
 
-    public static float DamageBonus(Weapon weapon) => 1f + DamagePerLevel * (GetLevel(weapon) - 1);
+    // Meydan okumada silah seviyeleri sayılmaz (adil olsun).
+    public static float DamageBonus(Weapon weapon) => DailyChallenge.IsActive ? 1f : 1f + DamagePerLevel * (GetLevel(weapon) - 1);
 
-    public static float FireRateBonus(Weapon weapon) => 1f + FireRatePerLevel * (GetLevel(weapon) - 1);
+    public static float FireRateBonus(Weapon weapon) => DailyChallenge.IsActive ? 1f : 1f + FireRatePerLevel * (GetLevel(weapon) - 1);
 
     public static int DamagePercentAt(int level) => Mathf.RoundToInt(DamagePerLevel * (level - 1) * 100f);
 

@@ -58,7 +58,7 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    public void Configure(int multiplier, WeaponCatalog.Weapon weapon, float levelDamageBonus = 1f)
+    public void Configure(int multiplier, WeaponCatalog.Weapon weapon, float levelDamageBonus = 1f, Color? tintOverride = null)
     {
         shotMultiplier = Mathf.Max(1, multiplier);
 
@@ -83,7 +83,8 @@ public class Bullet : MonoBehaviour
 
         if (spriteRenderer != null)
         {
-            spriteRenderer.color = defaultColor * weapon.tint;
+            // Mermi görünümü seçiliyse onun rengi, değilse silahın rengi
+            spriteRenderer.color = defaultColor * (tintOverride ?? weapon.tint);
         }
     }
 
@@ -210,6 +211,9 @@ public class Bullet : MonoBehaviour
 
         // Seçili silahın mermi başı hasarı (örn. pompalı saçması zayıf, roket güçlü)
         multiplier *= weaponDamageMultiplier;
+
+        // Günlük meydan okuma "Cam Top" kuralı
+        multiplier *= DailyChallenge.PlayerDamageMultiplier;
 
         int finalDamage =
             Mathf.RoundToInt(

@@ -31,6 +31,9 @@ public class PlayerHealth : MonoBehaviour
     {
         // Ana menüden alınan kalıcı "Başlangıç Canı" yükseltmesi
         maxHealth += PermanentUpgrades.BonusMaxHealth;
+
+        // Günlük meydan okuma "Cam Top" kuralı: yarım can
+        maxHealth = Mathf.Max(1, Mathf.RoundToInt(maxHealth * DailyChallenge.PlayerHealthMultiplier));
     }
 
     void Start()

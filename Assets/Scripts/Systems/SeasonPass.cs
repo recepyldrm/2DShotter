@@ -20,6 +20,11 @@ public static class SeasonPass
     // Premium yolun son ödülü olan özel drone görünümü
     public const string RewardSkinId = "drone_season";
 
+    // Ücretsiz yolun 20. seviyesindeki drone görünümü
+    public const string FreeRewardSkinId = "drone_night";
+
+    public static bool IsSeasonRewardSkin(string skinId) => skinId == RewardSkinId || skinId == FreeRewardSkinId;
+
     // Puan kaynakları
     public const int PointsPerLevelReached = 3;
     public const int PointsPerTenKills = 1;
@@ -37,6 +42,11 @@ public static class SeasonPass
     {
         public int gold;
         public string skinId;
+
+        // Mermi görünümü ödülü (BulletSkins)
+        public string bulletSkinId;
+
+        public bool IsBulletSkin => !string.IsNullOrEmpty(bulletSkinId);
 
         public bool IsSkin => !string.IsNullOrEmpty(skinId);
     }
@@ -153,6 +163,14 @@ public static class SeasonPass
         if (tier == TierCount)
             return new Reward { gold = 1000 };
 
+        // 20. seviye: ücretsiz yolun drone görünümü (zaten varsa altın)
+        if (tier == 20)
+        {
+            return PlayerProgress.IsCompanionSkinOwned(FreeRewardSkinId)
+                ? new Reward { gold = 400 }
+                : new Reward { skinId = FreeRewardSkinId };
+        }
+
         if (tier % 5 == 0)
             return new Reward { gold = 300 };
 
@@ -167,6 +185,14 @@ public static class SeasonPass
             return PlayerProgress.IsCompanionSkinOwned(RewardSkinId)
                 ? new Reward { gold = 3000 }
                 : new Reward { skinId = RewardSkinId, gold = 1000 };
+        }
+
+        // 15. seviye: SEZON ALEVİ mermi görünümü (zaten varsa altın)
+        if (tier == 15)
+        {
+            return BulletSkins.IsOwned(BulletSkins.Find(BulletSkins.SeasonSkinId))
+                ? new Reward { gold = 800 }
+                : new Reward { bulletSkinId = BulletSkins.SeasonSkinId, gold = 300 };
         }
 
         if (tier % 5 == 0)
@@ -227,6 +253,9 @@ public static class SeasonPass
 
         if (reward.IsSkin)
             PlayerProgress.UnlockCompanionSkin(reward.skinId);
+
+        if (reward.IsBulletSkin)
+            BulletSkins.Unlock(reward.bulletSkinId);
 
         OnChanged?.Invoke();
     }

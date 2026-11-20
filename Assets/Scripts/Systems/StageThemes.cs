@@ -71,6 +71,17 @@ public class StageThemes : MonoBehaviour
             damage = 1.15f,
             ruleTurkish = "Kalkanlılar çoğaldı, düşmanlar daha sert vurur",
             ruleEnglish = "More shielded enemies, enemies hit harder"
+        },
+        new Theme
+        {
+            name = "KÜL VADİSİ",
+            tint = new Color(0.88f, 0.76f, 0.66f, 1f),
+            rangedChance = 1.5f,
+            shieldedChance = 1.5f,
+            splitterChance = 1.5f,
+            health = 1.1f,
+            ruleTurkish = "Her türden özel düşman çoğaldı",
+            ruleEnglish = "More special enemies of every kind"
         }
     };
 
@@ -114,8 +125,45 @@ public class StageThemes : MonoBehaviour
         return Themes[1 + (stage - 1) % (Themes.Length - 1)];
     }
 
+    public static int ThemeCount => Themes.Length;
+
+    // Günlük meydan okuma: oyun baştan bu bölümün renk ve kurallarıyla oynanır,
+    // seviye atladıkça bölüm değişmez.
+    private bool fixedStage;
+
+    public static void StartFixed(int themeIndex)
+    {
+        if (instance == null)
+        {
+            instance = new GameObject("StageThemes").AddComponent<StageThemes>();
+        }
+
+        Theme target = Themes[Mathf.Clamp(themeIndex, 0, Themes.Length - 1)];
+
+        instance.fixedStage = true;
+        instance.currentStage = themeIndex;
+        activeTheme = target;
+        instance.ApplyTint(target.tint);
+        instance.StartCoroutine(instance.ShowChallengeBanner(target));
+    }
+
+    IEnumerator ShowChallengeBanner(Theme target)
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        bannerTitle.text = Loc.Pick("GÜNLÜK MEYDAN OKUMA", "DAILY CHALLENGE");
+        bannerName.text = Loc.T(target.name);
+        bannerRule.text = Loc.Pick(target.ruleTurkish, target.ruleEnglish) + "  ·  " +
+                          DailyChallenge.ModifierName(DailyChallenge.TodayModifier);
+
+        yield return FadeBanner();
+    }
+
     public static void NotifyLevelUp(int level)
     {
+        if (instance != null && instance.fixedStage)
+            return;
+
         int stage = StageForLevel(level);
 
         if (stage == 0 && instance == null)
@@ -236,6 +284,12 @@ public class StageThemes : MonoBehaviour
         bannerTitle.text = Loc.T("BÖLÜM") + " " + (stage + 1);
         bannerName.text = Loc.T(stageTheme.name);
         bannerRule.text = Loc.Pick(stageTheme.ruleTurkish, stageTheme.ruleEnglish);
+
+        yield return FadeBanner();
+    }
+
+    IEnumerator FadeBanner()
+    {
         bannerGroup.gameObject.SetActive(true);
 
         const float fade = 0.5f;

@@ -51,17 +51,21 @@ public class BossWaveManager : MonoBehaviour
         Charger,
         Artillery,
         Guardian,
-        Smasher
+        Smasher,
+        Broodmother,
+        Regenerator
     }
 
-    private static readonly string[] ArchetypeTitles = { "HÜCUMCU", "TOPÇU", "MUHAFIZ", "YIKICI" };
+    private static readonly string[] ArchetypeTitles = { "HÜCUMCU", "TOPÇU", "MUHAFIZ", "YIKICI", "SÜRÜ ANASI", "YENİLENEN" };
 
     private static readonly string[] ArchetypeIntros =
     {
         "Gövdesi şiştiğinde sana doğru hızla atılır ve yardımcı düşmanlar çağırır.",
         "Uzaktan yelpaze şeklinde mermi yağdırır. Ne kadar çabuk ölürse o kadar az hasar alırsın.",
         "Belirli aralıklarla mavi bir kalkan açar. Kalkan kısa sürede kendiliğinden kalkar; yanma hasarı kalkanı deler.",
-        "Durup yere vurmaya hazırlanır. Hazırlık sırasında ona yeterince hasar verirsen sersemler; veremezsen ağır bir şok dalgası gelir!"
+        "Durup yere vurmaya hazırlanır. Hazırlık sırasında ona yeterince hasar verirsen sersemler; veremezsen ağır bir şok dalgası gelir!",
+        "Durmadan bölünen düşmanlar doğurur. Çocuklarına boğulmadan önce onu indir; patlayıcı mermiler çok işe yarar.",
+        "Sürekli kendini iyileştirir. Yanarken iyileşemez: yakıcı mermi ya da yakıcı drone kullan!"
     };
 
     private static readonly Color[] ArchetypeColors =
@@ -69,14 +73,16 @@ public class BossWaveManager : MonoBehaviour
         new Color(1f, 0.35f, 0.25f, 1f),
         new Color(1f, 0.6f, 0.2f, 1f),
         new Color(0.55f, 0.8f, 1f, 1f),
-        new Color(0.85f, 0.4f, 1f, 1f)
+        new Color(0.85f, 0.4f, 1f, 1f),
+        new Color(0.55f, 0.95f, 0.45f, 1f),
+        new Color(0.4f, 1f, 0.75f, 1f)
     };
 
     private Archetype archetype;
     private EnemyVariant bossVariant;
     private int healthAtSlamStart;
 
-    public static string[] IntroIds => new[] { "boss_charger", "boss_artillery", "boss_guardian", "boss_smasher" };
+    public static string[] IntroIds => new[] { "boss_charger", "boss_artillery", "boss_guardian", "boss_smasher", "boss_broodmother", "boss_regenerator" };
 
     private static readonly string[] BossNames =
     {
@@ -116,7 +122,7 @@ public class BossWaveManager : MonoBehaviour
     // LevelSystem her seviye atlamada çağırır.
     public static void NotifyLevelUp(int level)
     {
-        if (level <= 0 || level % LevelsPerBoss != 0)
+        if (level <= 0 || level % DailyChallenge.LevelsPerBoss != 0)
             return;
 
         QueueBoss();
@@ -176,6 +182,8 @@ public class BossWaveManager : MonoBehaviour
 
             return;
         }
+
+        TickRegeneration();
 
         int max = Mathf.Max(1, boss.GetMaxHealth());
         int current = Mathf.Max(0, boss.GetCurrentHealth());
@@ -384,9 +392,82 @@ public class BossWaveManager : MonoBehaviour
                 case Archetype.Smasher:
                     yield return primary ? GroundSlam() : Charge();
                     break;
+
+                case Archetype.Broodmother:
+                    yield return primary ? SpawnBrood(spawner) : Charge();
+                    break;
+
+                case Archetype.Regenerator:
+                    // İyileşme Update'te sürer; yetenek olarak nişancı çağırır ve hücum eder.
+                    yield return primary ? SummonGunners(spawner) : Charge();
+                    break;
             }
 
             step++;
+        }
+    }
+
+    // ==================================
+    // SÜRÜ ANASI: BÖLÜNENLER DOĞURUR
+    // ==================================
+
+    IEnumerator SpawnBrood(EnemySpawner spawner)
+    {
+        yield return Telegraph(0.6f, ArchetypeColors[(int)Archetype.Broodmother]);
+
+        int count = Mathf.Min(4, 2 + (bossCount - 1) / 3);
+
+        for (int i = 0; i < count; i++)
+        {
+            if (boss == null || spawner == null)
+                yield break;
+
+            spawner.SpawnMinion(EnemyVariant.Kind.Splitter);
+            yield return new WaitForSeconds(0.25f);
+        }
+    }
+
+    // ==================================
+    // YENİLENEN: İYİLEŞME + NİŞANCI ÇAĞIRMA
+    // ==================================
+
+    private const float RegenInterval = 2.5f;
+    private const float RegenFraction = 0.025f;
+    private float regenTimer;
+
+    void TickRegeneration()
+    {
+        if (archetype != Archetype.Regenerator || boss == null)
+            return;
+
+        regenTimer -= Time.deltaTime;
+
+        if (regenTimer > 0f)
+            return;
+
+        regenTimer = RegenInterval;
+
+        // Yanarken iyileşemez (oyuncuya karşı koyma yolu)
+        if (boss.IsBurning)
+            return;
+
+        if (boss.HealFraction(RegenFraction) > 0)
+        {
+            ExplosionBlast.Play(GetBossCenter(), GetBossSize() * 0.55f, Color.white, ArchetypeColors[(int)Archetype.Regenerator]);
+        }
+    }
+
+    IEnumerator SummonGunners(EnemySpawner spawner)
+    {
+        int count = Mathf.Min(3, 1 + (bossCount - 1) / 3);
+
+        for (int i = 0; i < count; i++)
+        {
+            if (boss == null || spawner == null)
+                yield break;
+
+            spawner.SpawnMinion(EnemyVariant.Kind.Ranged);
+            yield return new WaitForSeconds(0.25f);
         }
     }
 

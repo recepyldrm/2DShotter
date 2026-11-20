@@ -69,6 +69,7 @@ public static class LocEnglish
         { "MÜZİK SESİ", "MUSIC VOLUME" },
         { "EFEKT SESİ", "EFFECTS VOLUME" },
         { "TİTREŞİM", "VIBRATION" },
+        { "BİLDİRİMLER", "NOTIFICATIONS" },
         { "GRAFİK", "GRAPHICS" },
         { "DİL", "LANGUAGE" },
         { "AÇIK", "ON" },
@@ -195,6 +196,13 @@ public static class LocEnglish
         { "ZEHİRLİ BATAKLIK", "TOXIC SWAMP" },
         { "BUZUL SINIR", "FROZEN FRONTIER" },
         { "KARANLIK BÖLGE", "DARK ZONE" },
+        { "KÜL VADİSİ", "ASH VALLEY" },
+        { "SÜRÜ ANASI", "BROODMOTHER" },
+        { "YENİLENEN", "REGENERATOR" },
+        { "Durmadan bölünen düşmanlar doğurur. Çocuklarına boğulmadan önce onu indir; patlayıcı mermiler çok işe yarar.",
+          "Keeps spawning splitters. Take it down before its brood overwhelms you; explosive bullets work great." },
+        { "Sürekli kendini iyileştirir. Yanarken iyileşemez: yakıcı mermi ya da yakıcı drone kullan!",
+          "Constantly heals itself. It can't heal while burning: use burning bullets or a burning drone!" },
 
         // ---------- Reklam ----------
         { "REKLAM", "AD" },
@@ -278,6 +286,17 @@ public static class LocEnglish
         { "BUZ KUTUSU", "ICE BOX" },
         { "ALTIN HELİKOPTER", "GOLDEN CHOPPER" },
         { "SEZON SAVAŞÇISI", "SEASON WARRIOR" },
+        { "ZEHİR", "VENOM" },
+        { "CEHENNEM", "INFERNO" },
+        { "GECE NÖBETÇİSİ", "NIGHT SENTINEL" },
+
+        // ---------- Mermi görünümleri ----------
+        { "KLASİK", "CLASSIC" },
+        { "ZÜMRÜT", "EMERALD" },
+        { "BUZ", "ICE" },
+        { "MOR PLAZMA", "VIOLET PLASMA" },
+        { "KIZIL", "CRIMSON" },
+        { "SEZON ALEVİ", "SEASON FLAME" },
 
         // ---------- Reklam ve ödüller ----------
         { "ÖDÜL", "REWARD" },

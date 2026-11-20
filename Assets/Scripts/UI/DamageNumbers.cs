@@ -14,7 +14,8 @@ public class DamageNumbers : MonoBehaviour
         Burn,
         Chain,
         Explosion,
-        Shield
+        Shield,
+        Heal
     }
 
     private const int PoolSize = 60;
@@ -38,10 +39,36 @@ public class DamageNumbers : MonoBehaviour
     private readonly List<Number> active = new List<Number>();
     private UITheme theme;
 
+    // Kalabalık anlarda ekran sayıyla dolup yavaşlamasın: kare başına sınır.
+    private const int MaxPerFrame = 6;
+    private const int MaxPerFrameReduced = 3;
+
+    private static int frameNumber = -1;
+    private static int shownThisFrame;
+
     public static void Show(Vector3 worldPosition, int amount, Style style)
     {
         if (amount <= 0)
             return;
+
+        // Düşük grafik ayarında sadece kritik vuruşlar gösterilir.
+        bool reduced = GraphicsQuality.ReducedEffects;
+
+        if (reduced && style != Style.Critical)
+            return;
+
+        if (frameNumber != Time.frameCount)
+        {
+            frameNumber = Time.frameCount;
+            shownThisFrame = 0;
+        }
+
+        // Kritik vuruşlar sınırdan bir miktar muaf (önemli geri bildirim)
+        int limit = reduced ? MaxPerFrameReduced : MaxPerFrame;
+        if (shownThisFrame >= limit + (style == Style.Critical ? 2 : 0))
+            return;
+
+        shownThisFrame++;
 
         if (instance == null)
         {
@@ -120,7 +147,7 @@ public class DamageNumbers : MonoBehaviour
         number.start = position + new Vector3(Random.Range(-0.2f, 0.2f), 0f, 0f);
         number.drift = new Vector3(Random.Range(-0.25f, 0.25f), RiseDistance, 0f);
 
-        number.text.text = number.critical ? amount + "!" : amount.ToString();
+        number.text.text = number.critical ? amount + "!" : style == Style.Heal ? "+" + amount : amount.ToString();
         number.text.color = number.color;
         number.text.fontSize = number.baseScale;
         number.text.transform.position = number.start;
@@ -184,6 +211,9 @@ public class DamageNumbers : MonoBehaviour
 
             case Style.Shield:
                 return new Color(0.7f, 0.85f, 1f, 1f);
+
+            case Style.Heal:
+                return new Color(0.45f, 1f, 0.5f, 1f);
 
             default:
                 return theme.mainWhite;

@@ -95,6 +95,13 @@ public class GameManager : MonoBehaviour
         RunStats.Reset();
         GameAnalytics.RunStarted(WeaponCatalog.Selected.id + "|" + Difficulty.Current);
 
+        // Günlük meydan okuma: günün bölümüyle başla (kalıcı bonuslar kapalı).
+        if (DailyChallenge.IsActive)
+        {
+            StageThemes.StartFixed(DailyChallenge.TodayStage);
+            return;
+        }
+
         // Kalıcı geliştirmeler uygulandı; oyuncuya göster.
         ActiveBonusBanner.ShowIfAny();
     }
@@ -109,6 +116,15 @@ public class GameManager : MonoBehaviour
     // Rekor bellekte güncellenir; diske her kill'de değil,
     // game over / uygulama arka plana alınınca yazılır.
     void CheckHighScore()
+    {
+        // Meydan okuma skorları normal rekoru etkilemez (ayrı tutulur).
+        if (DailyChallenge.IsActive)
+            return;
+
+        CheckHighScoreInternal();
+    }
+
+    void CheckHighScoreInternal()
     {
         if (score > highScore)
         {
@@ -327,7 +343,14 @@ public class GameManager : MonoBehaviour
         UpdateEarnedGoldText();
 
         GameAnalytics.PlayerDied(CurrentLevel, score, killsThisRun, Time.timeSinceLevelLoad, reviveUsed);
-        Leaderboards.ReportScore(score);
+        if (DailyChallenge.IsActive)
+        {
+            DailyChallenge.SubmitScore(score);
+        }
+        else
+        {
+            Leaderboards.ReportScore(score);
+        }
 
         if (finalScoreText != null)
         {
@@ -338,7 +361,7 @@ public class GameManager : MonoBehaviour
         if (bestScoreText != null)
         {
             bestScoreText.text =
-                Loc.T("EN İYİ: ") + highScore;
+                Loc.T("EN İYİ: ") + (DailyChallenge.IsActive ? DailyChallenge.BestToday : highScore);
         }
 
         if (gameOverPanel != null)

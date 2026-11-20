@@ -129,13 +129,34 @@ public class EnemySpawner : MonoBehaviour
         SpawnEnemy();
     }
 
+    // Boss'un belirli türde yardımcı çağırması (örn. Sürü Anası bölünenler çağırır).
+    public void SpawnMinion(EnemyVariant.Kind kind)
+    {
+        GameObject enemy = SpawnEnemy();
+
+        if (enemy == null)
+            return;
+
+        EnemyType type = enemy.GetComponent<EnemyType>();
+
+        // Bombacı rastgele seçildiyse sade kalsın; bölünme havuz ister.
+        if (type != null && type.IsBomber())
+            return;
+
+        EnemyHealth health = enemy.GetComponent<EnemyHealth>();
+        if (kind == EnemyVariant.Kind.Splitter && (health == null || string.IsNullOrEmpty(health.poolKey)))
+            return;
+
+        EnemyVariant.Apply(enemy, kind);
+    }
+
     public int CurrentLevel => GetCurrentLevel();
 
     // ==================================
     // SPAWN ENEMY
     // ==================================
 
-    void SpawnEnemy()
+    GameObject SpawnEnemy()
     {
         EnemySpawnData data =
             GetRandomEnemyData();
@@ -146,7 +167,7 @@ public class EnemySpawner : MonoBehaviour
                 "Bu level için spawn edilebilecek düşman yok!"
             );
 
-            return;
+            return null;
         }
 
         GameObject enemy = null;
@@ -180,7 +201,7 @@ public class EnemySpawner : MonoBehaviour
                     "Enemy prefab boş!"
                 );
 
-                return;
+                return null;
             }
 
             enemy =
@@ -230,6 +251,7 @@ public class EnemySpawner : MonoBehaviour
                 " | EnemyType bulunamadı!"
             );
         }
+        return enemy;
     }
 
     // Seviyeye göre bazı düşmanlar özel davranış kazanır.

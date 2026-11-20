@@ -103,7 +103,7 @@ public class DailyRewardUI : MonoBehaviour
 
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayUpgradePurchase();
+            AudioManager.Instance.PlayReward();
         }
 
         rewardText.text = "+" + gold + " " + UIBuilder.ColorTag(theme.mainRedHover, Loc.T("ALTIN"));

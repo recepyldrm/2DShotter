@@ -18,6 +18,9 @@ public static class MainMenuBootstrap
         if (scene.name != GameKeys.MainMenuScene)
             return;
 
+        // Meydan okumadan ana menüye dönüldü: normal moda geç.
+        DailyChallenge.End();
+
         GameObject host = null;
 
         AddIfMissing<WeaponsUI>(ref host);
@@ -28,6 +31,7 @@ public static class MainMenuBootstrap
         AddIfMissing<TutorialUI>(ref host);
         AddIfMissing<LeaderboardButton>(ref host);
         AddIfMissing<DifficultySelector>(ref host);
+        AddIfMissing<DailyChallengeUI>(ref host);
     }
 
     static void AddIfMissing<T>(ref GameObject host) where T : Component

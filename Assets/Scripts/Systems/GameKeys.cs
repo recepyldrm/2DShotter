@@ -55,6 +55,12 @@ public static class GameKeys
     public const string SeasonPremium = "SeasonPremium";
     public const string SeasonFreeClaimed = "SeasonFreeClaimed";
     public const string SeasonPremiumClaimed = "SeasonPremiumClaimed";
+    public const string OwnedBulletSkins = "OwnedBulletSkins";
+    public const string SelectedBulletSkin = "SelectedBulletSkin";
+    public const string ChallengeDate = "ChallengeDate";
+    public const string ChallengeBest = "ChallengeBest";
+    public const string NotificationsEnabled = "NotificationsEnabled";
+    public const string NotificationPermissionAsked = "NotificationPermissionAsked";
 
     // Kalıcı yükseltmeler: önek + yükseltme Id'si (örn. "PermUpgrade_start_health")
     public const string PermanentUpgradePrefix = "PermUpgrade_";
