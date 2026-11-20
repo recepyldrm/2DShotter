@@ -307,6 +307,8 @@ public class DebugMenu : MonoBehaviour
         AddButton(content, "+1 SEZON SEVİYESİ", SeasonPass.AddTierForDebug, false, false);
         AddButton(content, "SEZONU SIFIRLA", SeasonPass.ResetForDebug, false, false);
         AddButton(content, "SEZON PREMİUM AÇ", SeasonPass.UnlockPremium, false, false);
+        AddButton(content, "HATA KAYDINI KOPYALA", () => CrashReporter.CopyToClipboard(), false, false);
+        AddButton(content, "TEST HATASI ÜRET", CrashReporter.ThrowTestException, false, false);
         resetAllText = AddButton(content, "TÜM KAYITLARI SİL", ResetAll, false, false);
 
         panel.SetActive(false);

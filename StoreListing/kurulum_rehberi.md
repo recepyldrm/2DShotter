@@ -103,9 +103,33 @@ aşağıdaki kimliklerle ürün oluştur (kimlikler birebir aynı olmalı):
 
 ---
 
-## 7. Play Console beyanları
+## 7. Çökme raporları (5-15 dk)
+
+Oyunun kendi hata kaydı her zaman çalışır: hatalar cihazda `error_log.txt` dosyasına yazılır
+(bir önceki oturumunki `error_log_previous.txt`) ve analitik özetinde **HATALAR** bölümünde görünür.
+Test menüsündeki **HATA KAYDINI KOPYALA** ile kaydı panoya alıp bir test kullanıcısından isteyebilirsin.
+
+Oyunculardaki çökmeleri uzaktan görmek için iki seçenek var (biri yeterli):
+
+**A) Unity Cloud Diagnostics (kolay):**
+1. Proje ayarlarında açık bırakıldı. Unity'de **Edit > Project Settings > Services > Cloud Diagnostics**
+   sayfasında "Crash and Exception Reporting" açık mı kontrol et (Unity ayarı geri almış olabilir).
+2. Çökmeleri https://cloud.unity.com adresinde projenin **Cloud Diagnostics / Crashes** sayfasında görürsün.
+
+**B) Firebase Crashlytics (daha ayrıntılı):**
+1. https://console.firebase.google.com adresinde proje oluştur, Android uygulaması ekle
+   (paket adı `com.yildirim.shooter2d`), `google-services.json` dosyasını indirip `Assets` klasörüne koy.
+2. Firebase Unity SDK'sından **FirebaseCrashlytics.unitypackage** paketini içe aktar.
+3. Kurulunca kod kendiliğinden etkinleşir (FIREBASE_CRASHLYTICS tanımı otomatik eklenir).
+
+Test için: geliştirme sürümünde test menüsündeki **TEST HATASI ÜRET** butonu bilerek hata üretir.
+
+---
+
+## 8. Play Console beyanları
 
 - **Uygulama içeriği > Reklamlar:** "Evet, uygulamam reklam içeriyor".
 - **Veri güvenliği formu:** cihaz kimlikleri (AdMob reklam kimliği), uygulama etkinliği,
-  satın alma geçmişi (Google Play). Veriler aktarımda şifrelenir.
+  satın alma geçmişi (Google Play), **çökme kayıtları ve tanılama verileri** (Unity / Firebase).
+  Veriler aktarımda şifrelenir.
 - **Hedef kitle:** 13 yaş ve üzeri.

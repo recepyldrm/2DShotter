@@ -15,6 +15,7 @@ static class PluginDefines
         ("GPGS_INSTALLED", "GooglePlayGames.PlayGamesPlatform"),
         ("ADMOB_INSTALLED", "GoogleMobileAds.Api.MobileAds"),
         ("NOTIFICATIONS_INSTALLED", "Unity.Notifications.Android.AndroidNotificationCenter"),
+        ("FIREBASE_CRASHLYTICS", "Firebase.Crashlytics.Crashlytics"),
     };
 
     private static readonly NamedBuildTarget[] Targets =

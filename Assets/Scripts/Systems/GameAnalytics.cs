@@ -48,6 +48,7 @@ public static class GameAnalytics
     public const string Weapon_Upgrade = "weapon_upgrade";
     public const string Weekly_Quest = "weekly_quest";
     public const string Daily_Challenge = "daily_challenge";
+    public const string Error = "error";
     public const string Achievement = "achievement";
     public const string Boss_Spawned = "boss_spawned";
     public const string Boss_Defeated = "boss_defeated";
@@ -127,6 +128,10 @@ public static class GameAnalytics
 
     public static void DailyRewardClaimed(int day) =>
         Send(new AnalyticsRecord { e = Daily_Reward, value = day });
+
+    // CrashReporter: her yeni hata türü bir kez bildirilir.
+    public static void ErrorLogged(string type, string message, string where) =>
+        Send(new AnalyticsRecord { e = Error, card = type, detail = message, rarity = where });
 
     public static void ChallengePlayed(string day, int score) =>
         Send(new AnalyticsRecord { e = Daily_Challenge, score = score, detail = day });

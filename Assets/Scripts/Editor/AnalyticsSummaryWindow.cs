@@ -272,6 +272,28 @@ public class AnalyticsSummaryWindow : EditorWindow
 
         EditorGUILayout.LabelField("Günlük ödül alındı", Of(GameAnalytics.Daily_Reward).Count.ToString());
         EditorGUILayout.LabelField("Başarım ödülü alındı", Of(GameAnalytics.Achievement).Count.ToString());
+
+        // Hatalar (CrashReporter her hata türünü oturum başına bir kez bildirir)
+        Header("HATALAR");
+
+        List<AnalyticsRecord> errors = Of(GameAnalytics.Error);
+
+        if (errors.Count == 0)
+        {
+            EditorGUILayout.LabelField("Kayıtlı hata yok.");
+        }
+        else
+        {
+            foreach (IGrouping<string, AnalyticsRecord> group in errors.GroupBy(r => r.detail + " @ " + r.rarity).OrderByDescending(g => g.Count()).Take(15))
+            {
+                EditorGUILayout.LabelField(group.Count() + "×", group.Key, EditorStyles.wordWrappedLabel);
+            }
+        }
+
+        if (GUILayout.Button("Hata kaydı dosyasını göster"))
+        {
+            EditorUtility.RevealInFinder(CrashReporter.LogPath);
+        }
     }
 
     // ==================================
